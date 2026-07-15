@@ -65,6 +65,17 @@ register_deactivation_hook( __FILE__, 'deactivate_fswwp_comments_core' );
 require plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core.php';
 
 /**
+ * FSWWP Update Checker — automatic updates from your own server.
+ *
+ * @see https://github.com/flowsyncweb/fswwp-update-checker
+ */
+require plugin_dir_path( __FILE__ ) . 'fswwp-update-checker/index.php';
+new FSWWP_Update_Checker_1_0(
+	'http://127.0.0.1:8000/api/releases/fswwp-comments-core',
+	__FILE__
+);
+
+/**
  * Begins execution of the plugin.
  *
  * Since everything within the plugin is registered via hooks,

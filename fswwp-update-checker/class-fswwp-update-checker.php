@@ -661,7 +661,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			$code     = wp_remote_retrieve_response_code( $response );
 			$raw_body = wp_remote_retrieve_body( $response );
 			error_log( '[FSWWP Update Checker] details endpoint HTTP ' . $code . ' — body length: ' . strlen( $raw_body ) . ' chars' );
-			error_log( '[FSWWP Update Checker] details raw body (first 800 chars): ' . substr( $raw_body, 0, 800 ) );
+			error_log( '[FSWWP Update Checker] details FULL body (' . strlen( $raw_body ) . ' chars): ' . $raw_body );
 
 			if ( $code !== 200 ) {
 				error_log( '[FSWWP Update Checker] details endpoint returned non-200, aborting' );
@@ -684,6 +684,8 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			// Sections podem vir num objeto aninhado ou como campos soltos.
 			if ( ! empty( $body->sections ) ) {
 				$result->sections = (array) $body->sections;
+				error_log( '[FSWWP Update Checker] sections keys: ' . implode( ', ', array_keys( $result->sections ) ) );
+				error_log( '[FSWWP Update Checker] screenshots present: ' . ( isset( $result->sections['screenshots'] ) ? 'YES (' . strlen( $result->sections['screenshots'] ) . ' chars)' : 'NO' ) );
 			} else {
 				$flat_sections = array();
 				foreach ( array( 'description', 'changelog', 'installation', 'faq', 'screenshots' ) as $key ) {

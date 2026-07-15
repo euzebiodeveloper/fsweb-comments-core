@@ -165,8 +165,9 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			//  Admin hooks — only on the plugins screen
 			// ---------------------------------------------------------//
 			if ( is_admin() ) {
-				// Links na segunda linha: View Details, Check for Updates,
-				// Previous Versions (plugin_row_meta).
+				// Links na segunda linha: View Details (priority 999 para
+				// rodar DEPOIS do WordPress), Check for Updates,
+				// Previous Versions.
 				add_filter(
 					'plugin_row_meta',
 					array( $this, 'add_plugin_row_links' ),
@@ -622,17 +623,13 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				$info->icons = array();
 			}
 
-			// Sections: use $sections from details endpoint first,
-			// fallback to $metadata->sections, then default.
+			// Sections: details endpoint first, then metadata, then vazio.
 			if ( $sections !== null && is_array( $sections ) ) {
 				$info->sections = $sections;
 			} elseif ( ! empty( $metadata->sections ) ) {
 				$info->sections = (array) $metadata->sections;
 			} else {
-				$info->sections = array(
-					/* translators: %s: plugin name */
-					'description' => sprintf( __( '<p>Plugin %s</p>', 'fswwp-update-checker' ), $info->name ),
-				);
+				$info->sections = array();
 			}
 
 			return $info;
@@ -738,9 +735,16 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				return $links;
 			}
 
-			// NOTA: "View Details" não é adicionado aqui porque o WordPress
-			// já adiciona automaticamente (traduzido pelo locale do site).
-			// Um JS inline troca o texto "Ver detalhes" para "View Details".
+			// View Details em inglês direto, sem text-domain.
+			$view_url = self_admin_url(
+				'plugin-install.php?tab=plugin-information&plugin=' . $this->slug
+				. '&TB_iframe=true&width=772&height=550'
+			);
+			$links['view-details'] = sprintf(
+				'<a href="%s" class="thickbox open-plugin-details-modal">%s</a>',
+				esc_url( $view_url ),
+				'View Details'
+			);
 
 			// --- Check for Updates (AJAX manual check) ---
 			$check_url = admin_url(
@@ -1020,15 +1024,6 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				'
 				jQuery( function( $ ) {
 					var $doc = $( document );
-
-					// Renomeia "Ver detalhes" → "View Details" (WP traduz
-					// conforme locale, mas queremos manter tudo em inglês).
-					$doc.find( "a.thickbox.open-plugin-details-modal" ).each( function() {
-						var $el = $( this );
-						if ( $el.text().trim() !== "View Details" ) {
-							$el.text( "View Details" );
-						}
-					} );
 
 					// Enable install button when a non-current version is selected.
 					$doc.on( "change", "input[name=\"fswwp_version\"]", function() {

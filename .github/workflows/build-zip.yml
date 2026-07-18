@@ -1,0 +1,64 @@
+name: Build Plugin ZIP on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  build-zip:
+    # Só executa quando o PR for mergeado (não apenas fechado)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create plugin ZIP
+        run: |
+          PLUGIN_SLUG="fswwp-comments-core"
+          ZIP_NAME="${PLUGIN_SLUG}.zip"
+
+          # Cria o zip com os arquivos do plugin, ignorando o que não é necessário
+          zip -r "${ZIP_NAME}" . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x ".gitignore" \
+            -x ".gitattributes" \
+            -x ".editorconfig" \
+            -x ".DS_Store" \
+            -x "Thumbs.db" \
+            -x "CHANGELOG.md" \
+            -x "reasonix.toml" \
+            -x ".reasonix/*" \
+            -x "AGENTS.md" \
+            -x "*.zip" \
+            -x "node_modules/*" \
+            -x ".vscode/*" \
+            -x ".idea/*"
+
+          echo "ZIP criado: ${ZIP_NAME}"
+          echo "ZIP_SIZE=$(stat -c%s ${ZIP_NAME})" >> $GITHUB_ENV
+          ls -lh "${ZIP_NAME}"
+
+      - name: Upload ZIP as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fswwp-comments-core
+          path: fswwp-comments-core.zip
+          retention-days: 30
+
+      - name: Create Release (optional)
+        if: github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            Build gerado automaticamente a partir do PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
+
+            **Branch:** ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}
+            **Commit:** ${{ github.event.pull_request.merge_commit_sha }}
+          files: fswwp-comments-core.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

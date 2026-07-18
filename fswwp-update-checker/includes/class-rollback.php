@@ -1,0 +1,301 @@
+<?php
+/**
+ * FSWWP Update Checker — Rollback Handler
+ *
+ * AJAX handlers for the version rollback feature:
+ * - Previous Versions list (thickbox content)
+ * - Install selected version (deactivate → delete → install → reactivate)
+ * - Manual update check
+ *
+ * @package   FSWWP_Update_Checker
+ * @version   1.0.0
+ * @link      https://flowsyncweb.com
+ * @license   GPL-2.0+
+ */
+
+namespace FSWWP\UpdateChecker\V1;
+
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
+/**
+ * Rollback Handler — AJAX endpoints for version rollback.
+ */
+class Rollback {
+
+	/**
+	 * Plugin slug.
+	 *
+	 * @var string
+	 */
+	private $slug;
+
+	/**
+	 * Plugin basename.
+	 *
+	 * @var string
+	 */
+	private $plugin_basename;
+
+	/**
+	 * Nonce action identifier.
+	 *
+	 * @var string
+	 */
+	private $nonce_action;
+
+	/**
+	 * Metadata repository.
+	 *
+	 * @var Metadata
+	 */
+	private $metadata;
+
+	/**
+	 * Update manager.
+	 *
+	 * @var Updates
+	 */
+	private $updates;
+
+	/**
+	 * Admin UI.
+	 *
+	 * @var AdminUi
+	 */
+	private $admin_ui;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param string   $slug            Plugin slug.
+	 * @param string   $plugin_basename Plugin basename.
+	 * @param Metadata $metadata        Metadata repository.
+	 * @param Updates  $updates         Update manager.
+	 * @param AdminUi  $admin_ui        Admin UI renderer.
+	 */
+	public function __construct( $slug, $plugin_basename, Metadata $metadata, Updates $updates, AdminUi $admin_ui ) {
+		$this->slug            = $slug;
+		$this->plugin_basename = $plugin_basename;
+		$this->nonce_action    = 'fswwp_rollback_' . $slug;
+		$this->metadata        = $metadata;
+		$this->updates         = $updates;
+		$this->admin_ui        = $admin_ui;
+	}
+
+	/**
+	 * AJAX handler — renders the thickbox HTML with the version list.
+	 *
+	 * @return void
+	 */
+	public function ajax_previous_versions() {
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			wp_die( -1 );
+		}
+
+		$meta = $this->metadata->fetch_and_cache();
+		if ( ! $meta ) {
+			$meta = $this->metadata->get_cached();
+		}
+
+		$current_version = $this->updates->get_installed_version();
+		$versions        = $this->build_versions_array( $meta );
+
+		usort( $versions, array( $this, 'sort_versions_desc' ) );
+
+		$this->admin_ui->render_versions_modal( $versions, $current_version );
+
+		wp_die();
+	}
+
+	/**
+	 * AJAX handler — installs the selected version via Plugin_Upgrader.
+	 *
+	 * @return void
+	 */
+	public function ajax_install_version() {
+		check_ajax_referer( $this->nonce_action );
+
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'You do not have permission to install plugins.', 'fswwp-update-checker' ),
+			) );
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified above.
+		if ( empty( $_POST['download_url'] ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'No download URL provided.', 'fswwp-update-checker' ),
+			) );
+		}
+
+		$download_url = esc_url_raw( wp_unslash( $_POST['download_url'] ) );
+		$version      = isset( $_POST['version'] )
+			? sanitize_text_field( wp_unslash( $_POST['version'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		$was_active = is_plugin_active( $this->plugin_basename );
+
+		$this->load_upgrade_classes();
+
+		// 1. Deactivate if active.
+		if ( $was_active ) {
+			deactivate_plugins( $this->plugin_basename, true );
+		}
+
+		// 2. Delete current plugin files.
+		$deleted = delete_plugins( array( $this->plugin_basename ) );
+		if ( is_wp_error( $deleted ) ) {
+			if ( $was_active ) {
+				activate_plugin( $this->plugin_basename );
+			}
+			wp_send_json_error( array(
+				'message' => $deleted->get_error_message(),
+			) );
+		}
+
+		// 3. Install selected version.
+		$skin     = new \WP_Ajax_Upgrader_Skin();
+		$upgrader = new \Plugin_Upgrader( $skin );
+		$result   = $upgrader->install( $download_url );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array(
+				'message' => $result->get_error_message(),
+			) );
+		}
+
+		if ( ! $result ) {
+			wp_send_json_error( array(
+				'message' => __( 'Installation failed. Check filesystem permissions.', 'fswwp-update-checker' ),
+			) );
+		}
+
+		// 4. Re-activate if it was active before.
+		if ( $was_active ) {
+			$activated = activate_plugin( $this->plugin_basename );
+			if ( is_wp_error( $activated ) ) {
+				wp_send_json_error( array(
+					'message' => sprintf(
+						/* translators: %s: error message */
+						__( 'Version installed but could not re-activate: %s', 'fswwp-update-checker' ),
+						$activated->get_error_message()
+					),
+				) );
+			}
+		}
+
+		wp_send_json_success( array(
+			'message' => __( 'Version installed successfully!', 'fswwp-update-checker' ),
+			'version' => $version,
+		) );
+	}
+
+	/**
+	 * AJAX handler — performs a manual update check and returns the result.
+	 *
+	 * @return void
+	 */
+	public function ajax_check_for_updates() {
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			wp_die( -1 );
+		}
+
+		$meta = $this->metadata->fetch_and_cache();
+
+		if ( ! $meta ) {
+			wp_send_json_error( array(
+				'message' => __( 'Could not fetch update information.', 'fswwp-update-checker' ),
+			) );
+		}
+
+		$current_version = $this->updates->get_installed_version();
+		$has_update      = $current_version
+			&& version_compare( $meta->version, $current_version, '>' );
+
+		wp_send_json_success( array(
+			'has_update'      => $has_update,
+			'latest_version'  => $meta->version,
+			'current_version' => $current_version,
+			'message'         => $has_update
+				? sprintf(
+					/* translators: %s: latest version number */
+					__( 'Update available: version %s', 'fswwp-update-checker' ),
+					$meta->version
+				)
+				: __( 'You are running the latest version.', 'fswwp-update-checker' ),
+		) );
+
+		wp_die();
+	}
+
+	/**
+	 * Get the nonce action string.
+	 *
+	 * @return string
+	 */
+	public function get_nonce_action() {
+		return $this->nonce_action;
+	}
+
+	// ------------------------------------------------------------------//
+	//  Private helpers
+	// ------------------------------------------------------------------//
+
+	/**
+	 * Build a normalized versions array from metadata.
+	 *
+	 * @param object|null $meta Decoded JSON metadata.
+	 * @return array
+	 */
+	private function build_versions_array( $meta ) {
+		if ( $meta && ! empty( $meta->versions ) && is_array( $meta->versions ) ) {
+			return $meta->versions;
+		}
+
+		if ( $meta && ! empty( $meta->version ) ) {
+			return array(
+				array(
+					'version'      => $meta->version,
+					'download_url' => ! empty( $meta->download_url ) ? $meta->download_url : '',
+					'date'         => ! empty( $meta->last_updated ) ? $meta->last_updated : '',
+					'notes'        => '',
+				),
+			);
+		}
+
+		return array();
+	}
+
+	/**
+	 * Sort versions in descending order.
+	 *
+	 * @param object|array $a First version.
+	 * @param object|array $b Second version.
+	 * @return int
+	 */
+	private function sort_versions_desc( $a, $b ) {
+		return version_compare(
+			is_object( $a ) ? $a->version : $a['version'],
+			is_object( $b ) ? $b->version : $b['version'],
+			'<'
+		) ? 1 : -1;
+	}
+
+	/**
+	 * Load WordPress upgrade classes if not already available.
+	 *
+	 * @return void
+	 */
+	private function load_upgrade_classes() {
+		if ( ! class_exists( 'Plugin_Upgrader', false ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			require_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+	}
+}

@@ -17,4 +17,15 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// ------------------------------------------------------------------//
+//  Autoloader — maps FSWWP\UpdateChecker\V1 namespace to includes/
+// ------------------------------------------------------------------//
+require_once __DIR__ . '/includes/class-auto-loader.php';
+
+$fswwp_autoloader = new \FSWWP\UpdateChecker\V1\Autoloader( __DIR__ . '/includes' );
+$fswwp_autoloader->register();
+
+// ------------------------------------------------------------------//
+//  Main library class
+// ------------------------------------------------------------------//
 require_once __DIR__ . '/class-fswwp-update-checker.php';

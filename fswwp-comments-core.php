@@ -71,7 +71,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core.php';
  */
 require plugin_dir_path( __FILE__ ) . 'fswwp-update-checker/index.php';
 new FSWWP_Update_Checker_1_0(
-	'http://127.0.0.1:8000/api/releases/fswwp-comments-core',
+	'https://api.flowsyncweb.com/api/releases/fswwp-comments-core',
 	__FILE__
 );
 

@@ -16,10 +16,6 @@ Each library version uses a unique class name (e.g. FSWWP_Update_Checker_1_0).
 Different plugins can ship different library versions — they coexist because
 the class names are different.
 
-Each library version uses a unique class name (e.g. FSWWP_Update_Checker_1_0).
-Different plugins can ship different library versions — they coexist because
-the class names are different.
-
 == How to use ==
 
 1. Copy the entire `fswwp-update-checker/` folder into your plugin.

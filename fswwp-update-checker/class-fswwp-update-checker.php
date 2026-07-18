@@ -339,11 +339,16 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			}
 
 			// Busca dados completos do endpoint de detalhes (sections, banners, icons).
+			// Se falhar, retorna o resultado original (WordPress mostra erro).
 			error_log( '[FSWWP Update Checker] fetching details from endpoint' );
 			$details = $this->fetch_details();
-			$sections = $details ? $details->sections : null;
-			$banners  = $details ? $details->banners : null;
-			$icons    = $details ? $details->icons : null;
+			if ( ! $details ) {
+				error_log( '[FSWWP Update Checker] details endpoint failed — returning default result' );
+				return $result;
+			}
+			$sections = $details->sections;
+			$banners  = $details->banners;
+			$icons    = $details->icons;
 			error_log( '[FSWWP Update Checker] details result — sections: '
 				. ( $sections ? 'OK (' . count( $sections ) . ')' : 'null' )
 				. ' | banners: ' . ( $banners ? 'OK' : 'null' )
@@ -623,11 +628,9 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				$info->icons = array();
 			}
 
-			// Sections: details endpoint first, then metadata, then vazio.
+			// Sections: usa o que veio dos detalhes, ou vazio.
 			if ( $sections !== null && is_array( $sections ) ) {
 				$info->sections = $sections;
-			} elseif ( ! empty( $metadata->sections ) ) {
-				$info->sections = (array) $metadata->sections;
 			} else {
 				$info->sections = array();
 			}
@@ -737,16 +740,31 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				return $links;
 			}
 
-			// View Details em inglês direto, sem text-domain.
+			// View Details — redireciona qualquer link do WordPress para
+			// nossa API, garantindo que sempre use os dados do Laravel.
 			$view_url = self_admin_url(
 				'plugin-install.php?tab=plugin-information&plugin=' . $this->slug
 				. '&TB_iframe=true&width=772&height=550'
 			);
-			$links['view-details'] = sprintf(
+			$view_link = sprintf(
 				'<a href="%s" class="thickbox open-plugin-details-modal">%s</a>',
 				esc_url( $view_url ),
 				'View Details'
 			);
+
+			// Remove qualquer link WordPress existente com essa classe
+			// e insere o nosso no lugar.
+			$has_view_details = false;
+			foreach ( $links as $k => $v ) {
+				if ( is_string( $v ) && strpos( $v, 'open-plugin-details-modal' ) !== false ) {
+					$links[ $k ] = $view_link;
+					$has_view_details = true;
+					break;
+				}
+			}
+			if ( ! $has_view_details ) {
+				$links['view-details'] = $view_link;
+			}
 
 			// --- Check for Updates (AJAX manual check) ---
 			$check_url = admin_url(
@@ -1001,7 +1019,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		 * @param string $hook_suffix Current admin page.
 		 */
 		public function enqueue_rollback_script( $hook_suffix ) {
-			if ( 'plugins.php' !== $hook_suffix ) {
+			if ( ! in_array( $hook_suffix, array( 'plugins.php', 'plugin-install' ), true ) ) {
 				return;
 			}
 
@@ -1018,6 +1036,41 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				'
 				.plugin-title .fswwp-version-selector { margin-left: 8px; }
 				#TB_window.thickbox-loading .wrap { opacity: 0.5; }
+
+				/* Screenshots em grid responsivo (3 colunas) */
+				#section-screenshots ol {
+					display: grid;
+					grid-template-columns: repeat(3, 1fr);
+					gap: 20px;
+					list-style: none;
+					margin: 0;
+					padding: 0;
+				}
+				#section-screenshots ol li {
+					margin: 0;
+					text-align: center;
+				}
+				#section-screenshots ol li img {
+					max-width: 100%;
+					height: auto;
+					border: 1px solid #ddd;
+					border-radius: 4px;
+				}
+				#section-screenshots ol li p {
+					margin: 8px 0 0;
+					font-size: 13px;
+					color: #555;
+				}
+				@media (max-width: 782px) {
+					#section-screenshots ol {
+						grid-template-columns: repeat(2, 1fr);
+					}
+				}
+				@media (max-width: 480px) {
+					#section-screenshots ol {
+						grid-template-columns: 1fr;
+					}
+				}
 			'
 			);
 

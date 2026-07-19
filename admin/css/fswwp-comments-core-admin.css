@@ -1,4 +1,90 @@
 /**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
+ * FSWWP Comments Core — Admin Styles
  */
+
+/* ------------------------------------------------------------------ */
+/*  License status badges
+/* ------------------------------------------------------------------ */
+.fswwp-cc-status {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 3px;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 1.6;
+}
+
+.fswwp-cc-status--active {
+	background: #edfaef;
+	color: #1e7e34;
+	border: 1px solid #b7e1c1;
+}
+
+.fswwp-cc-status--inactive {
+	background: #f0f0f1;
+	color: #646970;
+	border: 1px solid #dcdcde;
+}
+
+.fswwp-cc-status--expired {
+	background: #fcf9e8;
+	color: #996800;
+	border: 1px solid #f0d87e;
+}
+
+.fswwp-cc-status--invalid {
+	background: #fcf0f1;
+	color: #b52727;
+	border: 1px solid #f1adad;
+}
+
+.fswwp-cc-status--pending {
+	background: #f0f6fc;
+	color: #1d5c96;
+	border: 1px solid #b8d6f0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  License page card
+/* ------------------------------------------------------------------ */
+.fswwp-cc-license-wrap .fswwp-cc-license-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px 24px;
+	margin-top: 16px;
+	max-width: 720px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.fswwp-cc-license-card .description {
+	margin: 0 0 16px;
+	font-size: 14px;
+}
+
+.fswwp-cc-license-card .submit {
+	margin: 0;
+	padding: 16px 0 0;
+}
+
+#fswwp-cc-license-message {
+	margin: 12px 0 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Welcome page
+/* ------------------------------------------------------------------ */
+.fswwp-cc-welcome {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 24px;
+	margin-top: 16px;
+	max-width: 640px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.fswwp-cc-welcome p {
+	font-size: 14px;
+	line-height: 1.6;
+}

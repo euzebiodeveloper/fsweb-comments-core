@@ -235,3 +235,17 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+/* ------------------------------------------------------------------ */
+/*  Inline update-message notice icons                                 */
+/* ------------------------------------------------------------------ */
+
+/* Success — green checkmark (WordPress puts ::before on <p>, not <div>) */
+.plugin-update-tr .update-message.notice-success p::before {
+	color: #00a32a !important;
+}
+
+/* Error — red */
+.plugin-update-tr .update-message.notice-error p::before {
+	color: #d63638 !important;
+}

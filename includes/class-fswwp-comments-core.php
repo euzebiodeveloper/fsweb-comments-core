@@ -157,6 +157,10 @@ class Fswwp_Comments_Core {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Main menu + License submenu.
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_main_menu' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_license_submenu' );
+
 	}
 
 	/**

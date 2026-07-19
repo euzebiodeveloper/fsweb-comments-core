@@ -30,7 +30,6 @@ class Fswwp_Comments_Core_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
 	}
 
 }

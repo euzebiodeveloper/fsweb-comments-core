@@ -90,8 +90,8 @@
 
 	/**
 	 * Handle "Check for Updates" click: POST to admin-ajax,
-	 * show inline feedback, then reload the page so WordPress
-	 * picks up the fresh update data.
+	 * show inline feedback. Reloads only when an update is found
+	 * (so WordPress shows the native update notice).
 	 */
 	$doc.on( 'click', '.fswwp-check-updates', function( e ) {
 		e.preventDefault();
@@ -100,7 +100,6 @@
 		var $row     = $link.closest( 'tr' );
 		var origText = $link.text();
 
-		// Visual feedback while checking.
 		$link.text( data.i18n.checking || 'Checking\u2026' );
 
 		$.post( window.ajaxurl, {
@@ -108,12 +107,18 @@
 			_ajax_nonce: $link.data( 'nonce' )
 		}, function( response ) {
 			if ( response.success ) {
-				// Update available or already latest — reload so
-				// WordPress shows the update notice inline.
-				window.location.reload();
+				if ( response.data.has_update ) {
+					// Update available — reload so WordPress shows the
+					// "Update now" link inline on the plugins page.
+					window.location.reload();
+				} else {
+					// Already on the latest version — show inline success.
+					showInlineNotice( $row, response.data.message, 'success' );
+					$link.text( origText );
+				}
 			} else {
-				// Error (e.g. no license) — show inline and restore link.
-				showInlineNotice( $row, response.data.message || ( data.i18n.checking || 'Check failed.' ), 'warning' );
+				// Error (e.g. no license, API down) — show inline warning.
+				showInlineNotice( $row, response.data.message || 'Check failed.', 'warning' );
 				$link.text( origText );
 			}
 		}, 'json' ).fail( function() {
@@ -140,6 +145,8 @@
 		var cls = 'notice-error';
 		if ( 'warning' === type ) {
 			cls = 'notice-warning';
+		} else if ( 'success' === type ) {
+			cls = 'notice-success';
 		}
 
 		// Add `update` class so WordPress CSS fuses the two rows together.

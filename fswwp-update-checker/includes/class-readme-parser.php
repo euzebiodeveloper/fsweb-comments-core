@@ -274,7 +274,7 @@ class ReadmeParser {
 		$text = preg_replace( '/^-{3,}\s*$/m', '<hr>', $text );
 
 		// Phase 7: unordered lists.
-		$text = $this->process_lists( $text, 'ul', '/^[\*\-\+]\s+(.+)$/m' );
+		$text = $this->process_lists( $text, 'ul', '/^[*+-]\s+(.+)$/m' );
 
 		// Phase 8: ordered lists.
 		$text = $this->process_lists( $text, 'ol', '/^\d+\.\s+(.+)$/m' );

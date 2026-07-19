@@ -81,11 +81,20 @@ class Metadata {
 	/**
 	 * Set the license key to be sent with every update request.
 	 *
+	 * Also clears any stale license error that may have been recorded
+	 * before the license was activated.
+	 *
 	 * @param string $license_key The license key.
 	 * @return void
 	 */
 	public function set_license( $license_key ) {
 		$this->license_key = sanitize_text_field( $license_key );
+
+		// If we have a key, clear any stale error from a previous
+		// failed check (e.g. cron ran before activation).
+		if ( ! empty( $this->license_key ) ) {
+			delete_option( $this->option_name . '_license_error' );
+		}
 	}
 
 	/**

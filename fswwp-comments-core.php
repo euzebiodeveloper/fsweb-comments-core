@@ -38,6 +38,12 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.0' );
 
 /**
+ * Plugin directory path and URL (with trailing slash).
+ */
+define( 'FSWWP_COMMENTS_CORE_DIR', plugin_dir_path( __FILE__ ) );
+define( 'FSWWP_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-fswwp-comments-core-activator.php
  */

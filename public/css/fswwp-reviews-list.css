@@ -1,0 +1,49 @@
+/**
+ * FSWWP Reviews — List Layout
+ */
+
+.fswwp-reviews--list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.fswwp-review-list-item {
+	display: flex;
+	gap: 20px;
+	background: #fff;
+	border-radius: 8px;
+	padding: 20px 24px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+	align-items: flex-start;
+	transition: box-shadow 0.2s;
+}
+
+.fswwp-review-list-item:hover {
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+}
+
+.fswwp-review-list-item .fswwp-review-image {
+	margin-bottom: 0;
+	flex-shrink: 0;
+}
+
+.fswwp-review-list-item .fswwp-review-avatar {
+	width: 56px;
+	height: 56px;
+}
+
+.fswwp-review-list-item .fswwp-review-name {
+	text-align: left;
+}
+
+@media (max-width: 480px) {
+	.fswwp-review-list-item {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.fswwp-review-list-item .fswwp-review-name {
+		text-align: center;
+	}
+}

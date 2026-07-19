@@ -30,6 +30,10 @@ class Fswwp_Comments_Core_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+		// Ensure CPT and taxonomy are registered before flushing rewrites.
+		Fswwp_Comments_Core_Post_Types::register_cpt();
+		Fswwp_Comments_Core_Post_Types::register_taxonomy();
+		flush_rewrite_rules();
 	}
 
 }

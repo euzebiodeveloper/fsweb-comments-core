@@ -1,0 +1,139 @@
+<?php
+/**
+ * FSWWP Comments Core — Review Form Styles
+ */
+
+.fswwp-review-form-wrap {
+	max-width: 600px;
+	margin: 20px 0;
+}
+
+.fswwp-review-form {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.fswwp-review-form-field {
+	display: flex;
+	flex-direction: column;
+}
+
+.fswwp-review-form-label {
+	font-weight: 600;
+	font-size: 14px;
+	margin-bottom: 6px;
+	color: #1d2327;
+}
+
+.fswwp-review-form-required {
+	color: #d63638;
+	margin-left: 2px;
+}
+
+.fswwp-review-form-field input[type="text"],
+.fswwp-review-form-field input[type="email"],
+.fswwp-review-form-field input[type="url"],
+.fswwp-review-form-field textarea,
+.fswwp-review-form-field select {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	font-size: 14px;
+	line-height: 1.5;
+	transition: border-color 0.2s;
+	box-sizing: border-box;
+}
+
+.fswwp-review-form-field input:focus,
+.fswwp-review-form-field textarea:focus,
+.fswwp-review-form-field select:focus {
+	border-color: #2271b1;
+	outline: none;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Star rating */
+.fswwp-review-stars {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	gap: 4px;
+}
+
+.fswwp-review-stars input {
+	display: none;
+}
+
+.fswwp-review-stars label {
+	font-size: 28px;
+	color: #dcdcde;
+	cursor: pointer;
+	transition: color 0.15s;
+}
+
+.fswwp-review-stars label:hover,
+.fswwp-review-stars label:hover ~ label,
+.fswwp-review-stars input:checked ~ label {
+	color: #f0c040;
+}
+
+/* Submit */
+.fswwp-review-form-submit {
+	display: inline-flex;
+	align-items: center;
+	padding: 12px 28px;
+	background: #2271b1;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.fswwp-review-form-submit:hover {
+	background: #135e96;
+}
+
+.fswwp-review-form-submit:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.fswwp-review-form-spinner {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border: 2px solid #dcdcde;
+	border-top-color: #2271b1;
+	border-radius: 50%;
+	animation: fswwp-spin 0.6s linear infinite;
+	margin-left: 10px;
+	vertical-align: middle;
+}
+
+@keyframes fswwp-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* Messages */
+.fswwp-review-form-message {
+	padding: 12px 16px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.fswwp-review-form-message--success {
+	background: #ecf7ed;
+	border-left: 4px solid #00a32a;
+	color: #1e6e1e;
+}
+
+.fswwp-review-form-message--error {
+	background: #fbeaea;
+	border-left: 4px solid #d63638;
+	color: #8b0000;
+}

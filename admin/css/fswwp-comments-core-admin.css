@@ -88,3 +88,582 @@
 	font-size: 14px;
 	line-height: 1.6;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Dashboard
+/* ------------------------------------------------------------------ */
+.fswwp-cc-dashboard h1 {
+	margin-bottom: 20px;
+}
+
+/* Stats cards row */
+.fswwp-cc-stats {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.fswwp-cc-stat-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 20px;
+	text-align: center;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.fswwp-cc-stat-number {
+	display: block;
+	font-size: 28px;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1.2;
+	margin-bottom: 4px;
+}
+
+.fswwp-cc-stat-label {
+	font-size: 13px;
+	color: #646970;
+}
+
+.fswwp-cc-stat-card--active .fswwp-cc-stat-number {
+	color: #00a32a;
+}
+
+.fswwp-cc-stat-card--expired .fswwp-cc-stat-number,
+.fswwp-cc-stat-card--invalid .fswwp-cc-stat-number,
+.fswwp-cc-stat-card--inactive .fswwp-cc-stat-number {
+	color: #d63638;
+}
+
+/* Dashboard grid (2 columns) */
+.fswwp-cc-dash-grid {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 24px;
+}
+
+.fswwp-cc-dash-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	overflow: hidden;
+}
+
+.fswwp-cc-dash-panel-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 20px;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.fswwp-cc-dash-panel-header h2 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* Recent reviews table */
+.fswwp-cc-recent-table {
+	border: none;
+}
+
+.fswwp-cc-recent-table thead th {
+	font-size: 12px;
+	color: #646970;
+}
+
+.fswwp-cc-has-thumb {
+	margin-left: 6px;
+	font-size: 12px;
+}
+
+.fswwp-cc-empty {
+	padding: 24px 20px;
+	color: #646970;
+	margin: 0;
+	font-size: 14px;
+}
+
+/* Quick actions */
+.fswwp-cc-quick-actions {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.fswwp-cc-quick-actions .button {
+	text-align: center;
+	justify-content: center;
+}
+
+/* Shortcode help box */
+.fswwp-cc-shortcode-help {
+	padding: 16px 20px;
+	border-top: 1px solid #e2e4e7;
+	background: #f6f7f7;
+}
+
+.fswwp-cc-shortcode-help h3 {
+	margin: 0 0 8px;
+	font-size: 13px;
+}
+
+.fswwp-cc-shortcode-help code {
+	font-size: 13px;
+	padding: 4px 8px;
+}
+
+@media (max-width: 960px) {
+	.fswwp-cc-stats {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.fswwp-cc-dash-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 480px) {
+	.fswwp-cc-stats {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  Form Builder
+/* ------------------------------------------------------------------ */
+.fswwp-cc-builder-wrap .description {
+	margin-bottom: 16px;
+}
+
+.fswwp-cc-builder {
+	display: grid;
+	grid-template-columns: 260px 1fr;
+	gap: 24px;
+	align-items: start;
+}
+
+/* Palette (left) */
+.fswwp-cc-builder-palette {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 16px;
+	position: sticky;
+	top: 40px;
+}
+
+.fswwp-cc-builder-palette h3 {
+	margin: 0 0 12px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.fswwp-cc-palette-items {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.fswwp-cc-palette-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	cursor: grab;
+	font-size: 13px;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.fswwp-cc-palette-item:hover {
+	background: #f0f0f1;
+	border-color: #2271b1;
+}
+
+.fswwp-cc-palette-item .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #646970;
+}
+
+/* Canvas (right) */
+.fswwp-cc-builder-canvas {
+	min-height: 300px;
+}
+
+.fswwp-cc-builder-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.fswwp-cc-builder-toolbar h3 {
+	margin: 0;
+	font-size: 14px;
+}
+
+/* Sortable field list */
+.fswwp-cc-fields-sortable {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 60px;
+}
+
+/* Field card */
+.fswwp-cc-field-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	overflow: hidden;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.fswwp-cc-field-card:hover {
+	border-color: #8c8f94;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.fswwp-cc-field-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 14px;
+	cursor: default;
+}
+
+.fswwp-cc-field-handle {
+	cursor: grab;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.fswwp-cc-field-label-text {
+	flex: 1;
+	font-size: 14px;
+}
+
+.fswwp-cc-field-type-badge {
+	font-size: 11px;
+	background: #f0f0f1;
+	padding: 2px 8px;
+	border-radius: 3px;
+	color: #50575e;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+.fswwp-cc-field-toggle,
+.fswwp-cc-field-delete {
+	border: none;
+	background: none;
+	cursor: pointer;
+	padding: 2px;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 20px;
+	height: 20px;
+}
+
+.fswwp-cc-field-delete:hover {
+	color: #d63638;
+}
+
+/* Field body */
+.fswwp-cc-field-body {
+	padding: 0 14px 14px;
+	border-top: 1px solid #e2e4e7;
+	background: #f9f9f9;
+}
+
+.fswwp-cc-field-row {
+	padding: 10px 0 0;
+}
+
+.fswwp-cc-field-row label {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3c434a;
+	margin-bottom: 4px;
+}
+
+.fswwp-cc-field-row input[type="text"],
+.fswwp-cc-field-row select,
+.fswwp-cc-field-row textarea {
+	width: 100%;
+	max-width: 400px;
+}
+
+.fswwp-cc-field-row textarea {
+	resize: vertical;
+}
+
+/* Sortable placeholder */
+.fswwp-cc-field-placeholder {
+	background: #f0f6fc;
+	border: 2px dashed #2271b1;
+	border-radius: 6px;
+	height: 48px;
+}
+
+/* Empty state */
+#fswwp-cc-builder-empty {
+	padding: 40px 20px;
+	text-align: center;
+	border: 2px dashed #dcdcde;
+	border-radius: 6px;
+	color: #8c8f94;
+}
+
+/* Save feedback */
+#fswwp-cc-builder-message {
+	margin-top: 16px;
+}
+
+@media (max-width: 782px) {
+	.fswwp-cc-builder {
+		grid-template-columns: 1fr;
+	}
+
+	.fswwp-cc-builder-palette {
+		position: static;
+	}
+
+	.fswwp-cc-palette-items {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.fswwp-cc-palette-item {
+		flex: 0 0 auto;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  Views Builder — row/column layout
+/* ------------------------------------------------------------------ */
+
+.fswwp-cc-views-canvas {
+	flex: 1;
+	min-height: 200px;
+}
+
+/* Row */
+.fswwp-cc-view-row {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	overflow: hidden;
+}
+
+.fswwp-cc-view-row-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.fswwp-cc-row-handle {
+	cursor: grab;
+	color: #8c8f94;
+	font-size: 16px;
+}
+
+.fswwp-cc-view-row-toolbar strong {
+	font-size: 12px;
+	flex: 1;
+}
+
+.fswwp-cc-col-btn {
+	border: 1px solid #8c8f94;
+	background: #fff;
+	border-radius: 3px;
+	padding: 2px 8px;
+	font-size: 11px;
+	cursor: pointer;
+}
+
+.fswwp-cc-col-btn.active {
+	background: #2271b1;
+	color: #fff;
+	border-color: #2271b1;
+}
+
+.fswwp-cc-delete-row {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: #8c8f94;
+	font-size: 16px;
+	padding: 2px;
+}
+
+.fswwp-cc-delete-row:hover {
+	color: #d63638;
+}
+
+/* Columns */
+.fswwp-cc-view-cols {
+	display: flex;
+	align-items: stretch;
+	min-height: 60px;
+}
+
+.fswwp-cc-view-col {
+	border-right: 1px dashed #e2e4e7;
+	padding: 8px;
+	display: flex;
+	flex-direction: column;
+}
+
+.fswwp-cc-view-col:last-child {
+	border-right: none;
+}
+
+.fswwp-cc-col-inner {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-height: 64px;
+	border: 2px dashed transparent;
+	border-radius: 4px;
+	transition: border-color 0.15s, background 0.15s;
+}
+
+/* Always-visible drop zone indicator on empty inner containers */
+.fswwp-cc-col-inner:empty {
+	border-color: #dcdcde;
+	background: #f9f9f9;
+}
+
+.fswwp-cc-col-inner:empty::after {
+	content: "Drop component here";
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	font-size: 12px;
+	color: #8c8f94;
+}
+
+/* Highlight intensifies during drag */
+.fswwp-cc-col-inner.fswwp-cc-col-droppable:empty {
+	border-color: #2271b1;
+	background: #f0f6fc;
+}
+
+.fswwp-cc-col-inner.fswwp-cc-col-droppable:empty::after {
+	color: #2271b1;
+}
+
+/* Component */
+.fswwp-cc-view-comp {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 10px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	font-size: 13px;
+	margin-bottom: 4px;
+	cursor: grab;
+}
+
+.fswwp-cc-view-comp:active {
+	cursor: grabbing;
+}
+
+.fswwp-cc-view-comp .dashicons {
+	font-size: 15px;
+	width: 15px;
+	height: 15px;
+	color: #50575e;
+}
+
+.fswwp-cc-comp-delete {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: #8c8f94;
+	margin-left: auto;
+	font-size: 14px;
+	padding: 0;
+}
+
+.fswwp-cc-comp-delete:hover {
+	color: #d63638;
+}
+
+/* Sortable placeholders */
+.fswwp-cc-row-placeholder {
+	background: #f0f6fc;
+	border: 2px dashed #2271b1;
+	border-radius: 6px;
+	height: 52px;
+	margin-bottom: 12px;
+}
+
+.fswwp-cc-comp-placeholder {
+	background: transparent;
+	height: 0;
+	margin: 0;
+}
+
+/* ---- Empty placeholder slots (static grid cells) ------------------------ */
+
+.fswwp-cc-view-comp--empty {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	padding: 8px 10px !important;
+	border: 2px dashed #dcdcde !important;
+	border-radius: 4px !important;
+	background: #fafafa !important;
+	color: #8c8f94 !important;
+	font-size: 13px !important;
+	margin-bottom: 4px !important;
+}
+
+/* Empty slot lights up when a component is dragged over it */
+.fswwp-cc-view-comp--empty.fswwp-cc-empty--hover {
+	border-color: #2271b1 !important;
+	background: #f0f6fc !important;
+	color: #2271b1 !important;
+	box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.2);
+}
+
+/* Extra slot that appears during drag — same look as normal empty slot. */
+.fswwp-cc-view-comp--extra {
+	/* no extra styling — the class exists only for JS identification */
+}
+
+/* Row highlight during drag */
+.fswwp-cc-row--dragging {
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.25);
+}
+
+.fswwp-cc-row--dragging .fswwp-cc-view-row-toolbar {
+	background: #f0f6fc;
+}
+
+#fswwp-cc-view-message {
+	margin-top: 12px;
+}

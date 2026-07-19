@@ -79,6 +79,11 @@ class Fswwp_Comments_Core {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
+		// Register CPT, taxonomy, and shortcode on init.
+		$this->loader->add_action( 'init', 'Fswwp_Comments_Core_Post_Types', 'register_cpt' );
+		$this->loader->add_action( 'init', 'Fswwp_Comments_Core_Post_Types', 'register_taxonomy' );
+		$this->loader->add_action( 'init', $this, 'init_shortcode' );
+
 	}
 
 	/**
@@ -112,6 +117,12 @@ class Fswwp_Comments_Core {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-fswwp-comments-core-i18n.php';
 
 		/**
+		 * The class responsible for registering the Review custom post type
+		 * and taxonomy.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-fswwp-comments-core-post-types.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fswwp-comments-core-admin.php';
@@ -121,6 +132,17 @@ class Fswwp_Comments_Core {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-fswwp-comments-core-public.php';
+
+		/**
+		 * The class responsible for the [fswwp_reviews] shortcode.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-fswwp-comments-core-shortcode.php';
+
+		/**
+		 * The class responsible for the [fswwp_review_form] shortcode
+		 * and AJAX review submission.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-fswwp-comments-core-form-shortcode.php';
 
 		$this->loader = new Fswwp_Comments_Core_Loader();
 
@@ -157,9 +179,16 @@ class Fswwp_Comments_Core {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-		// Main menu + License submenu.
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_main_menu' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_license_submenu' );
+		// Submenu pages (Dashboard + License) under the Reviews CPT.
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+
+		// AJAX — form builder save + delete.
+		$this->loader->add_action( 'wp_ajax_fswwp_cc_save_form', $plugin_admin, 'ajax_save_form' );
+		$this->loader->add_action( 'wp_ajax_fswwp_cc_delete_form', $plugin_admin, 'ajax_delete_form' );
+
+		// AJAX — views builder save + delete.
+		$this->loader->add_action( 'wp_ajax_fswwp_cc_save_view', $plugin_admin, 'ajax_save_view' );
+		$this->loader->add_action( 'wp_ajax_fswwp_cc_delete_view', $plugin_admin, 'ajax_delete_view' );
 
 	}
 
@@ -219,4 +248,15 @@ class Fswwp_Comments_Core {
 		return $this->version;
 	}
 
+	/**
+	 * Instantiate the shortcode handler.
+	 *
+	 * Called on 'init' so the CPT is already registered.
+	 *
+	 * @since    1.0.0
+	 */
+	public function init_shortcode() {
+		new Fswwp_Comments_Core_Shortcode();
+		new Fswwp_Comments_Core_Form_Shortcode();
+	}
 }

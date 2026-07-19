@@ -1,0 +1,104 @@
+/**
+ * FSWWP Reviews — Base Styles
+ *
+ * Shared styles for all review layouts.
+ */
+
+/* ------------------------------------------------------------------ */
+/*  Card
+/* ------------------------------------------------------------------ */
+.fswwp-review-card {
+	background: #fff;
+	border-radius: 8px;
+	padding: 24px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+	transition: box-shadow 0.2s, transform 0.2s;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.fswwp-review-card:hover {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Image / Avatar
+/* ------------------------------------------------------------------ */
+.fswwp-review-image {
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.fswwp-review-avatar {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid #f0f0f1;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Body
+/* ------------------------------------------------------------------ */
+.fswwp-review-name {
+	margin: 0 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2327;
+	text-align: center;
+}
+
+.fswwp-review-content {
+	font-size: 14px;
+	line-height: 1.7;
+	color: #50575e;
+}
+
+.fswwp-review-content p {
+	margin: 0 0 12px;
+}
+
+.fswwp-review-content p:last-child {
+	margin-bottom: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dynamic view components
+/* ------------------------------------------------------------------ */
+.fswwp-review-row + .fswwp-review-row {
+	margin-top: 16px;
+}
+
+.fswwp-review-col > * + * {
+	margin-top: 8px;
+}
+
+.fswwp-review-stars-display {
+	font-size: 18px;
+	letter-spacing: 2px;
+}
+
+.fswwp-star {
+	color: #dcdcde;
+}
+
+.fswwp-star--filled {
+	color: #f0c040;
+}
+
+.fswwp-review-date {
+	font-size: 12px;
+	color: #8c8f94;
+}
+
+.fswwp-review-category {
+	display: inline-block;
+	font-size: 11px;
+	background: #f0f0f1;
+	padding: 2px 10px;
+	border-radius: 3px;
+	color: #50575e;
+	text-transform: uppercase;
+	font-weight: 600;
+}

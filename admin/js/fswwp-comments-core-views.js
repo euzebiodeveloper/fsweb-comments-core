@@ -44,25 +44,37 @@
 		$rows.find( '.fswwp-cc-view-row' ).each( function() {
 			var $cols = $( this ).find( '.fswwp-cc-view-col' );
 			var max   = 0;
+			var counts = [];
 
-			// Wipe ALL empty placeholders (including --extra and --hover).
-			$cols.find( '.fswwp-cc-view-comp--empty, .fswwp-cc-view-comp--extra' ).remove();
-
+			// Count real components per column (ignore empties + extras).
 			$cols.each( function() {
-				var count = $( this ).find( '.fswwp-cc-view-comp' ).length;
-				if ( count > max ) { max = count; }
+				var real = $( this ).find( '.fswwp-cc-view-comp:not(.fswwp-cc-view-comp--empty)' ).length;
+				counts.push( real );
+				if ( real > max ) { max = real; }
 			} );
 
 			max += extra;
 			if ( max < 1 ) { max = 1; }
 
-			$cols.each( function() {
-				var $inner  = $( this ).find( '.fswwp-cc-col-inner' );
-				var current = $inner.find( '.fswwp-cc-view-comp' ).length;
-				for ( var i = current; i < max; i++ ) {
-					$inner.append(
-						'<div class="fswwp-cc-view-comp fswwp-cc-view-comp--empty" data-type="empty">Drop here</div>'
-					);
+			$cols.each( function( ci ) {
+				var $inner     = $( this ).find( '.fswwp-cc-col-inner' );
+				var real       = counts[ ci ];
+				var $empties   = $inner.find( '.fswwp-cc-view-comp--empty' );
+				var emptyCount = $empties.length;
+				var total      = real + emptyCount;
+
+				if ( total < max ) {
+					// Not enough slots — add empties at the end.
+					for ( var i = total; i < max; i++ ) {
+						$inner.append(
+							'<div class="fswwp-cc-view-comp fswwp-cc-view-comp--empty" data-type="empty">Drop here</div>'
+						);
+					}
+				} else if ( total > max ) {
+					// Too many slots — remove empties from the END only,
+					// preserving empties that sit between real components.
+					var toRemove = total - max;
+					$empties.slice( -toRemove ).remove();
 				}
 			} );
 		} );
@@ -186,6 +198,7 @@
 
 	// ---- Columns as droppable targets ------------------------------------
 	var dropTrackNS = 'mousemove.fswwpDropTrack';
+	var lastHit     = null;  // cached from tracker, used in drop
 
 	function initColumnDroppable() {
 		$( '.fswwp-cc-col-inner' ).droppable( {
@@ -198,15 +211,16 @@
 
 				// Track cursor continuously while over this column.
 				$( document ).off( dropTrackNS ).on( dropTrackNS, function( ev ) {
-					var hit = childAtY( $col, ev.clientY );
+					lastHit = childAtY( $col, ev.clientY );
 					$col.find( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
-					if ( hit && $( hit.el ).hasClass( 'fswwp-cc-view-comp--empty' ) ) {
-						$( hit.el ).addClass( 'fswwp-cc-empty--hover' );
+					if ( lastHit && $( lastHit.el ).hasClass( 'fswwp-cc-view-comp--empty' ) ) {
+						$( lastHit.el ).addClass( 'fswwp-cc-empty--hover' );
 					}
 				} );
 			},
 
 			out: function() {
+				lastHit = null;
 				var $col = $( this );
 				$col.removeClass( 'fswwp-cc-col--drop-active ui-state-hover ui-state-active' );
 				$col.find( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
@@ -216,16 +230,14 @@
 
 			drop: function( e, ui ) {
 				var $col = $( this );
-
-				// Stop cursor tracking IMMEDIATELY — prevent racing mousemove.
 				$( document ).off( dropTrackNS );
 
-				// Wipe every possible hover / active class.
 				$col.removeClass( 'fswwp-cc-col--drop-active ui-state-hover ui-state-active' );
 				$col.find( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
 				$col.find( '.ui-state-hover, .ui-state-active' ).removeClass( 'ui-state-hover ui-state-active' );
 
-				var hit = childAtY( $col, e.clientY );
+				var hit = lastHit;
+				lastHit = null;
 				var $comp;
 
 				if ( ui.draggable.hasClass( 'fswwp-cc-palette-item' ) ) {
@@ -242,18 +254,25 @@
 					$comp = ui.draggable.detach();
 				}
 
-				// Place at cursor position.
 				if ( hit ) {
-					if ( hit.position === 'top' ) {
-						$comp.insertBefore( hit.el );
-					} else {
+					var $target = $( hit.el );
+
+					if ( $target.hasClass( 'fswwp-cc-view-comp--extra' ) ) {
+						var $prev = $target.prev( ':not(.fswwp-cc-view-comp--extra)' );
+						if ( $prev.length ) {
+							$comp.insertAfter( $prev );
+						} else {
+							$col.prepend( $comp );
+						}
+					} else if ( $target.hasClass( 'fswwp-cc-view-comp--empty' ) || hit.position !== 'top' ) {
 						$comp.insertAfter( hit.el );
+					} else {
+						$comp.insertBefore( hit.el );
 					}
 				} else {
 					$col.append( $comp );
 				}
 
-				// Strip any leftover jQuery UI classes from the new component.
 				$comp.removeClass( 'ui-state-hover ui-state-active ui-draggable-dragging' );
 
 				$( '.fswwp-cc-view-comp--extra' ).remove();

@@ -128,15 +128,11 @@ class AdminUi {
 			$links['view-details'] = $view_link;
 		}
 
-		// "Check for Updates" — AJAX manual check.
-		$check_url = add_query_arg(
-			array( 'action' => 'fswwp_check_updates_' . $this->slug ),
-			admin_url( 'admin-ajax.php' )
-		);
+		// "Check for Updates" — AJAX manual check (JS intercepts the click).
 		$links['fswwp-check'] = sprintf(
-			'<a href="%s" class="fswwp-check-updates" data-plugin="%s">%s</a>',
-			esc_url( $check_url ),
-			esc_attr( $this->plugin_basename ),
+			'<a href="#" class="fswwp-check-updates" data-action="%s" data-nonce="%s">%s</a>',
+			esc_attr( 'fswwp_check_updates_' . $this->slug ),
+			esc_attr( wp_create_nonce( 'fswwp_check_updates_' . $this->slug ) ),
 			esc_html__( 'Check for Updates', 'fswwp-update-checker' )
 		);
 
@@ -251,6 +247,47 @@ class AdminUi {
 
 				<div id="fswwp-install-result"></div>
 			<?php endif; ?>
+		</body></html>
+		<?php
+	}
+
+	/**
+	 * Render a "License Required" thickbox modal.
+	 *
+	 * Shown when the user attempts to access Previous Versions without
+	 * a valid license key.
+	 *
+	 * @return void
+	 */
+	public function render_license_required_modal() {
+		?>
+		<!DOCTYPE html>
+		<html><head>
+			<title>
+				<?php echo esc_html( $this->plugin_name ); ?>
+				&mdash;
+				<?php esc_html_e( 'License Required', 'fswwp-update-checker' ); ?>
+			</title>
+			<?php wp_admin_css( 'common' ); ?>
+			<?php wp_admin_css( 'forms' ); ?>
+			<link rel="stylesheet" href="<?php echo esc_url( $this->assets_url . 'css/admin.css' ); ?>">
+		</head><body class="fswwp-rollback-body">
+			<h2>
+				<?php echo esc_html( $this->plugin_name ); ?>
+				&mdash;
+				<?php esc_html_e( 'License Required', 'fswwp-update-checker' ); ?>
+			</h2>
+			<p>
+				<?php esc_html_e( 'A valid license key is required to access previous versions.', 'fswwp-update-checker' ); ?>
+			</p>
+			<p>
+				<?php esc_html_e( 'Please activate your license on the plugin settings page to unlock this feature.', 'fswwp-update-checker' ); ?>
+			</p>
+			<div class="rollback-footer">
+				<button class="button" onclick="self.parent.tb_remove();">
+					<?php esc_html_e( 'Close', 'fswwp-update-checker' ); ?>
+				</button>
+			</div>
 		</body></html>
 		<?php
 	}

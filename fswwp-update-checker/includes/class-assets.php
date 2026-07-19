@@ -102,13 +102,18 @@ class Assets {
 			'fswwp-update-checker-admin',
 			'FSWWP_UpdateChecker_Rollback',
 			array(
-				'action' => 'fswwp_install_version_' . $this->slug,
-				'nonce'  => wp_create_nonce( $this->nonce_action ),
-				'i18n'   => array(
-					'installBtn'   => __( 'Install Selected Version', 'fswwp-update-checker' ),
-					'installing'   => __( 'Installing…', 'fswwp-update-checker' ),
-					'downloading'  => __( 'Downloading and installing version', 'fswwp-update-checker' ),
-					'networkError' => __( 'Network error. Please try again.', 'fswwp-update-checker' ),
+				'action'      => 'fswwp_install_version_' . $this->slug,
+				'nonce'       => wp_create_nonce( $this->nonce_action ),
+				'checkAction' => 'fswwp_check_updates_' . $this->slug,
+				'checkNonce'  => wp_create_nonce( 'fswwp_check_updates_' . $this->slug ),
+				'i18n'        => array(
+					'installBtn'    => __( 'Install Selected Version', 'fswwp-update-checker' ),
+					'installing'    => __( 'Installing…', 'fswwp-update-checker' ),
+					'downloading'   => __( 'Downloading and installing version', 'fswwp-update-checker' ),
+					'networkError'  => __( 'Network error. Please try again.', 'fswwp-update-checker' ),
+					'checking'      => __( 'Checking for updates…', 'fswwp-update-checker' ),
+					'noLicense'     => __( 'A valid license key is required to check for updates.', 'fswwp-update-checker' ),
+					'latestVersion' => __( 'You are running the latest version.', 'fswwp-update-checker' ),
 				),
 			)
 		);

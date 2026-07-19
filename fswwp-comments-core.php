@@ -70,10 +70,17 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core.php';
  * @see https://github.com/flowsyncweb/fswwp-update-checker
  */
 require plugin_dir_path( __FILE__ ) . 'fswwp-update-checker/index.php';
-new FSWWP_Update_Checker_1_0(
-	'https://api.flowsyncweb.com/api/releases/fswwp-comments-core',
+$fswwp_update_checker = new FSWWP_Update_Checker_1_0(
+	'http://127.0.0.1:8000/api/releases/fswwp-comments-core',
 	__FILE__
 );
+
+// Inject license key so the update-checker sends it with every request.
+// Without a valid key the API returns 401 and updates are blocked.
+$fswwp_license_key = get_option( 'fswwp_license_key', '' );
+if ( ! empty( $fswwp_license_key ) ) {
+	$fswwp_update_checker->set_license( $fswwp_license_key );
+}
 
 /**
  * Begins execution of the plugin.

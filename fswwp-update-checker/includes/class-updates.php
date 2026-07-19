@@ -156,7 +156,66 @@ class Updates {
 	}
 
 	/**
-	 * Build the plugin_info object for the plugins_api response.
+	 * Build the plugin_info object for the plugins_api response from LOCAL data.
+	 *
+	 * Uses the installed plugin's PHP headers, README.txt, and local assets
+	 * (icons, banners, screenshots) — no API call needed.
+	 * This ensures "View Details" always reflects the *installed* version,
+	 * never whatever the remote server happens to have.
+	 *
+	 * @return \stdClass
+	 */
+	public function build_local_plugin_info() {
+		if ( ! function_exists( 'get_plugin_data' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugin_data = get_plugin_data( $this->plugin_file, false, false );
+
+		$info                 = new \stdClass();
+		$info->name           = ! empty( $plugin_data['Name'] ) ? $plugin_data['Name'] : $this->slug;
+		$info->slug           = $this->slug;
+		$info->version        = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
+		$info->author         = ! empty( $plugin_data['Author'] ) ? $plugin_data['Author'] : '';
+		$info->author_profile = ! empty( $plugin_data['AuthorURI'] ) ? $plugin_data['AuthorURI'] : '';
+		$info->requires       = ! empty( $plugin_data['RequiresWP'] ) ? $plugin_data['RequiresWP'] : '';
+		$info->tested         = ''; // Not a standard plugin header — omit for local.
+		$info->requires_php   = ! empty( $plugin_data['RequiresPHP'] ) ? $plugin_data['RequiresPHP'] : '';
+		$info->homepage       = ! empty( $plugin_data['PluginURI'] ) ? $plugin_data['PluginURI'] : '';
+		$info->download_link  = ''; // Viewing installed version — no download here.
+		$info->last_updated   = gmdate( 'Y-m-d H:i:s', filemtime( $this->plugin_file ) );
+
+		// Icons / banners from local plugin assets (no API fallback needed).
+		$info->icons   = $this->build_local_icons();
+		$info->banners = $this->build_local_banners();
+
+		// Sections from README.txt.
+		$plugin_dir = plugin_dir_path( $this->plugin_file );
+		$readme     = new ReadmeParser( $plugin_dir );
+		$sections   = $readme->get_sections();
+
+		// Re-key sections to all-lowercase for WordPress compatibility.
+		$normalised = array();
+		foreach ( $sections as $key => $html ) {
+			$normalised[ strtolower( $key ) ] = $html;
+		}
+
+		// Override screenshots with local images (if available).
+		$local_screenshots = $this->build_local_screenshots();
+		if ( '' !== $local_screenshots ) {
+			$normalised['screenshots'] = $local_screenshots;
+		}
+
+		$info->sections = $normalised;
+
+		return $info;
+	}
+
+	/**
+	 * Build the plugin_info object for the plugins_api response from REMOTE data.
+	 *
+	 * @deprecated 1.1.0 Use build_local_plugin_info() instead. Kept for backward
+	 *             compatibility with any external code that might call it directly.
 	 *
 	 * @param object      $meta     Decoded JSON metadata.
 	 * @param array|null  $sections Optional sections array.
@@ -310,5 +369,137 @@ class Updates {
 		$html .= '</ol>';
 
 		return $html;
+	}
+
+	/**
+	 * Build icons object from local plugin images.
+	 *
+	 * Scans for icon-128x128.*, icon-256x256.*, and icon.svg in:
+	 *   1. {plugin_dir}/includes/assets/images/
+	 *   2. {plugin_dir}/assets/
+	 *   3. {plugin_dir}/ (root)
+	 *
+	 * Returns a WordPress-expected icons object with '1x', '2x', 'svg',
+	 * and 'default' keys.
+	 *
+	 * @return array Associative array of icon URLs (empty array if none found).
+	 */
+	public function build_local_icons() {
+		$plugin_dir  = plugin_dir_path( $this->plugin_file );
+		$plugin_url  = plugin_dir_url( $this->plugin_file );
+		$extensions  = array( 'webp', 'png', 'jpg', 'jpeg', 'svg' );
+
+		$search_dirs = array(
+			'includes/assets/images/',
+			'assets/',
+			'',
+		);
+
+		$icons = array();
+
+		foreach ( $search_dirs as $subdir ) {
+			$dir_path = $plugin_dir . $subdir;
+			if ( '' !== $subdir && ! is_dir( $dir_path ) ) {
+				continue;
+			}
+
+			$dir_url = $plugin_url . $subdir;
+
+			// 1x (128x128)
+			if ( ! isset( $icons['1x'] ) ) {
+				foreach ( $extensions as $ext ) {
+					$file = 'icon-128x128.' . $ext;
+					if ( file_exists( $dir_path . $file ) ) {
+						$icons['1x'] = $dir_url . $file;
+						break;
+					}
+				}
+			}
+
+			// 2x (256x256)
+			if ( ! isset( $icons['2x'] ) ) {
+				foreach ( $extensions as $ext ) {
+					if ( 'svg' === $ext ) {
+						continue;
+					}
+					$file = 'icon-256x256.' . $ext;
+					if ( file_exists( $dir_path . $file ) ) {
+						$icons['2x'] = $dir_url . $file;
+						break;
+					}
+				}
+			}
+
+			// SVG
+			if ( ! isset( $icons['svg'] ) && file_exists( $dir_path . 'icon.svg' ) ) {
+				$icons['svg'] = $dir_url . 'icon.svg';
+			}
+		}
+
+		// Default falls back to 1x, then whatever we have.
+		if ( ! empty( $icons ) ) {
+			$icons['default'] = isset( $icons['1x'] ) ? $icons['1x'] : reset( $icons );
+		}
+
+		return $icons;
+	}
+
+	/**
+	 * Build banners object from local plugin images.
+	 *
+	 * Scans for banner-772x250.* and banner-1544x500.* in:
+	 *   1. {plugin_dir}/includes/assets/images/
+	 *   2. {plugin_dir}/assets/
+	 *   3. {plugin_dir}/ (root)
+	 *
+	 * Returns a WordPress-expected banners object with 'low' and 'high' keys.
+	 *
+	 * @return array Associative array of banner URLs (empty array if none found).
+	 */
+	public function build_local_banners() {
+		$plugin_dir  = plugin_dir_path( $this->plugin_file );
+		$plugin_url  = plugin_dir_url( $this->plugin_file );
+		$extensions  = array( 'webp', 'png', 'jpg', 'jpeg' );
+
+		$search_dirs = array(
+			'includes/assets/images/',
+			'assets/',
+			'',
+		);
+
+		$banners = array();
+
+		foreach ( $search_dirs as $subdir ) {
+			$dir_path = $plugin_dir . $subdir;
+			if ( '' !== $subdir && ! is_dir( $dir_path ) ) {
+				continue;
+			}
+
+			$dir_url = $plugin_url . $subdir;
+
+			// low (772x250)
+			if ( ! isset( $banners['low'] ) ) {
+				foreach ( $extensions as $ext ) {
+					$file = 'banner-772x250.' . $ext;
+					if ( file_exists( $dir_path . $file ) ) {
+						$banners['low'] = $dir_url . $file;
+						break;
+					}
+				}
+			}
+
+			// high (1544x500 = retina)
+			if ( ! isset( $banners['high'] ) ) {
+				foreach ( $extensions as $ext ) {
+					$file = 'banner-1544x500.' . $ext;
+					if ( file_exists( $dir_path . $file ) ) {
+						$banners['high'] = $dir_url . $file;
+						break;
+					}
+				}
+			}
+		}
+
+		return $banners;
 	}
 }

@@ -241,12 +241,38 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 					'admin_enqueue_scripts',
 					array( $this, 'enqueue_admin_assets' )
 				);
+
+				// Admin notice for license errors.
+				add_action( 'admin_notices', array( $this, 'license_admin_notice' ) );
 			}
 		}
 
 		// ------------------------------------------------------------------//
 		//  Public API
 		// ------------------------------------------------------------------//
+
+		/**
+		 * Set the license key so every update request includes it.
+		 *
+		 * Also stores the installed plugin version for the POST body.
+		 * Call this before the first cron or transient check fires.
+		 *
+		 * @param string $license_key The license key.
+		 * @return void
+		 */
+		public function set_license( $license_key ) {
+			$this->metadata->set_license( $license_key );
+			$this->metadata->set_plugin_version( $this->updates->get_installed_version() );
+		}
+
+		/**
+		 * Get the last license error, if any.
+		 *
+		 * @return string 'invalid_key', 'forbidden', or empty string.
+		 */
+		public function get_license_error() {
+			return $this->metadata->get_last_license_error();
+		}
 
 		/**
 		 * Force an immediate update check.
@@ -284,15 +310,27 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		/**
 		 * Inject update data into the site_transient_update_plugins.
 		 *
+		 * Blocks updates when a license error is recorded (no key, invalid key,
+		 * domain mismatch, or expired license).
+		 *
 		 * @param \stdClass $transient The update_plugins transient value.
 		 * @return \stdClass
 		 */
 		public function inject_update( $transient ) {
+			$license_error = $this->metadata->get_last_license_error();
+			if ( ! empty( $license_error ) ) {
+				return $transient;
+			}
+
 			return $this->updates->inject_into_transient( $transient );
 		}
 
 		/**
 		 * Intercept plugins_api() calls for plugin information.
+		 *
+		 * Everything comes from local data (plugin headers + README.txt +
+		 * local icon/banner/screenshot assets). No API call — "View Details"
+		 * always reflects the *installed* version.
 		 *
 		 * @param mixed  $result Default result.
 		 * @param string $action API action.
@@ -308,33 +346,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				return $result;
 			}
 
-			$meta = $this->metadata->get_cached();
-			if ( ! $meta ) {
-				$meta = $this->metadata->fetch_and_cache();
-			}
-			if ( ! $meta ) {
-				return $result;
-			}
-
-			$details = $this->metadata->fetch_details();
-			if ( ! $details ) {
-				return $result;
-			}
-
-			$info = $this->updates->build_plugin_info(
-				$meta,
-				$details->sections,
-				$details->banners,
-				$details->icons
-			);
-
-			// Override screenshots with local images (if available).
-			$local_screenshots = $this->updates->build_local_screenshots();
-			if ( '' !== $local_screenshots ) {
-				$info->sections['screenshots'] = $local_screenshots;
-			}
-
-			return $info;
+			return $this->updates->build_local_plugin_info();
 		}
 
 		/**
@@ -394,6 +406,52 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			$this->assets->enqueue( $hook_suffix );
 		}
 
+		/**
+		 * Admin notice — warns the user about license problems.
+		 *
+		 * Rendered via admin_notices hook when the license check returns
+		 * 401 (invalid key) or 403 (domain mismatch / expired).
+		 *
+		 * @return void
+		 */
+		public function license_admin_notice() {
+			$error = $this->metadata->get_last_license_error();
+
+			if ( empty( $error ) ) {
+				return;
+			}
+
+			$plugin_name = $this->updates->get_plugin_name();
+
+			if ( 'invalid_key' === $error ) {
+				$message = sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: Automatic updates are disabled because your license key is invalid or missing. Please enter a valid license key to receive updates.',
+						'fswwp-update-checker'
+					),
+					'<strong>' . esc_html( $plugin_name ) . '</strong>'
+				);
+			} else {
+				$message = sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'%s: Automatic updates are disabled — your license may be expired or assigned to a different domain. Please check your license status to resume updates.',
+						'fswwp-update-checker'
+					),
+					'<strong>' . esc_html( $plugin_name ) . '</strong>'
+				);
+			}
+
+			printf(
+				'<div class="notice notice-warning"><p>%s</p></div>',
+				wp_kses(
+					$message,
+					array( 'strong' => array() )
+				)
+			);
+		}
+
 		// ------------------------------------------------------------------//
 		//  Cleanup helpers
 		// ------------------------------------------------------------------//
@@ -412,6 +470,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			remove_action( 'wp_ajax_fswwp_install_version_' . $this->slug, array( $this, 'ajax_install_version' ) );
 			remove_action( 'wp_ajax_fswwp_check_updates_' . $this->slug, array( $this, 'ajax_check_for_updates' ) );
 			remove_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+			remove_action( 'admin_notices', array( $this, 'license_admin_notice' ) );
 			remove_filter( 'cron_schedules', array( $this->cron, 'register_schedule' ) );
 		}
 	}

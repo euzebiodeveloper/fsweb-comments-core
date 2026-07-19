@@ -51,6 +51,20 @@ class Metadata {
 	private $slug;
 
 	/**
+	 * License key for authenticated update requests.
+	 *
+	 * @var string
+	 */
+	private $license_key = '';
+
+	/**
+	 * Installed plugin version (sent in POST body for validation).
+	 *
+	 * @var string
+	 */
+	private $plugin_version = '';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $metadata_url Remote JSON metadata URL.
@@ -62,6 +76,51 @@ class Metadata {
 		$this->details_url  = esc_url_raw( rtrim( $metadata_url, '/' ) . '/details' );
 		$this->slug         = $slug;
 		$this->option_name  = $option_name;
+	}
+
+	/**
+	 * Set the license key to be sent with every update request.
+	 *
+	 * @param string $license_key The license key.
+	 * @return void
+	 */
+	public function set_license( $license_key ) {
+		$this->license_key = sanitize_text_field( $license_key );
+	}
+
+	/**
+	 * Set the installed plugin version (sent in POST body).
+	 *
+	 * @param string $version Installed plugin version.
+	 * @return void
+	 */
+	public function set_plugin_version( $version ) {
+		$this->plugin_version = sanitize_text_field( $version );
+	}
+
+	/**
+	 * Get the last license error code, if any.
+	 *
+	 * Returns 'invalid_key' for 401, 'forbidden' for 403, or empty string if OK.
+	 *
+	 * @return string
+	 */
+	public function get_last_license_error() {
+		$error = get_option( $this->option_name . '_license_error', '' );
+		return is_string( $error ) ? $error : '';
+	}
+
+	/**
+	 * Check whether a valid license is configured.
+	 *
+	 * Returns true only when a license key has been set AND no license
+	 * error (401/403) is currently recorded.
+	 *
+	 * @return bool
+	 */
+	public function has_license() {
+		return ! empty( $this->license_key )
+			&& empty( $this->get_last_license_error() );
 	}
 
 	/**
@@ -78,6 +137,23 @@ class Metadata {
 		}
 
 		$code = wp_remote_retrieve_response_code( $response );
+
+		// 401 — no license key or invalid key.
+		if ( 401 === $code ) {
+			$this->clear_cache();
+			update_option( $this->option_name . '_license_error', 'invalid_key' );
+			$this->log( 'license_invalid', 'Update server rejected the license key (401).' );
+			return null;
+		}
+
+		// 403 — license exists but domain mismatch or expired.
+		if ( 403 === $code ) {
+			$this->clear_cache();
+			update_option( $this->option_name . '_license_error', 'forbidden' );
+			$this->log( 'license_forbidden', 'Update server denied access — domain mismatch or license expired (403).' );
+			return null;
+		}
+
 		if ( 200 !== $code ) {
 			$this->log( 'http_' . $code, 'Metadata endpoint returned HTTP ' . $code );
 			return null;
@@ -89,6 +165,9 @@ class Metadata {
 			$this->log( 'invalid_metadata', 'Response is missing version field or is not valid JSON.' );
 			return null;
 		}
+
+		// Success — clear any previous license error.
+		delete_option( $this->option_name . '_license_error' );
 
 		update_option( $this->option_name, $body );
 		update_option( $this->option_name . '_last_check', time() );
@@ -107,7 +186,7 @@ class Metadata {
 	}
 
 	/**
-	 * Delete cached metadata, details, and last-check timestamp.
+	 * Delete cached metadata, details, last-check timestamp, and license error.
 	 *
 	 * @return void
 	 */
@@ -115,10 +194,15 @@ class Metadata {
 		delete_option( $this->option_name );
 		delete_option( $this->option_name . '_last_check' );
 		delete_option( $this->option_name . '_details' );
+		delete_option( $this->option_name . '_license_error' );
 	}
 
 	/**
 	 * Fetch details from the /details endpoint (sections, banners, icons).
+	 *
+	 * @deprecated 1.1.0 No longer used internally — "View Details" now uses
+	 *             local README.txt + plugin assets exclusively. The /details
+	 *             API route is no longer required. Kept for backward compat.
 	 *
 	 * @param bool $force Bypass cache and force a fresh fetch.
 	 * @return object|null Object with `sections`, `banners`, `icons` — or null on failure.
@@ -194,25 +278,34 @@ class Metadata {
 	// ------------------------------------------------------------------//
 
 	/**
-	 * Perform an HTTP GET request to a URL.
+	 * Perform an HTTP POST request to a URL with license data in the body.
 	 *
 	 * @param string $url URL to fetch.
 	 * @return array|\WP_Error
 	 */
 	private function fetch( $url ) {
+		$body = array(
+			'license_key'    => $this->license_key,
+			'domain'         => home_url(),
+			'plugin_version' => $this->plugin_version,
+		);
+
 		$args = apply_filters(
 			'fswwp_update_checker_http_args',
 			array(
 				'timeout'    => 10,
 				'headers'    => array(
-					'Accept' => 'application/json',
+					'Accept'       => 'application/json',
+					'Content-Type' => 'application/json',
 				),
 				'user-agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ),
+				'method'     => 'POST',
+				'body'       => wp_json_encode( $body ),
 			),
 			$this->slug
 		);
 
-		return wp_remote_get( $url, $args );
+		return wp_remote_request( $url, $args );
 	}
 
 	/**

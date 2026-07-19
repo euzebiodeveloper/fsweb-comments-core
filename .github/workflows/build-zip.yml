@@ -32,6 +32,7 @@ jobs:
             -x "reasonix.toml" \
             -x ".reasonix/*" \
             -x "AGENTS.md" \
+            -x "ROADMAP.md" \
             -x "*.zip" \
             -x "node_modules/*" \
             -x ".vscode/*" \

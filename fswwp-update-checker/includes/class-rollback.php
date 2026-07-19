@@ -94,9 +94,21 @@ class Rollback {
 			wp_die( -1 );
 		}
 
+		// Block access if no license key is set or license is invalid/expired.
+		if ( ! $this->metadata->has_license() ) {
+			$this->admin_ui->render_license_required_modal();
+			wp_die();
+		}
+
 		$meta = $this->metadata->fetch_and_cache();
 		if ( ! $meta ) {
 			$meta = $this->metadata->get_cached();
+		}
+
+		// Double-check: if fetch returned error, don't show cached data.
+		if ( ! $this->metadata->has_license() ) {
+			$this->admin_ui->render_license_required_modal();
+			wp_die();
 		}
 
 		$current_version = $this->updates->get_installed_version();
@@ -199,8 +211,17 @@ class Rollback {
 	 * @return void
 	 */
 	public function ajax_check_for_updates() {
+		check_ajax_referer( 'fswwp_check_updates_' . $this->slug );
+
 		if ( ! current_user_can( 'update_plugins' ) ) {
 			wp_die( -1 );
+		}
+
+		// Block manual check if no license key is set or license is invalid/expired.
+		if ( ! $this->metadata->has_license() ) {
+			wp_send_json_error( array(
+				'message' => __( 'A valid license key is required to check for updates.', 'fswwp-update-checker' ),
+			) );
 		}
 
 		$meta = $this->metadata->fetch_and_cache();
@@ -251,15 +272,28 @@ class Rollback {
 	 * @return array
 	 */
 	private function build_versions_array( $meta ) {
+		$has_license = $this->metadata->has_license();
+
 		if ( $meta && ! empty( $meta->versions ) && is_array( $meta->versions ) ) {
-			return $meta->versions;
+			$versions = $meta->versions;
+			// Strip download URLs if license is invalid (defense-in-depth).
+			if ( ! $has_license ) {
+				foreach ( $versions as &$v ) {
+					if ( is_object( $v ) ) {
+						$v->download_url = '';
+					} elseif ( is_array( $v ) ) {
+						$v['download_url'] = '';
+					}
+				}
+			}
+			return $versions;
 		}
 
 		if ( $meta && ! empty( $meta->version ) ) {
 			return array(
 				array(
 					'version'      => $meta->version,
-					'download_url' => ! empty( $meta->download_url ) ? $meta->download_url : '',
+					'download_url' => $has_license && ! empty( $meta->download_url ) ? $meta->download_url : '',
 					'date'         => ! empty( $meta->last_updated ) ? $meta->last_updated : '',
 					'notes'        => '',
 				),

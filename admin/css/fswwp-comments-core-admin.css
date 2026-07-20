@@ -268,6 +268,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
+	margin-bottom: 16px;
 }
 
 .fswwp-cc-palette-item {
@@ -368,17 +369,24 @@
 .fswwp-cc-field-toggle,
 .fswwp-cc-field-delete {
 	border: none;
-	background: none;
+	background: #d63638;
 	cursor: pointer;
-	padding: 2px;
-	color: #8c8f94;
-	font-size: 16px;
-	width: 20px;
-	height: 20px;
+	padding: 0;
+	color: #fff;
+	font-size: 16px !important;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.15s;
+	line-height: 1 !important;
 }
 
+.fswwp-cc-field-toggle:hover,
 .fswwp-cc-field-delete:hover {
-	color: #d63638;
+	background: #b32d2e;
 }
 
 /* Field body */
@@ -491,12 +499,19 @@
 }
 
 .fswwp-cc-col-btn {
-	border: 1px solid #8c8f94;
+	border: 1px solid #c3c4c7;
 	background: #fff;
 	border-radius: 3px;
-	padding: 2px 8px;
-	font-size: 11px;
+	padding: 3px 10px;
+	font-size: 12px;
 	cursor: pointer;
+	line-height: 1.4;
+	transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.fswwp-cc-col-btn:hover {
+	border-color: #2271b1;
+	color: #2271b1;
 }
 
 .fswwp-cc-col-btn.active {
@@ -507,15 +522,24 @@
 
 .fswwp-cc-delete-row {
 	border: none;
-	background: none;
+	background: #d63638;
 	cursor: pointer;
-	color: #8c8f94;
-	font-size: 16px;
-	padding: 2px;
+	color: #fff;
+	font-size: 16px !important;
+	padding: 0;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.15s;
+	margin-left: auto;
+	line-height: 1 !important;
 }
 
 .fswwp-cc-delete-row:hover {
-	color: #d63638;
+	background: #b32d2e;
 }
 
 /* Columns */
@@ -585,6 +609,8 @@
 	font-size: 13px;
 	margin-bottom: 4px;
 	cursor: grab;
+	box-sizing: border-box;
+	min-height: 38px;
 }
 
 .fswwp-cc-view-comp:active {
@@ -596,6 +622,7 @@
 	width: 15px;
 	height: 15px;
 	color: #50575e;
+	flex-shrink: 0;
 }
 
 .fswwp-cc-comp-delete {
@@ -604,12 +631,22 @@
 	cursor: pointer;
 	color: #8c8f94;
 	margin-left: auto;
-	font-size: 14px;
+	font-size: 14px !important;
 	padding: 0;
+	width: 20px;
+	height: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+	flex-shrink: 0;
+	transition: color 0.15s, background 0.15s;
+	line-height: 1 !important;
 }
 
 .fswwp-cc-comp-delete:hover {
 	color: #d63638;
+	background: rgba(214, 54, 56, 0.08);
 }
 
 /* Sortable placeholders */
@@ -633,13 +670,15 @@
 	display: flex !important;
 	align-items: center !important;
 	justify-content: center !important;
-	padding: 8px 10px !important;
+	padding: 7px 10px !important;
 	border: 2px dashed #dcdcde !important;
 	border-radius: 4px !important;
 	background: #fafafa !important;
 	color: #8c8f94 !important;
 	font-size: 13px !important;
 	margin-bottom: 4px !important;
+	box-sizing: border-box !important;
+	min-height: 38px !important;
 }
 
 /* Empty slot lights up when a component is dragged over it */
@@ -666,4 +705,358 @@
 
 #fswwp-cc-view-message {
 	margin-top: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Template list
+/* ------------------------------------------------------------------ */
+.fswwp-cc-list-toolbar {
+	margin-bottom: 16px;
+}
+
+.fswwp-cc-templates-table {
+	margin-top: 8px;
+}
+
+.fswwp-cc-templates-table th,
+.fswwp-cc-templates-table td {
+	vertical-align: middle;
+}
+
+.fswwp-cc-shortcode-copy-wrap {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.fswwp-cc-shortcode-copy-wrap code {
+	font-size: 13px;
+	cursor: pointer;
+	user-select: all;
+}
+
+/* Dashicon inside buttons (New Form / New View / Add Row) */
+.fswwp-cc-btn-icon {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	line-height: 1 !important;
+	vertical-align: middle;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ── Table action buttons ── */
+/* Combined specificity with .button to beat WordPress core styles */
+
+/* Edit — yellow bg, dark icon */
+.button.fswwp-cc-edit-btn {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	border-radius: 4px;
+	background: #f0c33c !important;
+	border-color: #dba617 !important;
+	color: #3c434a !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-edit-btn:hover {
+	background: #dba617 !important;
+	border-color: #c49a0f !important;
+}
+
+.button.fswwp-cc-edit-btn .dashicons,
+.button.fswwp-cc-edit-btn .dashicons-edit {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	line-height: 1 !important;
+	color: #3c434a !important;
+}
+
+/* Delete — red bg, white icon */
+.button.fswwp-cc-delete-form,
+.button.fswwp-cc-delete-view {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	border-radius: 4px;
+	background: #d63638 !important;
+	border-color: #b32d2e !important;
+	color: #fff !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-delete-form:hover,
+.button.fswwp-cc-delete-view:hover {
+	background: #b32d2e !important;
+	border-color: #962325 !important;
+}
+
+.button.fswwp-cc-delete-form .dashicons,
+.button.fswwp-cc-delete-form .dashicons-trash,
+.button.fswwp-cc-delete-view .dashicons,
+.button.fswwp-cc-delete-view .dashicons-trash {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	line-height: 1 !important;
+	color: #fff !important;
+}
+
+/* Copy — subtle blue bg, outlined */
+.button.fswwp-cc-copy-btn {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	border-radius: 4px;
+	background: #eaf0f6 !important;
+	border: 1px solid #94a3b8 !important;
+	color: #50575e !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-copy-btn:hover {
+	background: #d4dfeb !important;
+	border-color: #64748b !important;
+}
+
+.button.fswwp-cc-copy-btn .dashicons,
+.button.fswwp-cc-copy-btn .dashicons-clipboard {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	line-height: 1 !important;
+	color: #50575e !important;
+}
+
+.fswwp-cc-action-buttons {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.fswwp-cc-empty-state {
+	padding: 40px 20px;
+	text-align: center;
+	border: 2px dashed #dcdcde;
+	border-radius: 6px;
+	color: #8c8f94;
+	margin-top: 16px;
+}
+
+.fswwp-cc-empty-state p {
+	font-size: 14px;
+	margin: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Field card — icon + edit button
+/* ------------------------------------------------------------------ */
+.fswwp-cc-field-icon {
+	color: #50575e;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.fswwp-cc-field-edit {
+	border: none;
+	background: #f0c33c;
+	cursor: pointer;
+	padding: 0;
+	color: #3c434a;
+	font-size: 16px !important;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.15s;
+	margin-left: auto;
+	line-height: 1 !important;
+}
+
+.fswwp-cc-field-edit:hover {
+	background: #dba617;
+}
+
+.fswwp-cc-field-header {
+	cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Modal
+/* ------------------------------------------------------------------ */
+.fswwp-cc-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.fswwp-cc-modal-backdrop {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.fswwp-cc-modal-content {
+	position: relative;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	width: 480px;
+	max-width: 90vw;
+	max-height: 85vh;
+	overflow-y: auto;
+	z-index: 1;
+}
+
+.fswwp-cc-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.fswwp-cc-modal-header h3 {
+	margin: 0;
+	font-size: 15px;
+}
+
+.fswwp-cc-modal-close {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: #8c8f94;
+	font-size: 18px;
+	padding: 2px;
+}
+
+.fswwp-cc-modal-close:hover {
+	color: #d63638;
+}
+
+.fswwp-cc-modal-body {
+	padding: 20px;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row {
+	padding: 8px 0;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row:first-child {
+	padding-top: 0;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row label {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3c434a;
+	margin-bottom: 4px;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row input[type="text"],
+.fswwp-cc-modal-body .fswwp-cc-field-row select,
+.fswwp-cc-modal-body .fswwp-cc-field-row textarea {
+	width: 100%;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row textarea {
+	resize: vertical;
+}
+
+.fswwp-cc-modal-body .description {
+	margin-top: 4px;
+	font-size: 12px;
+}
+
+.fswwp-cc-modal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 12px 20px;
+	border-top: 1px solid #e2e4e7;
+	background: #f6f7f7;
+	border-radius: 0 0 8px 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Copy button feedback
+/* ------------------------------------------------------------------ */
+.button.fswwp-cc-copy-btn .dashicons-yes,
+.button.fswwp-cc-copy-btn-inline .dashicons-yes {
+	color: #00a32a !important;
+}
+
+.button.fswwp-cc-copy-btn-inline {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	background: #eaf0f6 !important;
+	border: 1px solid #94a3b8 !important;
+	border-radius: 4px;
+	color: #50575e !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-copy-btn-inline:hover {
+	background: #d4dfeb !important;
+	border-color: #64748b !important;
+}
+
+.button.fswwp-cc-copy-btn-inline .dashicons,
+.button.fswwp-cc-copy-btn-inline .dashicons-clipboard {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	line-height: 1 !important;
+	color: #50575e !important;
 }

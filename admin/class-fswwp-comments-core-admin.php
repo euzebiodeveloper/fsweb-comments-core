@@ -405,81 +405,138 @@ class Fswwp_Comments_Core_Admin {
 	/**
 	 * Render the Form Builder page.
 	 *
+	 * Two modes:
+	 *   - List (default) — shows saved templates with edit/copy/delete.
+	 *   - Builder — when ?new=1 or ?form_id=xxx, shows the drag-and-drop builder.
+	 *
 	 * @since    1.0.0
 	 */
 	public function render_builder_page() {
-		$forms  = get_option( 'fswwp_review_forms', array() );
+		$forms   = get_option( 'fswwp_review_forms', array() );
 		$edit_id = isset( $_GET['form_id'] ) ? sanitize_key( wp_unslash( $_GET['form_id'] ) ) : '';
+		$is_new  = isset( $_GET['new'] ) && '1' === $_GET['new'];
 
-		// Find the form being edited, or pick the first one.
-		$current = null;
-		if ( '' !== $edit_id && isset( $forms[ $edit_id ] ) ) {
-			$current = $forms[ $edit_id ];
-		} elseif ( ! empty( $forms ) ) {
-			$current = reset( $forms );
+		// --- Builder mode --------------------------------------------------
+		if ( $is_new || '' !== $edit_id ) {
+			$this->render_form_builder_editor( $forms, $edit_id, $is_new );
+			return;
 		}
 
-		$fields = $current ? $current['fields'] : array();
-		$nonce  = wp_create_nonce( 'fswwp_builder_save' );
+		// --- List mode -----------------------------------------------------
+		// Auto-create default form if none exist.
+		if ( empty( $forms ) ) {
+			$forms = $this->maybe_create_default_form();
+		}
+
+		$new_url = add_query_arg( array( 'new' => '1' ), remove_query_arg( 'form_id' ) );
 		?>
 		<div class="wrap fswwp-cc-builder-wrap">
 			<h1><?php esc_html_e( 'Form Builder', 'fswwp-comments-core' ); ?></h1>
 
-			<!-- Saved forms list -->
+			<div class="fswwp-cc-list-toolbar">
+				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
+					<span class="dashicons dashicons-plus-alt" style="vertical-align:text-bottom;"></span>
+					<?php esc_html_e( 'New Form', 'fswwp-comments-core' ); ?>
+				</a>
+			</div>
+
 			<?php if ( ! empty( $forms ) ) : ?>
-				<div class="fswwp-cc-forms-list">
-					<h3><?php esc_html_e( 'Your Forms', 'fswwp-comments-core' ); ?></h3>
-					<table class="wp-list-table widefat fixed striped">
-						<thead>
+				<table class="wp-list-table widefat fixed striped fswwp-cc-templates-table">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Form Name', 'fswwp-comments-core' ); ?></th>
+							<th><?php esc_html_e( 'Shortcode', 'fswwp-comments-core' ); ?></th>
+							<th><?php esc_html_e( 'Fields', 'fswwp-comments-core' ); ?></th>
+							<th style="width:100px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $forms as $fid => $form ) : ?>
 							<tr>
-								<th><?php esc_html_e( 'Form Name', 'fswwp-comments-core' ); ?></th>
-								<th><?php esc_html_e( 'Shortcode', 'fswwp-comments-core' ); ?></th>
-								<th><?php esc_html_e( 'Fields', 'fswwp-comments-core' ); ?></th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php foreach ( $forms as $fid => $form ) : ?>
-								<tr>
-									<td>
-										<a href="<?php echo esc_url( add_query_arg( 'form_id', $fid ) ); ?>">
-											<strong><?php echo esc_html( $form['name'] ); ?></strong>
-										</a>
-									</td>
-									<td>
-										<code class="fswwp-cc-shortcode-copy" title="<?php esc_attr_e( 'Click to copy', 'fswwp-comments-core' ); ?>">[fswwp_review_form id="<?php echo esc_attr( $fid ); ?>"]</code>
-									</td>
-									<td><?php echo count( $form['fields'] ); ?></td>
-									<td>
-										<button type="button" class="button button-small fswwp-cc-delete-form" data-id="<?php echo esc_attr( $fid ); ?>">
-											<?php esc_html_e( 'Delete', 'fswwp-comments-core' ); ?>
+								<td>
+									<strong><?php echo esc_html( $form['name'] ); ?></strong>
+								</td>
+								<td>
+									<div class="fswwp-cc-shortcode-copy-wrap">
+										<code class="fswwp-cc-shortcode-copy">[fswwp_review_form id="<?php echo esc_attr( $fid ); ?>"]</code>
+										<button type="button" class="button button-small fswwp-cc-copy-btn" data-code="[fswwp_review_form id=&quot;<?php echo esc_attr( $fid ); ?>&quot;]" title="<?php esc_attr_e( 'Copy shortcode', 'fswwp-comments-core' ); ?>">
+											<span class="dashicons dashicons-clipboard"></span>
 										</button>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
+									</div>
+								</td>
+								<td><?php echo count( $form['fields'] ); ?></td>
+								<td>
+									<div class="fswwp-cc-action-buttons">
+										<a href="<?php echo esc_url( add_query_arg( 'form_id', $fid, remove_query_arg( 'new' ) ) ); ?>" class="button button-small fswwp-cc-edit-btn" title="<?php esc_attr_e( 'Edit', 'fswwp-comments-core' ); ?>">
+											<span class="dashicons dashicons-edit"></span>
+										</a>
+										<button type="button" class="button button-small fswwp-cc-delete-form" data-id="<?php echo esc_attr( $fid ); ?>" title="<?php esc_attr_e( 'Delete', 'fswwp-comments-core' ); ?>">
+											<span class="dashicons dashicons-trash"></span>
+										</button>
+									</div>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php else : ?>
+				<div class="fswwp-cc-empty-state">
+					<p><?php esc_html_e( 'No forms yet. Create your first form to start collecting reviews!', 'fswwp-comments-core' ); ?></p>
 				</div>
 			<?php endif; ?>
+		</div>
+		<?php
+	}
 
-			<!-- Form name + new form -->
+	/**
+	 * Render the Form Builder editor (builder mode).
+	 *
+	 * @param array  $forms   All saved forms.
+	 * @param string $edit_id Form ID being edited (empty for new).
+	 * @param bool   $is_new  Whether this is a brand-new form.
+	 */
+	private function render_form_builder_editor( $forms, $edit_id, $is_new ) {
+		$current = null;
+		if ( '' !== $edit_id && isset( $forms[ $edit_id ] ) ) {
+			$current = $forms[ $edit_id ];
+		}
+
+		// Fields: from saved form, or default template.
+		if ( $current ) {
+			$fields = $current['fields'];
+		} elseif ( $is_new ) {
+			$fields = $this->default_form_fields();
+		} else {
+			$fields = array();
+		}
+
+		$nonce    = wp_create_nonce( 'fswwp_builder_save' );
+		$list_url = remove_query_arg( array( 'form_id', 'new' ) );
+		?>
+		<div class="wrap fswwp-cc-builder-wrap">
+			<h1><?php esc_html_e( 'Form Builder', 'fswwp-comments-core' ); ?></h1>
+
+			<!-- Back to list -->
+			<p>
+				<a href="<?php echo esc_url( $list_url ); ?>" class="button">
+					<span class="dashicons dashicons-arrow-left-alt" style="vertical-align:text-bottom;"></span>
+					<?php esc_html_e( 'Back to list', 'fswwp-comments-core' ); ?>
+				</a>
+			</p>
+
+			<!-- Toolbar -->
 			<div class="fswwp-cc-builder-toolbar" style="margin-bottom:16px;">
 				<div style="display:flex;align-items:center;gap:12px;">
 					<input type="text" id="fswwp-cc-form-name" class="regular-text"
 						value="<?php echo esc_attr( $current ? $current['name'] : '' ); ?>"
 						placeholder="<?php esc_attr_e( 'Form name', 'fswwp-comments-core' ); ?>">
 					<button type="button" id="fswwp-cc-new-form" class="button">
-						<?php esc_html_e( 'New Form', 'fswwp-comments-core' ); ?>
+						<?php esc_html_e( 'Clear & New', 'fswwp-comments-core' ); ?>
 					</button>
 					<button type="button" id="fswwp-cc-save-form" class="button button-primary">
 						<?php esc_html_e( 'Save Form', 'fswwp-comments-core' ); ?>
 					</button>
 					<input type="hidden" id="fswwp-cc-form-id" value="<?php echo esc_attr( $edit_id ); ?>">
-				</div>
-				<div id="fswwp-cc-shortcode-output" style="margin-top:8px;<?php echo $current ? '' : 'display:none;'; ?>">
-					<?php esc_html_e( 'Shortcode:', 'fswwp-comments-core' ); ?>
-					<code id="fswwp-cc-shortcode-text"><?php echo $current ? esc_html( '[fswwp_review_form id="' . $edit_id . '"]' ) : ''; ?></code>
-					<span class="description" style="margin-left:8px;"><?php esc_html_e( '(copy and paste into any page)', 'fswwp-comments-core' ); ?></span>
 				</div>
 			</div>
 
@@ -488,6 +545,10 @@ class Fswwp_Comments_Core_Admin {
 				<div class="fswwp-cc-builder-palette">
 					<h3><?php esc_html_e( 'Available Fields', 'fswwp-comments-core' ); ?></h3>
 					<div class="fswwp-cc-palette-items">
+						<div class="fswwp-cc-palette-item" data-type="image">
+							<span class="dashicons dashicons-format-image"></span>
+							<?php esc_html_e( 'Image', 'fswwp-comments-core' ); ?>
+						</div>
 						<div class="fswwp-cc-palette-item" data-type="text">
 							<span class="dashicons dashicons-editor-textcolor"></span>
 							<?php esc_html_e( 'Text', 'fswwp-comments-core' ); ?>
@@ -503,6 +564,10 @@ class Fswwp_Comments_Core_Admin {
 						<div class="fswwp-cc-palette-item" data-type="url">
 							<span class="dashicons dashicons-admin-links"></span>
 							<?php esc_html_e( 'URL', 'fswwp-comments-core' ); ?>
+						</div>
+						<div class="fswwp-cc-palette-item" data-type="date">
+							<span class="dashicons dashicons-calendar"></span>
+							<?php esc_html_e( 'Date', 'fswwp-comments-core' ); ?>
 						</div>
 						<div class="fswwp-cc-palette-item" data-type="select">
 							<span class="dashicons dashicons-menu-alt"></span>
@@ -523,13 +588,112 @@ class Fswwp_Comments_Core_Admin {
 						<?php endforeach; ?>
 					</div>
 					<div id="fswwp-cc-builder-empty" style="<?php echo ! empty( $fields ) ? 'display:none;' : ''; ?>">
-						<p><?php esc_html_e( 'Drag fields here from the palette on the left.', 'fswwp-comments-core' ); ?></p>
+						<p><?php esc_html_e( 'Drag fields here from the palette on the left. Click a field to edit its properties.', 'fswwp-comments-core' ); ?></p>
 					</div>
 					<div id="fswwp-cc-builder-message" class="notice" style="display:none;"></div>
 				</div>
 			</div>
 		</div>
+
+		<!-- Field edit modal (rendered once, JS populates it) -->
+		<div id="fswwp-cc-field-modal" class="fswwp-cc-modal" style="display:none;">
+			<div class="fswwp-cc-modal-backdrop"></div>
+			<div class="fswwp-cc-modal-content">
+				<div class="fswwp-cc-modal-header">
+					<h3><?php esc_html_e( 'Field Settings', 'fswwp-comments-core' ); ?></h3>
+					<button type="button" class="fswwp-cc-modal-close dashicons dashicons-no-alt"></button>
+				</div>
+				<div class="fswwp-cc-modal-body">
+					<div class="fswwp-cc-field-row">
+						<label><?php esc_html_e( 'Field ID', 'fswwp-comments-core' ); ?></label>
+						<input type="text" id="fswwp-cc-modal-field-id" class="regular-text">
+						<p class="description"><?php esc_html_e( 'Unique identifier for this field. Used in shortcodes and templates.', 'fswwp-comments-core' ); ?></p>
+					</div>
+					<div class="fswwp-cc-field-row">
+						<label><?php esc_html_e( 'Type', 'fswwp-comments-core' ); ?></label>
+						<select id="fswwp-cc-modal-field-type">
+							<option value="image"><?php esc_html_e( 'Image', 'fswwp-comments-core' ); ?></option>
+							<option value="text"><?php esc_html_e( 'Text', 'fswwp-comments-core' ); ?></option>
+							<option value="textarea"><?php esc_html_e( 'Textarea', 'fswwp-comments-core' ); ?></option>
+							<option value="email"><?php esc_html_e( 'Email', 'fswwp-comments-core' ); ?></option>
+							<option value="url"><?php esc_html_e( 'URL', 'fswwp-comments-core' ); ?></option>
+							<option value="date"><?php esc_html_e( 'Date', 'fswwp-comments-core' ); ?></option>
+							<option value="select"><?php esc_html_e( 'Select', 'fswwp-comments-core' ); ?></option>
+							<option value="rating"><?php esc_html_e( 'Rating', 'fswwp-comments-core' ); ?></option>
+						</select>
+					</div>
+					<div class="fswwp-cc-field-row">
+						<label><?php esc_html_e( 'Label', 'fswwp-comments-core' ); ?></label>
+						<input type="text" id="fswwp-cc-modal-field-label" class="regular-text">
+					</div>
+					<div class="fswwp-cc-field-row">
+						<label><?php esc_html_e( 'Placeholder', 'fswwp-comments-core' ); ?></label>
+						<input type="text" id="fswwp-cc-modal-field-placeholder" class="regular-text">
+					</div>
+					<div class="fswwp-cc-field-row fswwp-cc-modal-options-row" style="display:none;">
+						<label><?php esc_html_e( 'Options', 'fswwp-comments-core' ); ?></label>
+						<textarea id="fswwp-cc-modal-field-options" rows="4" placeholder="<?php esc_attr_e( 'One per line', 'fswwp-comments-core' ); ?>"></textarea>
+						<p class="description"><?php esc_html_e( 'One option per line.', 'fswwp-comments-core' ); ?></p>
+					</div>
+					<div class="fswwp-cc-field-row">
+						<label>
+							<input type="checkbox" id="fswwp-cc-modal-field-required">
+							<?php esc_html_e( 'Required', 'fswwp-comments-core' ); ?>
+						</label>
+					</div>
+				</div>
+				<div class="fswwp-cc-modal-footer">
+					<button type="button" id="fswwp-cc-modal-save" class="button button-primary"><?php esc_html_e( 'Apply', 'fswwp-comments-core' ); ?></button>
+					<button type="button" id="fswwp-cc-modal-cancel" class="button"><?php esc_html_e( 'Cancel', 'fswwp-comments-core' ); ?></button>
+				</div>
+			</div>
+		</div>
 		<?php
+	}
+
+	/**
+	 * Default form fields — pre-filled template for new forms.
+	 *
+	 * @return array
+	 */
+	private function default_form_fields() {
+		return array(
+			array(
+				'id'          => 'fswwp_image',
+				'type'        => 'image',
+				'label'       => __( 'Image', 'fswwp-comments-core' ),
+				'placeholder' => '',
+				'required'    => false,
+			),
+			array(
+				'id'          => 'fswwp_name',
+				'type'        => 'text',
+				'label'       => __( 'Name', 'fswwp-comments-core' ),
+				'placeholder' => __( 'Insert your name', 'fswwp-comments-core' ),
+				'required'    => true,
+			),
+			array(
+				'id'          => 'fswwp_email',
+				'type'        => 'email',
+				'label'       => __( 'Email', 'fswwp-comments-core' ),
+				'placeholder' => __( 'Insert your email', 'fswwp-comments-core' ),
+				'required'    => true,
+			),
+			array(
+				'id'          => 'fswwp_rating',
+				'type'        => 'rating',
+				'label'       => __( 'Rating', 'fswwp-comments-core' ),
+				'placeholder' => '',
+				'required'    => true,
+			),
+			array(
+				'id'          => 'fswwp_description',
+				'type'        => 'textarea',
+				'label'       => __( 'Description', 'fswwp-comments-core' ),
+				'placeholder' => __( 'Insert your review description', 'fswwp-comments-core' ),
+				'required'    => true,
+			),
+		);
 	}
 
 	/**
@@ -541,23 +705,38 @@ class Fswwp_Comments_Core_Admin {
 	 */
 	private function render_field_card( $field, $index ) {
 		$type_labels = array(
+			'image'    => __( 'Image', 'fswwp-comments-core' ),
 			'text'     => __( 'Text', 'fswwp-comments-core' ),
 			'textarea' => __( 'Textarea', 'fswwp-comments-core' ),
 			'email'    => __( 'Email', 'fswwp-comments-core' ),
 			'url'      => __( 'URL', 'fswwp-comments-core' ),
+			'date'     => __( 'Date', 'fswwp-comments-core' ),
 			'select'   => __( 'Select', 'fswwp-comments-core' ),
 			'rating'   => __( 'Rating', 'fswwp-comments-core' ),
 		);
 
+		$type_icons = array(
+			'image'    => 'dashicons-format-image',
+			'text'     => 'dashicons-editor-textcolor',
+			'textarea' => 'dashicons-editor-paragraph',
+			'email'    => 'dashicons-email',
+			'url'      => 'dashicons-admin-links',
+			'date'     => 'dashicons-calendar',
+			'select'   => 'dashicons-menu-alt',
+			'rating'   => 'dashicons-star-filled',
+		);
+
 		$type_label = isset( $type_labels[ $field['type'] ] ) ? $type_labels[ $field['type'] ] : $field['type'];
+		$type_icon  = isset( $type_icons[ $field['type'] ] ) ? $type_icons[ $field['type'] ] : 'dashicons-edit';
 		$options    = isset( $field['options'] ) ? $field['options'] : '';
 		?>
 		<div class="fswwp-cc-field-card" data-id="<?php echo esc_attr( $field['id'] ); ?>">
 			<div class="fswwp-cc-field-header">
 				<span class="dashicons dashicons-move fswwp-cc-field-handle"></span>
+				<span class="dashicons <?php echo esc_attr( $type_icon ); ?> fswwp-cc-field-icon"></span>
 				<strong class="fswwp-cc-field-label-text"><?php echo esc_html( $field['label'] ); ?></strong>
 				<span class="fswwp-cc-field-type-badge"><?php echo esc_html( $type_label ); ?></span>
-				<button type="button" class="fswwp-cc-field-toggle dashicons dashicons-arrow-down-alt2"></button>
+				<button type="button" class="fswwp-cc-field-edit dashicons dashicons-edit" title="<?php esc_attr_e( 'Edit field', 'fswwp-comments-core' ); ?>"></button>
 				<button type="button" class="fswwp-cc-field-delete dashicons dashicons-trash"></button>
 			</div>
 			<div class="fswwp-cc-field-body" style="display:none;">
@@ -624,10 +803,11 @@ class Fswwp_Comments_Core_Admin {
 
 		// Sanitize fields.
 		$clean = array();
+		$valid_types = array( 'image', 'text', 'textarea', 'email', 'url', 'date', 'select', 'rating' );
 		foreach ( $fields as $field ) {
 			$clean[] = array(
 				'id'          => sanitize_key( $field['id'] ),
-				'type'        => in_array( $field['type'], array( 'text', 'textarea', 'email', 'url', 'select', 'rating' ), true ) ? $field['type'] : 'text',
+				'type'        => in_array( $field['type'], $valid_types, true ) ? $field['type'] : 'text',
 				'label'       => sanitize_text_field( $field['label'] ),
 				'placeholder' => sanitize_text_field( isset( $field['placeholder'] ) ? $field['placeholder'] : '' ),
 				'required'    => ! empty( $field['required'] ),
@@ -687,60 +867,162 @@ class Fswwp_Comments_Core_Admin {
 	/**
 	 * Render the Views Builder page.
 	 *
+	 * Two modes:
+	 *   - List (default) — shows saved views with edit/copy/delete.
+	 *   - Builder — when ?new=1 or ?view_id=xxx, shows the row/column builder.
+	 *
 	 * @since    1.0.0
 	 */
 	public function render_views_page() {
 		$views   = get_option( 'fswwp_review_views', array() );
 		$edit_id = isset( $_GET['view_id'] ) ? sanitize_key( wp_unslash( $_GET['view_id'] ) ) : '';
+		$is_new  = isset( $_GET['new'] ) && '1' === $_GET['new'];
 
-		$current = null;
-		if ( '' !== $edit_id && isset( $views[ $edit_id ] ) ) {
-			$current = $views[ $edit_id ];
-		} elseif ( ! empty( $views ) ) {
-			$current = reset( $views );
+		// --- Builder mode --------------------------------------------------
+		if ( $is_new || '' !== $edit_id ) {
+			$this->render_views_builder_editor( $views, $edit_id, $is_new );
+			return;
 		}
 
-		$rows = $current && isset( $current['rows'] ) ? $current['rows'] : array();
-		$nonce = wp_create_nonce( 'fswwp_views_save' );
-
-		// Default row if none.
-		if ( empty( $rows ) ) {
-			$rows = array( $this->default_row() );
+		// --- List mode -----------------------------------------------------
+		// Auto-create default view if none exist.
+		if ( empty( $views ) ) {
+			$views = $this->maybe_create_default_view();
 		}
+
+		$new_url = add_query_arg( array( 'new' => '1' ), remove_query_arg( 'view_id' ) );
 		?>
 		<div class="wrap fswwp-cc-builder-wrap">
 			<h1><?php esc_html_e( 'Views Builder', 'fswwp-comments-core' ); ?></h1>
 
-			<!-- Saved views list -->
+			<div class="fswwp-cc-list-toolbar">
+				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
+					<span class="dashicons dashicons-plus-alt" style="vertical-align:text-bottom;"></span>
+					<?php esc_html_e( 'New View', 'fswwp-comments-core' ); ?>
+				</a>
+			</div>
+
 			<?php if ( ! empty( $views ) ) : ?>
-				<div class="fswwp-cc-forms-list">
-					<h3><?php esc_html_e( 'Your Views', 'fswwp-comments-core' ); ?></h3>
-					<table class="wp-list-table widefat fixed striped">
-						<thead><tr>
-							<th><?php esc_html_e( 'Name', 'fswwp-comments-core' ); ?></th>
+				<table class="wp-list-table widefat fixed striped fswwp-cc-templates-table">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'View Name', 'fswwp-comments-core' ); ?></th>
 							<th><?php esc_html_e( 'Shortcode', 'fswwp-comments-core' ); ?></th>
 							<th><?php esc_html_e( 'Layout', 'fswwp-comments-core' ); ?></th>
-							<th></th>
-						</tr></thead>
-						<tbody>
-							<?php foreach ( $views as $vid => $view ) : ?>
-								<tr>
-									<td><a href="<?php echo esc_url( add_query_arg( 'view_id', $vid ) ); ?>"><strong><?php echo esc_html( $view['name'] ); ?></strong></a></td>
-									<td><code class="fswwp-cc-shortcode-copy">[fswwp_reviews id="<?php echo esc_attr( $vid ); ?>"]</code></td>
-									<td><?php echo esc_html( ucfirst( $view['layout'] ) ); ?></td>
-									<td><button type="button" class="button button-small fswwp-cc-delete-view" data-id="<?php echo esc_attr( $vid ); ?>"><?php esc_html_e( 'Delete', 'fswwp-comments-core' ); ?></button></td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
+							<th><?php esc_html_e( 'Connected Form', 'fswwp-comments-core' ); ?></th>
+							<th style="width:100px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $views as $vid => $view ) : ?>
+							<tr>
+								<td><strong><?php echo esc_html( $view['name'] ); ?></strong></td>
+								<td>
+									<div class="fswwp-cc-shortcode-copy-wrap">
+										<code class="fswwp-cc-shortcode-copy">[fswwp_reviews id="<?php echo esc_attr( $vid ); ?>"]</code>
+										<button type="button" class="button button-small fswwp-cc-copy-btn" data-code="[fswwp_reviews id=&quot;<?php echo esc_attr( $vid ); ?>&quot;]" title="<?php esc_attr_e( 'Copy shortcode', 'fswwp-comments-core' ); ?>">
+											<span class="dashicons dashicons-clipboard"></span>
+										</button>
+									</div>
+								</td>
+								<td><?php echo esc_html( ucfirst( $view['layout'] ) ); ?></td>
+								<td><?php echo isset( $view['form_id'] ) && ! empty( $view['form_id'] ) ? esc_html( $view['form_id'] ) : '—'; ?></td>
+								<td>
+									<div class="fswwp-cc-action-buttons">
+										<a href="<?php echo esc_url( add_query_arg( 'view_id', $vid, remove_query_arg( 'new' ) ) ); ?>" class="button button-small fswwp-cc-edit-btn" title="<?php esc_attr_e( 'Edit', 'fswwp-comments-core' ); ?>">
+											<span class="dashicons dashicons-edit"></span>
+										</a>
+										<button type="button" class="button button-small fswwp-cc-delete-view" data-id="<?php echo esc_attr( $vid ); ?>" title="<?php esc_attr_e( 'Delete', 'fswwp-comments-core' ); ?>">
+											<span class="dashicons dashicons-trash"></span>
+										</button>
+									</div>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php else : ?>
+				<div class="fswwp-cc-empty-state">
+					<p><?php esc_html_e( 'No views yet. Create your first view to display reviews!', 'fswwp-comments-core' ); ?></p>
 				</div>
 			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the Views Builder editor (builder mode).
+	 *
+	 * @param array  $views   All saved views.
+	 * @param string $edit_id View ID being edited (empty for new).
+	 * @param bool   $is_new  Whether this is a brand-new view.
+	 */
+	private function render_views_builder_editor( $views, $edit_id, $is_new ) {
+		$forms = get_option( 'fswwp_review_forms', array() );
+
+		$current = null;
+		if ( '' !== $edit_id && isset( $views[ $edit_id ] ) ) {
+			$current = $views[ $edit_id ];
+		}
+
+		// Determine connected form and available components.
+		$connected_form_id = $current && isset( $current['form_id'] ) ? $current['form_id'] : '';
+		$rows              = $current && isset( $current['rows'] ) ? $current['rows'] : array();
+
+		// If new, build default rows from the first available form (or fallback).
+		if ( $is_new && empty( $rows ) ) {
+			if ( empty( $connected_form_id ) && ! empty( $forms ) ) {
+				$first_form        = array_key_first( $forms );
+				$connected_form_id = $first_form;
+			}
+			$rows = array( $this->default_view_row_from_form( $connected_form_id, $forms ) );
+		} elseif ( empty( $rows ) ) {
+			$rows = array( $this->default_view_row_from_form( $connected_form_id, $forms ) );
+		}
+
+		// Components available: from connected form, or fallback defaults.
+		$available_components = $this->get_available_components( $connected_form_id, $forms );
+
+		// Build field-label lookup from the connected form.
+		$connected_form_fields = array();
+		if ( $connected_form_id && isset( $forms[ $connected_form_id ]['fields'] ) ) {
+			foreach ( $forms[ $connected_form_id ]['fields'] as $f ) {
+				if ( ! empty( $f['label'] ) ) {
+					$connected_form_fields[ $f['id'] ] = $f['label'];
+				}
+			}
+		}
+
+		$nonce    = wp_create_nonce( 'fswwp_views_save' );
+		$list_url = remove_query_arg( array( 'view_id', 'new' ) );
+		?>
+		<div class="wrap fswwp-cc-builder-wrap">
+			<h1><?php esc_html_e( 'Views Builder', 'fswwp-comments-core' ); ?></h1>
+
+			<!-- Back to list -->
+			<p>
+				<a href="<?php echo esc_url( $list_url ); ?>" class="button">
+					<span class="dashicons dashicons-arrow-left-alt" style="vertical-align:text-bottom;"></span>
+					<?php esc_html_e( 'Back to list', 'fswwp-comments-core' ); ?>
+				</a>
+			</p>
 
 			<!-- Toolbar -->
 			<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
 				<input type="text" id="fswwp-cc-view-name" class="regular-text"
 					value="<?php echo esc_attr( $current ? $current['name'] : '' ); ?>"
 					placeholder="<?php esc_attr_e( 'View name', 'fswwp-comments-core' ); ?>">
+
+				<label style="font-weight:600;font-size:13px;"><?php esc_html_e( 'Connected Form:', 'fswwp-comments-core' ); ?></label>
+				<select id="fswwp-cc-view-form-id">
+					<option value=""><?php esc_html_e( '— None —', 'fswwp-comments-core' ); ?></option>
+					<?php foreach ( $forms as $fid => $form ) : ?>
+						<option value="<?php echo esc_attr( $fid ); ?>" <?php selected( $connected_form_id, $fid ); ?>>
+							<?php echo esc_html( $form['name'] . ' (' . $fid . ')' ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+
 				<select id="fswwp-cc-view-layout">
 					<option value="grid" <?php selected( $current ? $current['layout'] : 'grid', 'grid' ); ?>>Grid</option>
 					<option value="slider" <?php selected( $current ? $current['layout'] : '', 'slider' ); ?>>Slider</option>
@@ -754,30 +1036,34 @@ class Fswwp_Comments_Core_Admin {
 					<option value="random" <?php selected( $current ? $current['order'] : '', 'random' ); ?>>Random</option>
 					<option value="menu_order" <?php selected( $current ? $current['order'] : '', 'menu_order' ); ?>>Menu order</option>
 				</select>
-				<button type="button" id="fswwp-cc-new-view" class="button"><?php esc_html_e( 'New', 'fswwp-comments-core' ); ?></button>
+				<button type="button" id="fswwp-cc-new-view" class="button"><?php esc_html_e( 'Clear & New', 'fswwp-comments-core' ); ?></button>
 				<button type="button" id="fswwp-cc-save-view" class="button button-primary"><?php esc_html_e( 'Save View', 'fswwp-comments-core' ); ?></button>
 				<input type="hidden" id="fswwp-cc-view-id" value="<?php echo esc_attr( $edit_id ); ?>">
-				<span id="fswwp-cc-view-shortcode-output" style="<?php echo $current ? '' : 'display:none;'; ?>">
-					<code id="fswwp-cc-view-shortcode-text"><?php echo $current ? esc_html( '[fswwp_reviews id="' . $edit_id . '"]' ) : ''; ?></code>
-				</span>
 			</div>
 
 			<div class="fswwp-cc-builder" data-nonce="<?php echo esc_attr( $nonce ); ?>">
-				<!-- Component palette -->
+				<!-- Sidebar palette — only "Add Row" when form is connected (components already in layout) -->
 				<div class="fswwp-cc-builder-palette">
 					<h3><?php esc_html_e( 'Components', 'fswwp-comments-core' ); ?></h3>
-					<div class="fswwp-cc-palette-items">
-						<div class="fswwp-cc-palette-item" data-type="image"><span class="dashicons dashicons-format-image"></span> <?php esc_html_e( 'Image', 'fswwp-comments-core' ); ?></div>
-						<div class="fswwp-cc-palette-item" data-type="name"><span class="dashicons dashicons-admin-users"></span> <?php esc_html_e( 'Name', 'fswwp-comments-core' ); ?></div>
-						<div class="fswwp-cc-palette-item" data-type="content"><span class="dashicons dashicons-editor-paragraph"></span> <?php esc_html_e( 'Content', 'fswwp-comments-core' ); ?></div>
-						<div class="fswwp-cc-palette-item" data-type="rating"><span class="dashicons dashicons-star-filled"></span> <?php esc_html_e( 'Rating', 'fswwp-comments-core' ); ?></div>
-						<div class="fswwp-cc-palette-item" data-type="date"><span class="dashicons dashicons-calendar"></span> <?php esc_html_e( 'Date', 'fswwp-comments-core' ); ?></div>
-						<div class="fswwp-cc-palette-item" data-type="category"><span class="dashicons dashicons-category"></span> <?php esc_html_e( 'Category', 'fswwp-comments-core' ); ?></div>
-					</div>
 
-					<div style="margin-top:16px;">
+					<?php if ( ! empty( $connected_form_id ) ) : ?>
+						<p class="description" style="margin:0 0 8px;">
+							<?php esc_html_e( 'Components from the connected form are already placed in the default layout. Drag them between columns or add more rows below.', 'fswwp-comments-core' ); ?>
+						</p>
+					<?php else : ?>
+						<div class="fswwp-cc-palette-items" id="fswwp-cc-views-palette">
+							<?php foreach ( $available_components as $comp ) : ?>
+								<div class="fswwp-cc-palette-item" data-type="<?php echo esc_attr( $comp['type'] ); ?>" data-field-id="<?php echo esc_attr( $comp['id'] ); ?>">
+									<span class="dashicons <?php echo esc_attr( $comp['icon'] ); ?>"></span>
+									<?php echo esc_html( $comp['label'] ); ?>
+								</div>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+
+					<div style="margin-top:<?php echo ! empty( $connected_form_id ) ? '0' : '16px'; ?>;">
 						<button type="button" id="fswwp-cc-add-row" class="button" style="width:100%;">
-							<span class="dashicons dashicons-plus-alt" style="vertical-align:middle;"></span>
+							<span class="dashicons dashicons-plus-alt fswwp-cc-btn-icon"></span>
 							<?php esc_html_e( 'Add Row', 'fswwp-comments-core' ); ?>
 						</button>
 					</div>
@@ -787,7 +1073,7 @@ class Fswwp_Comments_Core_Admin {
 				<div class="fswwp-cc-views-canvas">
 					<div id="fswwp-cc-rows">
 						<?php foreach ( $rows as $ri => $row ) : ?>
-							<?php $this->render_view_row( $row, $ri ); ?>
+							<?php $this->render_view_row( $row, $ri, $connected_form_fields ); ?>
 						<?php endforeach; ?>
 					</div>
 					<div id="fswwp-cc-view-empty" style="<?php echo ! empty( $rows ) ? 'display:none;' : ''; ?>">
@@ -801,9 +1087,101 @@ class Fswwp_Comments_Core_Admin {
 	}
 
 	/**
+	 * Get available components for the Views palette from a connected form.
+	 *
+	 * @param string $form_id Connected form ID.
+	 * @param array  $forms   All saved forms.
+	 * @return array Components list with type, id, icon, label.
+	 */
+	private function get_available_components( $form_id, $forms ) {
+		$type_icons = array(
+			'image'    => 'dashicons-format-image',
+			'text'     => 'dashicons-editor-textcolor',
+			'textarea' => 'dashicons-editor-paragraph',
+			'email'    => 'dashicons-email',
+			'url'      => 'dashicons-admin-links',
+			'date'     => 'dashicons-calendar',
+			'select'   => 'dashicons-menu-alt',
+			'rating'   => 'dashicons-star-filled',
+		);
+
+		// If connected to a form, return its fields as components.
+		if ( ! empty( $form_id ) && isset( $forms[ $form_id ] ) ) {
+			$components = array();
+			foreach ( $forms[ $form_id ]['fields'] as $field ) {
+				$components[] = array(
+					'type'  => $field['type'],
+					'id'    => $field['id'],
+					'label' => $field['label'],
+					'icon'  => isset( $type_icons[ $field['type'] ] ) ? $type_icons[ $field['type'] ] : 'dashicons-edit',
+				);
+			}
+			return $components;
+		}
+
+		// Fallback — default components.
+		return array(
+			array( 'type' => 'image',    'id' => 'fswwp_image',    'label' => __( 'Image', 'fswwp-comments-core' ),    'icon' => 'dashicons-format-image' ),
+			array( 'type' => 'name',     'id' => 'fswwp_name',     'label' => __( 'Name', 'fswwp-comments-core' ),     'icon' => 'dashicons-admin-users' ),
+			array( 'type' => 'content',  'id' => 'fswwp_content',  'label' => __( 'Content', 'fswwp-comments-core' ),  'icon' => 'dashicons-editor-paragraph' ),
+			array( 'type' => 'rating',   'id' => 'fswwp_rating',   'label' => __( 'Rating', 'fswwp-comments-core' ),   'icon' => 'dashicons-star-filled' ),
+			array( 'type' => 'date',     'id' => 'fswwp_date',     'label' => __( 'Date', 'fswwp-comments-core' ),     'icon' => 'dashicons-calendar' ),
+			array( 'type' => 'category', 'id' => 'fswwp_category', 'label' => __( 'Category', 'fswwp-comments-core' ), 'icon' => 'dashicons-category' ),
+		);
+	}
+
+	/**
+	 * Build a default view row from the connected form's fields.
+	 *
+	 * @param string $form_id Connected form ID.
+	 * @param array  $forms   All saved forms.
+	 * @return array Row with columns and components.
+	 */
+	private function default_view_row_from_form( $form_id, $forms ) {
+		$components = $this->get_available_components( $form_id, $forms );
+
+		// Image on the left, remaining fields on the right.
+		$left  = array();
+		$right = array();
+
+		foreach ( $components as $comp ) {
+			if ( 'image' === $comp['type'] ) {
+				$left[] = array( 'type' => $comp['type'], 'field_id' => $comp['id'] );
+			} else {
+				$right[] = array( 'type' => $comp['type'], 'field_id' => $comp['id'] );
+			}
+		}
+
+		// If no image component, just put everything in one column.
+		if ( empty( $left ) ) {
+			return array(
+				'columns' => array(
+					array(
+						'width'      => 100,
+						'components' => $right,
+					),
+				),
+			);
+		}
+
+		return array(
+			'columns' => array(
+				array(
+					'width'      => 50,
+					'components' => $left,
+				),
+				array(
+					'width'      => 50,
+					'components' => $right,
+				),
+			),
+		);
+	}
+
+	/**
 	 * Render a single row in the views builder.
 	 */
-	private function render_view_row( $row, $index ) {
+	private function render_view_row( $row, $index, $field_labels = array() ) {
 		$cols      = isset( $row['columns'] ) ? $row['columns'] : array();
 		$col_count = count( $cols );
 		?>
@@ -819,10 +1197,10 @@ class Fswwp_Comments_Core_Admin {
 			<div class="fswwp-cc-view-cols">
 				<?php foreach ( $cols as $ci => $col ) : ?>
 					<div class="fswwp-cc-view-col" data-col="<?php echo (int) $ci; ?>" style="flex:<?php echo isset( $col['width'] ) ? (int) $col['width'] : 100; ?>;">
-						<div class="fswwp-cc-col-inner fswwp-cc-col-sortable">
+						<div class="fswwp-cc-col-inner">
 							<?php if ( isset( $col['components'] ) ) :
 								foreach ( $col['components'] as $comp ) :
-									$this->render_view_component( $comp );
+									$this->render_view_component( $comp, $field_labels );
 								endforeach;
 							endif; ?>
 						</div>
@@ -836,51 +1214,42 @@ class Fswwp_Comments_Core_Admin {
 	/**
 	 * Render a component inside a column.
 	 */
-	private function render_view_component( $comp ) {
+	private function render_view_component( $comp, $field_labels = array() ) {
 		$icons = array(
 			'image'    => 'dashicons-format-image',
 			'name'     => 'dashicons-admin-users',
 			'content'  => 'dashicons-editor-paragraph',
-			'rating'   => 'dashicons-star-filled',
+			'text'     => 'dashicons-editor-textcolor',
+			'textarea' => 'dashicons-editor-paragraph',
+			'email'    => 'dashicons-email',
+			'url'      => 'dashicons-admin-links',
 			'date'     => 'dashicons-calendar',
+			'select'   => 'dashicons-menu-alt',
+			'rating'   => 'dashicons-star-filled',
 			'category' => 'dashicons-category',
 		);
 		$labels = array(
 			'image' => 'Image', 'name' => 'Name', 'content' => 'Content',
-			'rating' => 'Rating', 'date' => 'Date', 'category' => 'Category',
+			'text' => 'Text', 'textarea' => 'Textarea', 'email' => 'Email',
+			'url' => 'URL', 'date' => 'Date', 'select' => 'Select',
+			'rating' => 'Rating', 'category' => 'Category',
 		);
-		$type = $comp['type'];
+		$type     = $comp['type'];
+		$field_id = isset( $comp['field_id'] ) ? $comp['field_id'] : '';
+
+		// Use field label when available, otherwise fall back to type name.
+		if ( $field_id && isset( $field_labels[ $field_id ] ) ) {
+			$display_label = $field_labels[ $field_id ];
+		} else {
+			$display_label = isset( $labels[ $type ] ) ? $labels[ $type ] : ucfirst( $type );
+		}
 		?>
-		<div class="fswwp-cc-view-comp" data-type="<?php echo esc_attr( $type ); ?>">
-			<span class="dashicons <?php echo esc_attr( $icons[ $type ] ); ?>"></span>
-			<span><?php echo esc_html( $labels[ $type ] ); ?></span>
+		<div class="fswwp-cc-view-comp" data-type="<?php echo esc_attr( $type ); ?>" data-field-id="<?php echo esc_attr( $field_id ); ?>">
+			<span class="dashicons <?php echo esc_attr( isset( $icons[ $type ] ) ? $icons[ $type ] : 'dashicons-edit' ); ?>"></span>
+			<span><?php echo esc_html( $display_label ); ?></span>
 			<button type="button" class="fswwp-cc-comp-delete dashicons dashicons-no-alt"></button>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Default row with 2 columns (image left, text right).
-	 */
-	private function default_row() {
-		return array(
-			'columns' => array(
-				array(
-					'width'      => 40,
-					'components' => array(
-						array( 'type' => 'image' ),
-					),
-				),
-				array(
-					'width'      => 60,
-					'components' => array(
-						array( 'type' => 'name' ),
-						array( 'type' => 'content' ),
-						array( 'type' => 'rating' ),
-					),
-				),
-			),
-		);
 	}
 
 	/**
@@ -902,6 +1271,7 @@ class Fswwp_Comments_Core_Admin {
 		$count   = isset( $_POST['count'] ) ? min( max( (int) $_POST['count'], 1 ), 50 ) : 6;
 		$order   = isset( $_POST['order'] ) ? sanitize_key( wp_unslash( $_POST['order'] ) ) : 'newest';
 		$category = isset( $_POST['category'] ) ? sanitize_text_field( wp_unslash( $_POST['category'] ) ) : '';
+		$form_id = isset( $_POST['form_id'] ) ? sanitize_key( wp_unslash( $_POST['form_id'] ) ) : '';
 		$raw_rows = isset( $_POST['rows'] ) ? wp_unslash( $_POST['rows'] ) : '[]';
 		// phpcs:enable
 
@@ -916,7 +1286,7 @@ class Fswwp_Comments_Core_Admin {
 
 		// Sanitize rows.
 		$clean_rows = array();
-		$valid_types = array( 'image', 'name', 'content', 'rating', 'date', 'category' );
+		$valid_types = array( 'image', 'name', 'content', 'rating', 'date', 'category', 'text', 'textarea', 'email', 'url', 'select' );
 		foreach ( $rows as $row ) {
 			$clean_cols = array();
 			if ( isset( $row['columns'] ) && is_array( $row['columns'] ) ) {
@@ -927,7 +1297,10 @@ class Fswwp_Comments_Core_Admin {
 					if ( isset( $col['components'] ) && is_array( $col['components'] ) ) {
 						foreach ( $col['components'] as $comp ) {
 							if ( isset( $comp['type'] ) && in_array( $comp['type'], $valid_types, true ) ) {
-								$clean_comps[] = array( 'type' => $comp['type'] );
+								$clean_comps[] = array(
+									'type'     => $comp['type'],
+									'field_id' => isset( $comp['field_id'] ) ? sanitize_key( $comp['field_id'] ) : '',
+								);
 							}
 						}
 					}
@@ -943,7 +1316,8 @@ class Fswwp_Comments_Core_Admin {
 		}
 
 		if ( empty( $clean_rows ) ) {
-			$clean_rows = array( $this->default_row() );
+			$forms = get_option( 'fswwp_review_forms', array() );
+			$clean_rows = array( $this->default_view_row_from_form( $form_id, $forms ) );
 		}
 
 		$views = get_option( 'fswwp_review_views', array() );
@@ -958,6 +1332,7 @@ class Fswwp_Comments_Core_Admin {
 			'count'    => $count,
 			'order'    => $order,
 			'category' => $category,
+			'form_id'  => $form_id,
 			'rows'     => $clean_rows,
 		);
 
@@ -991,5 +1366,85 @@ class Fswwp_Comments_Core_Admin {
 		update_option( 'fswwp_review_views', $views );
 
 		wp_send_json_success( array( 'message' => __( 'View deleted.', 'fswwp-comments-core' ) ) );
+	}
+
+	/**
+	 * AJAX handler — get components for a connected form.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_get_form_components() {
+		check_ajax_referer( 'fswwp_views_save', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'fswwp-comments-core' ) ) );
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$form_id = isset( $_POST['form_id'] ) ? sanitize_key( wp_unslash( $_POST['form_id'] ) ) : '';
+		// phpcs:enable
+
+		$forms = get_option( 'fswwp_review_forms', array() );
+		$components = $this->get_available_components( $form_id, $forms );
+
+		wp_send_json_success( array( 'components' => $components ) );
+	}
+
+	/**
+	 * Auto-create a default form template if none exist.
+	 *
+	 * @since    1.0.0
+	 * @return array The forms array (now containing the default).
+	 */
+	private function maybe_create_default_form() {
+		$forms = get_option( 'fswwp_review_forms', array() );
+		if ( ! empty( $forms ) ) {
+			return $forms;
+		}
+
+		$default_id = 'default';
+		$forms[ $default_id ] = array(
+			'name'   => __( 'Default Form', 'fswwp-comments-core' ),
+			'fields' => $this->default_form_fields(),
+		);
+
+		update_option( 'fswwp_review_forms', $forms );
+		return $forms;
+	}
+
+	/**
+	 * Auto-create a default view template if none exist.
+	 *
+	 * Connects to the default form (or first available form).
+	 *
+	 * @since    1.0.0
+	 * @return array The views array (now containing the default).
+	 */
+	private function maybe_create_default_view() {
+		$views = get_option( 'fswwp_review_views', array() );
+		if ( ! empty( $views ) ) {
+			return $views;
+		}
+
+		// Ensure a default form exists so the view can connect to it.
+		$forms = $this->maybe_create_default_form();
+		$form_id = 'default';
+		if ( ! isset( $forms[ $form_id ] ) ) {
+			$form_id = array_key_first( $forms );
+		}
+
+		$default_id = 'default';
+		$views[ $default_id ] = array(
+			'name'     => __( 'Default View', 'fswwp-comments-core' ),
+			'layout'   => 'grid',
+			'count'    => 6,
+			'order'    => 'newest',
+			'category' => '',
+			'form_id'  => $form_id,
+			'rows'     => array( $this->default_view_row_from_form( $form_id, $forms ) ),
+		);
+
+		update_option( 'fswwp_review_views', $views );
+		return $views;
 	}
 }

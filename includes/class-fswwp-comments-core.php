@@ -189,6 +189,7 @@ class Fswwp_Comments_Core {
 		// AJAX — views builder save + delete.
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_save_view', $plugin_admin, 'ajax_save_view' );
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_delete_view', $plugin_admin, 'ajax_delete_view' );
+		$this->loader->add_action( 'wp_ajax_fswwp_cc_get_form_components', $plugin_admin, 'ajax_get_form_components' );
 
 	}
 

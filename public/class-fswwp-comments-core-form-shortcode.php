@@ -160,6 +160,10 @@ class Fswwp_Comments_Core_Form_Shortcode {
 		}
 
 		switch ( $field['type'] ) {
+			case 'image':
+				echo '<input type="file" name="' . esc_attr( $field['id'] ) . '" accept="image/*"' . $attrs . '>';
+				break;
+
 			case 'textarea':
 				echo '<textarea name="' . esc_attr( $field['id'] ) . '" rows="4"' . $attrs . '></textarea>';
 				break;
@@ -170,6 +174,10 @@ class Fswwp_Comments_Core_Form_Shortcode {
 
 			case 'url':
 				echo '<input type="url" name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
+				break;
+
+			case 'date':
+				echo '<input type="date" name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
 				break;
 
 			case 'select':

@@ -78,7 +78,9 @@ function render_rows( $rows, $post_id ) {
  * Render a single component.
  */
 function render_component( $comp, $post_id ) {
-	$type = $comp['type'];
+	$type     = $comp['type'];
+	$field_id = isset( $comp['field_id'] ) ? $comp['field_id'] : '';
+
 	switch ( $type ) {
 		case 'image':
 			if ( has_post_thumbnail( $post_id ) ) {
@@ -96,15 +98,20 @@ function render_component( $comp, $post_id ) {
 			break;
 
 		case 'content':
-			$post  = get_post( $post_id );
-			$text  = $post ? apply_filters( 'the_content', $post->post_content ) : '';
+		case 'textarea':
+			$post = get_post( $post_id );
+			// For textarea, try post content first, then meta.
+			$text = $post ? apply_filters( 'the_content', $post->post_content ) : '';
+			if ( ! $text && $field_id ) {
+				$text = get_post_meta( $post_id, $field_id, true );
+			}
 			if ( $text ) {
-				echo '<div class="fswwp-review-content">' . $text . '</div>';
+				echo '<div class="fswwp-review-content">' . wp_kses_post( $text ) . '</div>';
 			}
 			break;
 
 		case 'rating':
-			$rating = get_post_meta( $post_id, 'rating', true );
+			$rating = $field_id ? get_post_meta( $post_id, $field_id, true ) : get_post_meta( $post_id, 'rating', true );
 			if ( $rating ) {
 				$stars = (int) $rating;
 				echo '<div class="fswwp-review-stars-display">';
@@ -129,6 +136,24 @@ function render_component( $comp, $post_id ) {
 				}
 				echo implode( ', ', $names );
 				echo '</span>';
+			}
+			break;
+
+		case 'text':
+		case 'email':
+		case 'url':
+		case 'select':
+			if ( $field_id ) {
+				$value = get_post_meta( $post_id, $field_id, true );
+				if ( $value ) {
+					if ( 'url' === $type ) {
+						echo '<a href="' . esc_url( $value ) . '" class="fswwp-review-url" target="_blank" rel="nofollow">' . esc_html( $value ) . '</a>';
+					} elseif ( 'email' === $type ) {
+						echo '<a href="mailto:' . esc_attr( $value ) . '" class="fswwp-review-email">' . esc_html( $value ) . '</a>';
+					} else {
+						echo '<span class="fswwp-review-meta">' . esc_html( $value ) . '</span>';
+					}
+				}
 			}
 			break;
 	}

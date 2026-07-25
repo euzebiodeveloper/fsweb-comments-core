@@ -56,6 +56,10 @@
 		$row.find( '.fswwp-cc-view-col' ).each( function() {
 			var $inner = $( this ).find( '.fswwp-cc-col-inner' );
 			if ( ! $inner.find( '.fswwp-cc-view-comp--extra' ).length ) {
+				$inner.prepend(
+					'<div class="fswwp-cc-view-comp fswwp-cc-view-comp--empty fswwp-cc-view-comp--extra" data-type="empty">' +
+					'<span class="fswwp-cc-extra-label">+ Drop here</span></div>'
+				);
 				$inner.append(
 					'<div class="fswwp-cc-view-comp fswwp-cc-view-comp--empty fswwp-cc-view-comp--extra" data-type="empty">' +
 					'<span class="fswwp-cc-extra-label">+ Drop here</span></div>'
@@ -186,6 +190,7 @@
 	function makeCompDraggable( $comp ) {
 		if ( $comp.hasClass( 'ui-draggable' ) ) { return; }
 		$comp.draggable( {
+			handle: '.fswwp-cc-field-handle',
 			helper: 'original',
 			revert: 'invalid',
 			revertDuration: 150,
@@ -366,10 +371,18 @@
 					var fieldId  = ui.draggable.data( 'field-id' ) || '';
 					var icons    = { image:'dashicons-format-image', name:'dashicons-admin-users', content:'dashicons-editor-paragraph', text:'dashicons-editor-textcolor', textarea:'dashicons-editor-paragraph', email:'dashicons-email', url:'dashicons-admin-links', date:'dashicons-calendar', select:'dashicons-menu-alt', rating:'dashicons-star-filled', category:'dashicons-category' };
 					var labels   = { image:'Image', name:'Name', content:'Content', text:'Text', textarea:'Textarea', email:'Email', url:'URL', date:'Date', select:'Select', rating:'Rating', category:'Category' };
-					$comp = $( '<div class="fswwp-cc-view-comp" data-type="' + type + '" data-field-id="' + fieldId + '">' +
-						'<span class="dashicons ' + ( icons[type] || 'dashicons-edit' ) + '"></span>' +
-						'<span>' + ( labels[type] || type ) + '</span>' +
-						'<button type="button" class="fswwp-cc-comp-delete dashicons dashicons-no-alt"></button>' +
+					var compIcon = icons[ type ] || 'dashicons-edit';
+					var compLabel = labels[ type ] || type;
+					$comp = $( '<div class="fswwp-cc-view-comp fswwp-cc-field-card" data-type="' + type + '" data-field-id="' + fieldId + '" data-styles="{}">' +
+						'<div class="fswwp-cc-field-header">' +
+						'<span class="dashicons dashicons-move fswwp-cc-field-handle"></span>' +
+						'<span class="dashicons ' + compIcon + ' fswwp-cc-field-icon"></span>' +
+						'<strong class="fswwp-cc-field-label-text">' + compLabel + '</strong>' +
+						'<span class="fswwp-cc-field-type-badge">' + compLabel + '</span>' +
+						'<button type="button" class="fswwp-cc-field-edit dashicons dashicons-edit" title="Edit styles"></button>' +
+						'<button type="button" class="fswwp-cc-field-delete dashicons dashicons-trash" title="Remove"></button>' +
+						'</div>' +
+						'<div class="fswwp-cc-field-body" style="display:none;"></div>' +
 						'</div>' );
 					makeCompDraggable( $comp );
 
@@ -417,16 +430,17 @@
 	initColumnDroppable();
 
 	// Make existing real components draggable.
-	$( '.fswwp-cc-view-comp:not(.fswwp-cc-view-comp--empty)' ).each( function() {
+	$( '.fswwp-cc-view-comp' ).each( function() {
 		makeCompDraggable( $( this ) );
 	} );
 
 	// ---- Component deletion → return to palette ---------------------------
-	$rows.on( 'click', '.fswwp-cc-comp-delete', function() {
+	$rows.on( 'click', '.fswwp-cc-field-delete', function( e ) {
+		e.stopPropagation();
 		var $comp    = $( this ).closest( '.fswwp-cc-view-comp' );
 		var type     = $comp.data( 'type' );
 		var fieldId  = $comp.data( 'field-id' ) || '';
-		var label    = $comp.find( 'span:not(.dashicons)' ).text().trim();
+		var label    = $comp.find( '.fswwp-cc-field-label-text' ).text().trim();
 		var typeIcons = { image:'dashicons-format-image', name:'dashicons-admin-users', content:'dashicons-editor-paragraph', text:'dashicons-editor-textcolor', textarea:'dashicons-editor-paragraph', email:'dashicons-email', url:'dashicons-admin-links', date:'dashicons-calendar', select:'dashicons-menu-alt', rating:'dashicons-star-filled', category:'dashicons-category' };
 		var compIcon  = typeIcons[ type ] || 'dashicons-edit';
 
@@ -628,5 +642,227 @@
 	} );
 
 	balanceColumns( 0 );
+
+	// ====================================================================
+	//  Component Style Modal
+	// ====================================================================
+
+	var $compModal    = $( '#fswwp-cc-comp-modal' );
+	var $compBody     = $( '#fswwp-cc-comp-modal-body' );
+	var $compApply    = $( '#fswwp-cc-comp-apply' );
+	var $compCancel   = $( '#fswwp-cc-comp-cancel' );
+	var currentComp   = null;  // The component being edited.
+
+	// Style fields per component type.
+	var textFields = [
+		{ key: 'text_align',  label: 'Text Align',  type: 'select',  opts: ['', 'left', 'center', 'right', 'justify'] },
+		{ key: 'font_weight', label: 'Font Weight', type: 'select',  opts: ['', 'normal', 'bold', '300', '600', '700'] },
+		{ key: 'font_style',  label: 'Font Style',  type: 'select',  opts: ['', 'normal', 'italic'] },
+		{ key: 'font_size',   label: 'Font Size',   type: 'text',    placeholder: 'e.g. 14px' },
+		{ key: 'color',       label: 'Text Color',  type: 'color' },
+		{ key: 'background',  label: 'Background',  type: 'color_text', placeholder: 'e.g. #f0f0f1' },
+		{ key: 'margin',      label: 'Margin',      type: 'text',    placeholder: 'e.g. 0 0 8px 0' },
+		{ key: 'padding',     label: 'Padding',     type: 'text',    placeholder: 'e.g. 4px 8px' }
+	];
+
+	var imageFields = [
+		{ key: 'width',         label: 'Width',        type: 'text', placeholder: 'e.g. 150px' },
+		{ key: 'height',        label: 'Height',       type: 'text', placeholder: 'e.g. 150px' },
+		{ key: 'border_radius', label: 'Border Radius',type: 'text', placeholder: 'e.g. 8px' },
+		{ key: 'object_fit',    label: 'Object Fit',   type: 'select', opts: ['', 'cover', 'contain', 'fill', 'none'] },
+		{ key: 'box_shadow',    label: 'Box Shadow',   type: 'text', placeholder: 'e.g. 0 2px 8px rgba(0,0,0,0.1)' }
+	];
+
+	var ratingFields = [
+		{ key: 'star_size',  label: 'Star Size',  type: 'text',  placeholder: 'e.g. 20px' },
+		{ key: 'star_color', label: 'Star Color', type: 'color' },
+		{ key: 'gap',        label: 'Gap',        type: 'text',  placeholder: 'e.g. 2px' },
+		{ key: 'text_align', label: 'Align',      type: 'select', opts: ['', 'left', 'center', 'right'] }
+	];
+
+	var badgeFields = [
+		{ key: 'text_align', label: 'Align',      type: 'select', opts: ['', 'left', 'center', 'right'] },
+		{ key: 'font_size',  label: 'Font Size',  type: 'text',   placeholder: 'e.g. 13px' },
+		{ key: 'font_style', label: 'Font Style', type: 'select', opts: ['', 'normal', 'italic'] },
+		{ key: 'color',      label: 'Text Color', type: 'color' }
+	];
+
+	function getFieldsForType( type ) {
+		switch ( type ) {
+			case 'image':    return imageFields;
+			case 'rating':   return ratingFields;
+			case 'date':
+			case 'category': return badgeFields;
+			default:         return textFields;
+		}
+	}
+
+	function openCompModal( $comp ) {
+		currentComp = $comp;
+		var type    = $comp.data( 'type' );
+		var styles  = $comp.data( 'styles' ) || {};
+		var fields  = getFieldsForType( type );
+
+		var html = '<div class="fswwp-cc-comp-modal-info">' +
+			'<span class="fswwp-cc-comp-type-label">' + ( type.charAt(0).toUpperCase() + type.slice(1) ) + '</span>' +
+			'</div>';
+
+		$.each( fields, function( i, f ) {
+			var val = styles[ f.key ] || '';
+			html += '<div class="fswwp-cc-field-row">' +
+				'<label>' + f.label + '</label>';
+
+			if ( f.type === 'select' ) {
+				html += '<select class="fswwp-cc-comp-style" data-key="' + f.key + '">';
+				$.each( f.opts, function( j, o ) {
+					html += '<option value="' + o + '"' + ( val === o ? ' selected' : '' ) + '>' + ( o || 'Default' ) + '</option>';
+				} );
+				html += '</select>';
+			} else if ( f.type === 'color' ) {
+				html += '<input type="color" class="fswwp-cc-comp-style" data-key="' + f.key + '" value="' + ( val || '#000000' ) + '">';
+			} else if ( f.type === 'color_text' ) {
+				html += '<div style="display:flex;gap:6px;align-items:center;">' +
+					'<input type="color" class="fswwp-cc-comp-style-color" data-key="' + f.key + '" value="' + ( val && val !== 'transparent' ? val : '#ffffff' ) + '" style="width:36px;height:30px;padding:0;border:none;cursor:pointer;">' +
+					'<input type="text" class="fswwp-cc-comp-style widefat" data-key="' + f.key + '" value="' + val + '" placeholder="' + ( f.placeholder || '' ) + '">' +
+					'</div>';
+			} else {
+				html += '<input type="text" class="fswwp-cc-comp-style widefat" data-key="' + f.key + '" value="' + val + '" placeholder="' + ( f.placeholder || '' ) + '">';
+			}
+			html += '</div>';
+		} );
+
+		$compBody.html( html );
+
+		// Sync color_text inputs: text ↔ color picker.
+		$compBody.find( '.fswwp-cc-comp-style-color' ).on( 'input', function() {
+			var $txt = $( this ).closest( '.fswwp-cc-field-row' ).find( 'input[type="text"].fswwp-cc-comp-style' );
+			$txt.val( this.value );
+		} );
+
+		$compModal.show();
+	}
+
+	function closeCompModal() {
+		$compModal.hide();
+		currentComp = null;
+	}
+
+	function applyCompStyles() {
+		if ( ! currentComp ) { return; }
+		var styles = {};
+		$compBody.find( '.fswwp-cc-comp-style' ).each( function() {
+			var key = $( this ).data( 'key' );
+			var val = $( this ).val().trim();
+			if ( val ) { styles[ key ] = val; }
+		} );
+		// Also pick up color_text text inputs.
+		$compBody.find( '.fswwp-cc-comp-style-color' ).each( function() {
+			var key  = $( this ).data( 'key' );
+			var $txt = $( this ).closest( '.fswwp-cc-field-row' ).find( 'input[type="text"].fswwp-cc-comp-style' );
+			var val  = $txt.val().trim();
+			if ( val ) { styles[ key ] = val; }
+		} );
+
+		currentComp.data( 'styles', styles );
+		currentComp.attr( 'data-styles', JSON.stringify( styles ) );
+
+		// Update preview on canvas.
+		applyPreviewStyles( currentComp, styles );
+
+		closeCompModal();
+	}
+
+	function applyPreviewStyles( $comp, styles ) {
+		var css = {};
+		$.each( styles, function( key, val ) {
+			var prop = key.replace( /_/g, '-' );
+			css[ prop ] = val;
+		} );
+
+		// For rating, apply star-size to font-size and star-color to color.
+		if ( $comp.data( 'type' ) === 'rating' && styles.star_size ) {
+			css[ 'font-size' ] = styles.star_size;
+		}
+		if ( $comp.data( 'type' ) === 'rating' && styles.star_color ) {
+			css[ 'color' ] = styles.star_color;
+		}
+
+		$comp.css( css );
+	}
+
+	// ---- Modal events ------------------------------------------------------
+	$compApply.on( 'click', applyCompStyles );
+	$compCancel.on( 'click', closeCompModal );
+	$compModal.find( '.fswwp-cc-modal-close' ).on( 'click', closeCompModal );
+	$compModal.find( '.fswwp-cc-modal-backdrop' ).on( 'click', closeCompModal );
+
+	// Open modal on edit button click OR header click.
+	$rows.on( 'click', '.fswwp-cc-field-edit', function( e ) {
+		e.stopPropagation();
+		openCompModal( $( this ).closest( '.fswwp-cc-view-comp' ) );
+	} );
+
+	$rows.on( 'click', '.fswwp-cc-field-header', function( e ) {
+		if ( $( e.target ).closest( '.fswwp-cc-field-handle, .fswwp-cc-field-edit, .fswwp-cc-field-delete' ).length ) {
+			return;
+		}
+		openCompModal( $( this ).closest( '.fswwp-cc-view-comp' ) );
+	} );
+
+	// ---- Save with styles -----------------------------------------------
+	$( '#fswwp-cc-save-view' ).off( 'click' ).on( 'click', function() {
+		var $btn = $( this );
+		var name = $( '#fswwp-cc-view-name' ).val().trim();
+		var data = [];
+
+		$rows.find( '.fswwp-cc-view-row' ).each( function() {
+			var row = { columns: [] };
+			$( this ).find( '.fswwp-cc-view-col' ).each( function() {
+				var col = { components: [] };
+				$( this ).find( '.fswwp-cc-view-comp:not(.fswwp-cc-view-comp--empty)' ).each( function() {
+					var $c   = $( this );
+					var comp = {
+						type:     $c.data( 'type' ),
+						field_id: $c.data( 'field-id' ) || ''
+					};
+					var styles = $c.data( 'styles' );
+					if ( styles && ! $.isEmptyObject( styles ) ) {
+						comp.styles = styles;
+					}
+					col.components.push( comp );
+				} );
+				row.columns.push( col );
+			} );
+			if ( row.columns.length ) { data.push( row ); }
+		} );
+
+		$btn.prop( 'disabled', true ).text( 'Saving…' );
+		$.post( window.ajaxurl, {
+			action:    'fswwp_cc_save_view',
+			nonce:     nonce,
+			view_name: name,
+			view_id:   $( '#fswwp-cc-view-id' ).val(),
+			layout:    $( '#fswwp-cc-view-layout' ).val(),
+			count:     $( '#fswwp-cc-view-count' ).val(),
+			order:     $( '#fswwp-cc-view-order' ).val(),
+			category:  '',
+			form_id:   $formSelect.val(),
+			rows:      JSON.stringify( data )
+		}, function( r ) {
+			if ( r.success ) {
+				$( '#fswwp-cc-view-id' ).val( r.data.view_id );
+				showMsg( r.data.message, 'success' );
+				setTimeout( function() {
+					window.location.search = '?page=fswwp-comments-core-views&post_type=fswwp_review&view_id=' + r.data.view_id;
+				}, 800 );
+			} else {
+				showMsg( r.data.message, 'error' );
+			}
+			$btn.prop( 'disabled', false ).text( 'Save View' );
+		}, 'json' ).fail( function() {
+			showMsg( 'Network error.', 'error' );
+			$btn.prop( 'disabled', false ).text( 'Save View' );
+		} );
+	} );
 
 } )( jQuery );

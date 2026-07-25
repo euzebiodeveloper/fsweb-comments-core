@@ -1172,6 +1172,24 @@ class Fswwp_Comments_Core_Admin {
 					<div id="fswwp-cc-view-message" class="notice" style="display:none;"></div>
 				</div>
 			</div>
+
+			<!-- Component Style Modal -->
+			<div id="fswwp-cc-comp-modal" class="fswwp-cc-modal" style="display:none;">
+				<div class="fswwp-cc-modal-backdrop"></div>
+				<div class="fswwp-cc-modal-content">
+					<div class="fswwp-cc-modal-header">
+						<h3><?php esc_html_e( 'Component Settings', 'fswwp-comments-core' ); ?></h3>
+						<button type="button" class="fswwp-cc-modal-close">&times;</button>
+					</div>
+					<div class="fswwp-cc-modal-body" id="fswwp-cc-comp-modal-body">
+						<!-- Filled dynamically by JS -->
+					</div>
+					<div class="fswwp-cc-modal-footer">
+						<button type="button" id="fswwp-cc-comp-apply" class="button button-primary"><?php esc_html_e( 'Apply', 'fswwp-comments-core' ); ?></button>
+						<button type="button" id="fswwp-cc-comp-cancel" class="button"><?php esc_html_e( 'Cancel', 'fswwp-comments-core' ); ?></button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -1326,18 +1344,27 @@ class Fswwp_Comments_Core_Admin {
 		);
 		$type     = $comp['type'];
 		$field_id = isset( $comp['field_id'] ) ? $comp['field_id'] : '';
+		$styles   = isset( $comp['styles'] ) ? $comp['styles'] : array();
 
-		// Use field label when available, otherwise fall back to type name.
 		if ( $field_id && isset( $field_labels[ $field_id ] ) ) {
 			$display_label = $field_labels[ $field_id ];
 		} else {
 			$display_label = isset( $labels[ $type ] ) ? $labels[ $type ] : ucfirst( $type );
 		}
+		$badge_text = isset( $labels[ $type ] ) ? $labels[ $type ] : $type;
 		?>
-		<div class="fswwp-cc-view-comp" data-type="<?php echo esc_attr( $type ); ?>" data-field-id="<?php echo esc_attr( $field_id ); ?>">
-			<span class="dashicons <?php echo esc_attr( isset( $icons[ $type ] ) ? $icons[ $type ] : 'dashicons-edit' ); ?>"></span>
-			<span><?php echo esc_html( $display_label ); ?></span>
-			<button type="button" class="fswwp-cc-comp-delete dashicons dashicons-no-alt"></button>
+		<div class="fswwp-cc-view-comp fswwp-cc-field-card" data-type="<?php echo esc_attr( $type ); ?>" data-field-id="<?php echo esc_attr( $field_id ); ?>" data-styles="<?php echo esc_attr( wp_json_encode( $styles ) ); ?>">
+			<div class="fswwp-cc-field-header">
+				<span class="dashicons dashicons-move fswwp-cc-field-handle"></span>
+				<span class="dashicons <?php echo esc_attr( isset( $icons[ $type ] ) ? $icons[ $type ] : 'dashicons-edit' ); ?> fswwp-cc-field-icon"></span>
+				<strong class="fswwp-cc-field-label-text"><?php echo esc_html( $display_label ); ?></strong>
+				<span class="fswwp-cc-field-type-badge"><?php echo esc_html( $badge_text ); ?></span>
+				<button type="button" class="fswwp-cc-field-edit dashicons dashicons-edit" title="<?php esc_attr_e( 'Edit styles', 'fswwp-comments-core' ); ?>"></button>
+				<button type="button" class="fswwp-cc-field-delete dashicons dashicons-trash" title="<?php esc_attr_e( 'Remove', 'fswwp-comments-core' ); ?>"></button>
+			</div>
+			<div class="fswwp-cc-field-body" style="display:none;">
+				<!-- Styles stored in data-styles attribute -->
+			</div>
 		</div>
 		<?php
 	}
@@ -1387,10 +1414,17 @@ class Fswwp_Comments_Core_Admin {
 					if ( isset( $col['components'] ) && is_array( $col['components'] ) ) {
 						foreach ( $col['components'] as $comp ) {
 							if ( isset( $comp['type'] ) && in_array( $comp['type'], $valid_types, true ) ) {
-								$clean_comps[] = array(
+								$clean_comp = array(
 									'type'     => $comp['type'],
 									'field_id' => isset( $comp['field_id'] ) ? sanitize_key( $comp['field_id'] ) : '',
 								);
+
+								// Sanitize styles.
+								if ( isset( $comp['styles'] ) && is_array( $comp['styles'] ) ) {
+									$clean_comp['styles'] = $this->sanitize_component_styles( $comp['styles'], $comp['type'] );
+								}
+
+								$clean_comps[] = $clean_comp;
 							}
 						}
 					}
@@ -1536,5 +1570,54 @@ class Fswwp_Comments_Core_Admin {
 
 		update_option( 'fswwp_review_views', $views );
 		return $views;
+	}
+
+	/**
+	 * Sanitize component styles, allowing only safe CSS values.
+	 *
+	 * @since    1.0.0
+	 * @param    array  $styles Raw style key-value pairs.
+	 * @param    string $type   Component type (for allowed-property filtering).
+	 * @return   array  Clean styles.
+	 */
+	private function sanitize_component_styles( $styles, $type ) {
+		// Allowed CSS properties (camelCase as stored).
+		$allowed_text = array(
+			'text_align', 'font_weight', 'font_style', 'font_size',
+			'color', 'background', 'margin', 'padding',
+		);
+		$allowed_image = array(
+			'width', 'height', 'border_radius', 'object_fit', 'box_shadow',
+		);
+		$allowed_rating = array(
+			'star_size', 'star_color', 'gap', 'text_align',
+		);
+		$allowed_badge = array(
+			'text_align', 'font_size', 'color', 'font_style',
+		);
+
+		switch ( $type ) {
+			case 'image':  $allowed = $allowed_image;  break;
+			case 'rating': $allowed = $allowed_rating; break;
+			case 'date':
+			case 'category': $allowed = $allowed_badge; break;
+			default:       $allowed = $allowed_text;   break;
+		}
+
+		$clean = array();
+		foreach ( $styles as $key => $val ) {
+			if ( ! in_array( $key, $allowed, true ) ) {
+				continue;
+			}
+			$val = trim( $val );
+			if ( '' === $val ) {
+				continue;
+			}
+			// Basic safety: strip any dangerous characters.
+			$val = preg_replace( '/[^a-zA-Z0-9#%\-_.,;:()\s]/', '', $val );
+			$clean[ $key ] = $val;
+		}
+
+		return $clean;
 	}
 }

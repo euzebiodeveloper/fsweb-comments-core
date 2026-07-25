@@ -75,6 +75,40 @@ function render_rows( $rows, $post_id ) {
 }
 
 /**
+ * Build inline style string from component styles array.
+ */
+function build_comp_style( $comp ) {
+	if ( empty( $comp['styles'] ) || ! is_array( $comp['styles'] ) ) {
+		return '';
+	}
+	$map = array(
+		'text_align'    => 'text-align',
+		'font_weight'   => 'font-weight',
+		'font_style'    => 'font-style',
+		'font_size'     => 'font-size',
+		'color'         => 'color',
+		'background'    => 'background',
+		'margin'        => 'margin',
+		'padding'       => 'padding',
+		'width'         => 'width',
+		'height'        => 'height',
+		'border_radius' => 'border-radius',
+		'object_fit'    => 'object-fit',
+		'box_shadow'    => 'box-shadow',
+		'star_size'     => 'font-size',
+		'star_color'    => 'color',
+		'gap'           => 'gap',
+	);
+	$parts = array();
+	foreach ( $comp['styles'] as $key => $val ) {
+		if ( isset( $map[ $key ] ) && '' !== $val ) {
+			$parts[] = $map[ $key ] . ':' . esc_attr( $val );
+		}
+	}
+	return $parts ? ' style="' . implode( ';', $parts ) . '"' : '';
+}
+
+/**
  * Render a single component.
  */
 function render_component( $comp, $post_id ) {
@@ -84,8 +118,9 @@ function render_component( $comp, $post_id ) {
 	switch ( $type ) {
 		case 'image':
 			if ( has_post_thumbnail( $post_id ) ) {
-				echo '<div class="fswwp-review-image">';
-				echo get_the_post_thumbnail( $post_id, 'medium', array( 'class' => 'fswwp-review-avatar' ) );
+				$is = build_comp_style( $comp );
+				echo '<div class="fswwp-review-image"' . $is . '>';
+				echo get_the_post_thumbnail( $post_id, 'medium', array( 'class' => 'fswwp-review-avatar', 'style' => ( $is ? 'width:100%;height:auto;' : '' ) ) );
 				echo '</div>';
 			}
 			break;
@@ -93,7 +128,7 @@ function render_component( $comp, $post_id ) {
 		case 'name':
 			$title = get_the_title( $post_id );
 			if ( $title ) {
-				echo '<h4 class="fswwp-review-name">' . esc_html( $title ) . '</h4>';
+				echo '<h4 class="fswwp-review-name"' . build_comp_style( $comp ) . '>' . esc_html( $title ) . '</h4>';
 			}
 			break;
 
@@ -106,7 +141,7 @@ function render_component( $comp, $post_id ) {
 				$text = get_post_meta( $post_id, $field_id, true );
 			}
 			if ( $text ) {
-				echo '<div class="fswwp-review-content">' . wp_kses_post( $text ) . '</div>';
+				echo '<div class="fswwp-review-content"' . build_comp_style( $comp ) . '>' . wp_kses_post( $text ) . '</div>';
 			}
 			break;
 
@@ -114,7 +149,7 @@ function render_component( $comp, $post_id ) {
 			$rating = $field_id ? get_post_meta( $post_id, $field_id, true ) : get_post_meta( $post_id, 'rating', true );
 			if ( $rating ) {
 				$stars = (int) $rating;
-				echo '<div class="fswwp-review-stars-display">';
+				echo '<div class="fswwp-review-stars-display"' . build_comp_style( $comp ) . '>';
 				for ( $i = 1; $i <= 5; $i++ ) {
 					echo '<span class="fswwp-star ' . ( $i <= $stars ? 'fswwp-star--filled' : '' ) . '">&#9733;</span>';
 				}
@@ -123,13 +158,13 @@ function render_component( $comp, $post_id ) {
 			break;
 
 		case 'date':
-			echo '<span class="fswwp-review-date">' . esc_html( get_the_date( '', $post_id ) ) . '</span>';
+			echo '<span class="fswwp-review-date"' . build_comp_style( $comp ) . '>' . esc_html( get_the_date( '', $post_id ) ) . '</span>';
 			break;
 
 		case 'category':
 			$cats = get_the_terms( $post_id, 'fswwp_review_category' );
 			if ( $cats && ! is_wp_error( $cats ) ) {
-				echo '<span class="fswwp-review-category">';
+				echo '<span class="fswwp-review-category"' . build_comp_style( $comp ) . '>';
 				$names = array();
 				foreach ( $cats as $cat ) {
 					$names[] = esc_html( $cat->name );
@@ -144,7 +179,7 @@ function render_component( $comp, $post_id ) {
 			if ( $field_id && ( false !== stripos( $field_id, 'name' ) ) ) {
 				$title = get_the_title( $post_id );
 				if ( $title ) {
-					echo '<h4 class="fswwp-review-name">' . esc_html( $title ) . '</h4>';
+					echo '<h4 class="fswwp-review-name"' . build_comp_style( $comp ) . '>' . esc_html( $title ) . '</h4>';
 				}
 				break;
 			}
@@ -156,11 +191,11 @@ function render_component( $comp, $post_id ) {
 				$value = get_post_meta( $post_id, $field_id, true );
 				if ( $value ) {
 					if ( 'url' === $type ) {
-						echo '<a href="' . esc_url( $value ) . '" class="fswwp-review-url" target="_blank" rel="nofollow">' . esc_html( $value ) . '</a>';
+						echo '<a href="' . esc_url( $value ) . '" class="fswwp-review-url" target="_blank" rel="nofollow"' . build_comp_style( $comp ) . '>' . esc_html( $value ) . '</a>';
 					} elseif ( 'email' === $type ) {
-						echo '<a href="mailto:' . esc_attr( $value ) . '" class="fswwp-review-email">' . esc_html( $value ) . '</a>';
+						echo '<a href="mailto:' . esc_attr( $value ) . '" class="fswwp-review-email"' . build_comp_style( $comp ) . '>' . esc_html( $value ) . '</a>';
 					} else {
-						echo '<span class="fswwp-review-meta">' . esc_html( $value ) . '</span>';
+						echo '<span class="fswwp-review-meta"' . build_comp_style( $comp ) . '>' . esc_html( $value ) . '</span>';
 					}
 				}
 			}

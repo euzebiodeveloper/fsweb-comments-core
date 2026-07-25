@@ -202,6 +202,8 @@
 			start: function() {
 				var $self = $( this );
 				$self.addClass( 'fswwp-cc-comp--dragging' );
+				// Collapse space with negative bottom margin.
+				$self.css( 'margin-bottom', -( $self.outerHeight( true ) ) + 'px' );
 				var $row = $self.closest( '.fswwp-cc-view-row' );
 				addExtraSlots( $row );
 				$row.addClass( 'fswwp-cc-row--dragging' );
@@ -209,6 +211,8 @@
 
 			stop: function() {
 				var $self = $( this );
+				$self.removeClass( 'fswwp-cc-comp--dragging' );
+				$self.css( 'margin-bottom', '' );
 
 				// If the element was rejected (still on body from appendTo:'body'),
 				// return it to the palette instead of letting it disappear.

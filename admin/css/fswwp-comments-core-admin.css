@@ -602,6 +602,10 @@
 	/* field-card handles all styling */
 }
 
+.fswwp-cc-comp--dragging {
+	/* space collapsed via JS negative margin */
+}
+
 .fswwp-cc-view-comp:active {
 	/* handled by field-card */
 }

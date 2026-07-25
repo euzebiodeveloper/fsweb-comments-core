@@ -140,6 +140,15 @@ function render_component( $comp, $post_id ) {
 			break;
 
 		case 'text':
+			// Text fields: if this is the name field, read from post_title.
+			if ( $field_id && ( false !== stripos( $field_id, 'name' ) ) ) {
+				$title = get_the_title( $post_id );
+				if ( $title ) {
+					echo '<h4 class="fswwp-review-name">' . esc_html( $title ) . '</h4>';
+				}
+				break;
+			}
+			// Otherwise fall through to generic meta handler.
 		case 'email':
 		case 'url':
 		case 'select':

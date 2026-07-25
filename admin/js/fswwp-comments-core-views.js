@@ -249,7 +249,7 @@
 				// Clean up jQuery UI leftover inline offsets (keep position for draggable).
 				$self.css( { left: '', top: '', zIndex: '' } );
 				$rows.find( '.fswwp-cc-view-row' ).removeClass( 'fswwp-cc-row--dragging' );
-				$( '.fswwp-cc-col-inner' ).removeClass( 'fswwp-cc-col--drop-active ui-state-hover ui-state-active' );
+				$( '.fswwp-cc-col-inner' ).removeClass( 'fswwp-cc-col--drop-active' );
 				$( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
 				$( '.fswwp-cc-view-comp--extra' ).remove();
 				balanceColumns( 0 );
@@ -283,7 +283,7 @@
 
 			stop: function() {
 				$rows.find( '.fswwp-cc-view-row' ).removeClass( 'fswwp-cc-row--dragging' );
-				$( '.fswwp-cc-col-inner' ).removeClass( 'fswwp-cc-col--drop-active ui-state-hover ui-state-active' );
+				$( '.fswwp-cc-col-inner' ).removeClass( 'fswwp-cc-col--drop-active' );
 				$( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
 				$( '.fswwp-cc-view-comp--extra' ).remove();
 				balanceColumns( 0 );
@@ -306,12 +306,30 @@
 		$( '.fswwp-cc-col-inner' ).droppable( {
 			accept: '.fswwp-cc-view-comp, .fswwp-cc-palette-item',
 			tolerance: 'pointer',
+			activeClass: false,   // Don't let jQuery UI add ui-droppable-active to all columns.
+			hoverClass: false,    // We use fswwp-cc-col--drop-active instead.
 
 			over: function( e, ui ) {
 				var $col = $( this );
+
+				// Clear ALL columns and rows before highlighting this one.
+				$( '.fswwp-cc-col-inner' ).removeClass( 'fswwp-cc-col--drop-active' );
+				$( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
+				$( '.fswwp-cc-view-row' ).removeClass( 'fswwp-cc-row--dragging' );
+
 				$col.addClass( 'fswwp-cc-col--drop-active' );
 
 				$( document ).off( dropTrackNS ).on( dropTrackNS, function( ev ) {
+					// If the mouse isn't over any column, clear everything.
+					var el = document.elementFromPoint( ev.clientX, ev.clientY );
+					if ( ! $( el ).closest( '.fswwp-cc-col-inner' ).length ) {
+						$( '.fswwp-cc-col-inner' ).removeClass( 'fswwp-cc-col--drop-active' );
+						$( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
+						$( '.fswwp-cc-view-row' ).removeClass( 'fswwp-cc-row--dragging' );
+						lastHit = null;
+						return;
+					}
+
 					lastHit = childAtY( $col, ev.clientY );
 					$col.find( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
 					if ( lastHit && $( lastHit.el ).hasClass( 'fswwp-cc-view-comp--empty' ) ) {
@@ -323,9 +341,9 @@
 			out: function() {
 				lastHit = null;
 				var $col = $( this );
-				$col.removeClass( 'fswwp-cc-col--drop-active ui-state-hover ui-state-active' );
+				$col.removeClass( 'fswwp-cc-col--drop-active' );
 				$col.find( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
-				$col.find( '.ui-state-hover, .ui-state-active' ).removeClass( 'ui-state-hover ui-state-active' );
+				$col.closest( '.fswwp-cc-view-row' ).removeClass( 'fswwp-cc-row--dragging' );
 				// Don't unbind the mousemove tracker here — when out fires
 				// after the next column's over, it would kill the new tracker.
 			},
@@ -334,9 +352,8 @@
 				var $col = $( this );
 				$( document ).off( dropTrackNS );
 
-				$col.removeClass( 'fswwp-cc-col--drop-active ui-state-hover ui-state-active' );
+				$col.removeClass( 'fswwp-cc-col--drop-active' );
 				$col.find( '.fswwp-cc-view-comp--empty' ).removeClass( 'fswwp-cc-empty--hover' );
-				$col.find( '.ui-state-hover, .ui-state-active' ).removeClass( 'ui-state-hover ui-state-active' );
 
 				// Recalculate hit using THIS column and the drop event's actual
 				// mouse position — avoids stale lastHit from a different column.

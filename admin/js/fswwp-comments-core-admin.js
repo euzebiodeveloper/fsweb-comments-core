@@ -92,4 +92,12 @@
 		doAjax( 'deactivate', $keyInput.val().trim() );
 	} );
 
+	// Rating stars in Review Details meta box — update (4/5) badge on change.
+	$( document ).on( 'change', '.fswwp-review-editor-stars input[type="radio"]', function() {
+		var val = parseInt( this.value, 10 ) || 0;
+		$( this ).closest( '.fswwp-review-editor-stars' )
+			.find( '.fswwp-review-editor-rating-current' )
+			.text( val );
+	} );
+
 } )( jQuery, window.FSWWP_CommentsCore_License || {} );

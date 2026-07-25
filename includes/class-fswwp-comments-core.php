@@ -144,6 +144,12 @@ class Fswwp_Comments_Core {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-fswwp-comments-core-form-shortcode.php';
 
+		/**
+		 * The class responsible for customising the Review edit screen
+		 * (meta box + custom columns).
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-fswwp-comments-core-review-editor.php';
+
 		$this->loader = new Fswwp_Comments_Core_Loader();
 
 	}
@@ -190,6 +196,9 @@ class Fswwp_Comments_Core {
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_save_view', $plugin_admin, 'ajax_save_view' );
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_delete_view', $plugin_admin, 'ajax_delete_view' );
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_get_form_components', $plugin_admin, 'ajax_get_form_components' );
+
+		// Review Editor — meta box + custom columns (self-registers via constructor).
+		new Fswwp_Comments_Core_Review_Editor();
 
 	}
 

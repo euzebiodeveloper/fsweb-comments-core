@@ -55,10 +55,10 @@ class Fswwp_Comments_Core_Post_Types {
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
 			'show_in_menu'        => true,
-			'show_in_rest'        => true,
+			'show_in_rest'        => false,
 			'menu_icon'           => 'dashicons-format-chat',
 			'hierarchical'        => false,
-			'supports'            => array( 'title', 'editor', 'thumbnail', 'page-attributes' ),
+			'supports'            => array( 'title', 'thumbnail', 'page-attributes' ),
 			'has_archive'         => false,
 			'rewrite'             => array(
 				'slug'       => 'review',

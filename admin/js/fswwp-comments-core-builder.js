@@ -3,15 +3,19 @@
  *
  * Multi-form drag-and-drop builder using jQuery UI Sortable.
  * Field editing via modal instead of inline expand.
+ * Multi-step support.
  */
 ( function( $ ) {
 	'use strict';
 
-	var $sortable  = $( '#fswwp-cc-form-fields' );
-	var $empty     = $( '#fswwp-cc-builder-empty' );
-	var $msg       = $( '#fswwp-cc-builder-message' );
-	var $nameInput = $( '#fswwp-cc-form-name' );
-	var $formId    = $( '#fswwp-cc-form-id' );
+	var $sortable     = $( '#fswwp-cc-form-fields' );
+	var $stepsWrap    = $( '#fswwp-cc-steps-container' );
+	var $addStepBtn   = $( '#fswwp-cc-add-step' );
+	var $multiToggle  = $( '#fswwp-cc-multi-step' );
+	var $empty        = $( '#fswwp-cc-builder-empty' );
+	var $msg          = $( '#fswwp-cc-builder-message' );
+	var $nameInput    = $( '#fswwp-cc-form-name' );
+	var $formId       = $( '#fswwp-cc-form-id' );
 
 	// Modal elements.
 	var $modal       = $( '#fswwp-cc-field-modal' );
@@ -25,6 +29,7 @@
 	var currentFieldCard = null;
 
 	var fieldIndex = $sortable.find( '.fswwp-cc-field-card' ).length;
+	var stepIndex  = $stepsWrap.find( '.fswwp-cc-step' ).length;
 
 	// Type defaults.
 	var typeDefaults = {
@@ -41,70 +46,249 @@
 	var typeLabels = { image:'Image', text:'Text', textarea:'Textarea', email:'Email', url:'URL', date:'Date', select:'Select', rating:'Rating' };
 	var typeIcons  = { image:'dashicons-format-image', text:'dashicons-editor-textcolor', textarea:'dashicons-editor-paragraph', email:'dashicons-email', url:'dashicons-admin-links', date:'dashicons-calendar', select:'dashicons-menu-alt', rating:'dashicons-star-filled' };
 
-	// ---- Sortable init ----------------------------------------------------
-	$sortable.sortable( {
-		handle: '.fswwp-cc-field-handle',
-		placeholder: 'fswwp-cc-field-placeholder',
-		forcePlaceholderSize: true,
-		opacity: 0.8,
-		tolerance: 'pointer'
+	// ======================================================================
+	//  MULTI-STEP TOGGLE
+	// ======================================================================
+
+	function isMultiStep() {
+		return $multiToggle.is( ':checked' );
+	}
+
+	function getActiveSortables() {
+		return isMultiStep()
+			? $stepsWrap.find( '.fswwp-cc-step-fields' )
+			: $sortable;
+	}
+
+	function reindexBadges() {
+		$stepsWrap.find( '.fswwp-cc-step' ).each( function( i ) {
+			$( this ).find( '.fswwp-cc-step-badge' ).text( i + 1 );
+		} );
+	}
+
+	function toggleEmptyState() {
+		if ( isMultiStep() ) {
+			$empty.hide();
+		} else {
+			var count = $sortable.find( '.fswwp-cc-field-card' ).length;
+			$empty.toggle( count === 0 );
+		}
+	}
+
+	$multiToggle.on( 'change', function() {
+		if ( isMultiStep() ) {
+			// Switch TO multi-step: wrap flat fields into a single step.
+			var $fields = $sortable.find( '.fswwp-cc-field-card' );
+			$sortable.hide();
+			$stepsWrap.show();
+
+			// Clear existing steps and create one with current fields.
+			$stepsWrap.find( '.fswwp-cc-step' ).remove();
+			var $step = $( buildStepHtml( 'step_1', 'Step 1' ) );
+			$step.insertBefore( $addStepBtn );
+			var $stepFields = $step.find( '.fswwp-cc-step-fields' );
+			if ( $fields.length ) {
+				$stepFields.append( $fields );
+			}
+			stepIndex = 1;
+			initStepSortable( $stepFields );
+			reindexBadges();
+			toggleEmptyState();
+		} else {
+			// Switch FROM multi-step: flatten all step fields into flat sortable.
+			var $allFields = $stepsWrap.find( '.fswwp-cc-field-card' );
+			$stepsWrap.hide();
+			$sortable.show();
+			if ( $allFields.length ) {
+				$sortable.append( $allFields );
+			}
+			initSortable();
+			fieldIndex = $sortable.find( '.fswwp-cc-field-card' ).length;
+			toggleEmptyState();
+		}
 	} );
 
-	// Palette draggable.
+	// ======================================================================
+	//  STEP MANAGEMENT
+	// ======================================================================
+
+	function buildStepHtml( id, label ) {
+		return '<div class="fswwp-cc-step" data-step-id="' + id + '">' +
+			'<div class="fswwp-cc-step-header">' +
+			'<span class="dashicons dashicons-move fswwp-cc-step-handle"></span>' +
+			'<input type="text" class="fswwp-cc-step-label" value="' + label + '" placeholder="Step name">' +
+			'<span class="fswwp-cc-step-badge">-</span>' +
+			'<button type="button" class="fswwp-cc-step-delete dashicons dashicons-trash" title="Delete step"></button>' +
+			'</div>' +
+			'<div class="fswwp-cc-step-fields fswwp-cc-fields-sortable" data-step="' + id + '"></div>' +
+			'</div>';
+	}
+
+	$addStepBtn.on( 'click', function() {
+		stepIndex++;
+		var id = 'step_' + stepIndex + '_' + Date.now();
+		var label = 'Step ' + stepIndex;
+		var $step = $( buildStepHtml( id, label ) );
+		$step.insertBefore( $addStepBtn );
+		initStepSortable( $step.find( '.fswwp-cc-step-fields' ) );
+		reindexBadges();
+		refreshStepsSortable();
+	} );
+
+	$stepsWrap.on( 'click', '.fswwp-cc-step-delete', function() {
+		var $step = $( this ).closest( '.fswwp-cc-step' );
+		var count = $stepsWrap.find( '.fswwp-cc-step' ).length;
+		if ( count <= 1 ) { return; } // Keep at least one step.
+		$step.slideUp( 150, function() {
+			$( this ).remove();
+			reindexBadges();
+			refreshStepsSortable();
+		} );
+	} );
+
+	// ======================================================================
+	//  SORTABLES — steps and fields
+	// ======================================================================
+
+	function initStepSortable( $el ) {
+		$el.sortable( {
+			handle: '.fswwp-cc-field-handle',
+			placeholder: 'fswwp-cc-field-placeholder',
+			forcePlaceholderSize: true,
+			opacity: 0.8,
+			tolerance: 'pointer',
+			connectWith: '.fswwp-cc-step-fields'
+		} );
+	}
+
+	function initSortable() {
+		$sortable.sortable( {
+			handle: '.fswwp-cc-field-handle',
+			placeholder: 'fswwp-cc-field-placeholder',
+			forcePlaceholderSize: true,
+			opacity: 0.8,
+			tolerance: 'pointer'
+		} );
+	}
+
+	function refreshStepsSortable() {
+		// Make step containers sortable among themselves.
+		if ( $stepsWrap.data( 'ui-sortable' ) ) {
+			$stepsWrap.sortable( 'destroy' );
+		}
+		$stepsWrap.sortable( {
+			handle: '.fswwp-cc-step-handle',
+			placeholder: 'fswwp-cc-step-placeholder',
+			forcePlaceholderSize: true,
+			opacity: 0.8,
+			tolerance: 'pointer',
+			items: '.fswwp-cc-step',
+			update: reindexBadges
+		} );
+		// Also refresh step field sortables.
+		$stepsWrap.find( '.fswwp-cc-step-fields' ).each( function() {
+			if ( ! $( this ).data( 'ui-sortable' ) ) {
+				initStepSortable( $( this ) );
+			} else {
+				$( this ).sortable( 'refresh' );
+			}
+		} );
+	}
+
+	// Init flat sortable initially.
+	initSortable();
+
+	// Init step sortables + steps sortable if multi-step is on.
+	if ( isMultiStep() ) {
+		$stepsWrap.find( '.fswwp-cc-step-fields' ).each( function() {
+			initStepSortable( $( this ) );
+		} );
+		refreshStepsSortable();
+	}
+
+	// ======================================================================
+	//  PALETTE — drag into active canvas
+	// ======================================================================
+
 	$( '.fswwp-cc-palette-item' ).draggable( {
-		connectToSortable: '#fswwp-cc-form-fields',
+		connectToSortable: isMultiStep() ? '.fswwp-cc-step-fields' : '#fswwp-cc-form-fields',
 		helper: 'clone',
 		revert: 'invalid',
 		zIndex: 1000
 	} );
 
+	// Re-bind draggable connect when toggling.
+	$multiToggle.on( 'change', function() {
+		$( '.fswwp-cc-palette-item' ).draggable( 'option', 'connectToSortable',
+			isMultiStep() ? '.fswwp-cc-step-fields' : '#fswwp-cc-form-fields' );
+	} );
+
 	// Drop palette item → create card.
-	$sortable.on( 'sortreceive', function( e, ui ) {
+	$( document ).on( 'sortreceive', '.fswwp-cc-fields-sortable', function( e, ui ) {
 		if ( ui.item.hasClass( 'fswwp-cc-palette-item' ) ) {
 			var type = ui.item.data( 'type' );
 			var def  = typeDefaults[ type ] || { label: typeLabels[type] || type, placeholder: '' };
 			var id   = 'fld_' + ( ++fieldIndex ) + '_' + Date.now();
 			ui.item.replaceWith( $( buildCard( id, type, def.label, def.placeholder, '', false ) ) );
-			$sortable.sortable( 'refresh' );
-			$empty.hide();
+			var $target = $( this );
+			if ( $target.is( '.fswwp-cc-step-fields' ) ) {
+				$target.sortable( 'refresh' );
+			} else {
+				$sortable.sortable( 'refresh' );
+			}
+			toggleEmptyState();
 		}
 	} );
 
-	// ---- Delete field -----------------------------------------------------
-	$sortable.on( 'click', '.fswwp-cc-field-delete', function() {
-		$( this ).closest( '.fswwp-cc-field-card' ).slideUp( 150, function() {
+	// ======================================================================
+	//  DELETE FIELD
+	// ======================================================================
+
+	$( document ).on( 'click', '.fswwp-cc-field-delete', function() {
+		var $card = $( this ).closest( '.fswwp-cc-field-card' );
+		var $container = $card.closest( '.fswwp-cc-fields-sortable' );
+		$card.slideUp( 150, function() {
 			$( this ).remove();
-			if ( ! $sortable.find( '.fswwp-cc-field-card' ).length ) {
-				$empty.show();
+			toggleEmptyState();
+			if ( $container.is( '.fswwp-cc-step-fields' ) ) {
+				$container.sortable( 'refresh' );
+			} else if ( $container.is( '#fswwp-cc-form-fields' ) ) {
+				$sortable.sortable( 'refresh' );
 			}
 		} );
 	} );
 
-	// ---- Open modal on card header click (except handle, edit, delete) -----
-	$sortable.on( 'click', '.fswwp-cc-field-header', function( e ) {
-		// Ignore clicks on the handle, edit button, or delete button.
+	// ======================================================================
+	//  OPEN MODAL
+	// ======================================================================
+
+	$( document ).on( 'click', '.fswwp-cc-field-header', function( e ) {
 		if ( $( e.target ).closest( '.fswwp-cc-field-handle, .fswwp-cc-field-edit, .fswwp-cc-field-delete' ).length ) {
 			return;
 		}
 		openModal( $( this ).closest( '.fswwp-cc-field-card' ) );
 	} );
 
-	// Also open via edit button.
-	$sortable.on( 'click', '.fswwp-cc-field-edit', function() {
+	$( document ).on( 'click', '.fswwp-cc-field-edit', function() {
 		openModal( $( this ).closest( '.fswwp-cc-field-card' ) );
 	} );
 
-	// ---- Modal: type change → update defaults -----------------------------
+	// ======================================================================
+	//  MODAL: TYPE CHANGE
+	// ======================================================================
+
 	$modalType.on( 'change', function() {
 		var type = $( this ).val();
 		var def  = typeDefaults[ type ] || {};
-		// Only update label/placeholder if they look "default-ish" (empty or matching a previous default).
 		$modalLabel.val( def.label || '' );
 		$modalPlh.val( def.placeholder || '' );
 		$modalOptsRow.toggle( type === 'select' );
 	} );
 
-	// ---- Modal: save -----------------------------------------------------
+	// ======================================================================
+	//  MODAL: SAVE
+	// ======================================================================
+
 	$( '#fswwp-cc-modal-save' ).on( 'click', function() {
 		if ( ! currentFieldCard ) { return; }
 
@@ -124,20 +308,27 @@
 			return;
 		}
 
-		// Rebuild the card.
 		var newCard = buildCard( id, type, label, plh, opts, req );
 		currentFieldCard.replaceWith( $( newCard ) );
-		$sortable.sortable( 'refresh' );
+
+		var $container = currentFieldCard.closest( '.fswwp-cc-fields-sortable' );
+		if ( $container.is( '.fswwp-cc-step-fields' ) ) {
+			$container.sortable( 'refresh' );
+		} else {
+			$sortable.sortable( 'refresh' );
+		}
 
 		closeModal();
 	} );
 
-	// ---- Modal: cancel / close --------------------------------------------
+	// ======================================================================
+	//  MODAL: CANCEL / CLOSE
+	// ======================================================================
+
 	$( '#fswwp-cc-modal-cancel, .fswwp-cc-modal-close, .fswwp-cc-modal-backdrop' ).on( 'click', function() {
 		closeModal();
 	} );
 
-	// ---- Modal: keyboard escape -------------------------------------------
 	$( document ).on( 'keydown', function( e ) {
 		if ( e.key === 'Escape' && $modal.is( ':visible' ) ) {
 			closeModal();
@@ -171,31 +362,77 @@
 		currentFieldCard = null;
 	}
 
-	// ---- Save -------------------------------------------------------------
+	// ======================================================================
+	//  SAVE FORM
+	// ======================================================================
+
 	$( '#fswwp-cc-save-form' ).on( 'click', function() {
 		var $btn   = $( this );
-		var fields = [];
-		var valid  = true;
 		var name   = $nameInput.val().trim();
+		var valid  = true;
+		var multi  = isMultiStep();
 
-		$sortable.find( '.fswwp-cc-field-card' ).each( function() {
-			var $card = $( this );
-			var label = $card.find( '.fswwp-cc-field-label' ).val().trim();
-			if ( ! label ) {
-				valid = false;
-				$card.css( 'border-color', '#d63638' );
-			} else {
-				$card.css( 'border-color', '' );
-			}
-			fields.push( {
-				id: $card.data( 'id' ),
-				type: $card.find( '.fswwp-cc-field-type' ).val(),
-				label: label,
-				placeholder: $card.find( '.fswwp-cc-field-placeholder' ).val().trim(),
-				required: $card.find( '.fswwp-cc-field-required' ).is( ':checked' ),
-				options: $card.find( '.fswwp-cc-field-options' ).val().trim()
+		var payload = {
+			action:     'fswwp_cc_save_form',
+			nonce:      $sortable.data( 'nonce' ),
+			form_name:  name,
+			form_id:    $formId.val(),
+			multi_step: multi ? '1' : '0'
+		};
+
+		if ( multi ) {
+			// Collect steps.
+			var steps = [];
+			$stepsWrap.find( '.fswwp-cc-step' ).each( function() {
+				var $step   = $( this );
+				var stepId  = $step.data( 'step-id' );
+				var stepLbl = $step.find( '.fswwp-cc-step-label' ).val().trim() || 'Step';
+				var fields  = [];
+				$step.find( '.fswwp-cc-field-card' ).each( function() {
+					var $card = $( this );
+					var label = $card.find( '.fswwp-cc-field-label' ).val().trim();
+					if ( ! label ) {
+						valid = false;
+						$card.css( 'border-color', '#d63638' );
+					} else {
+						$card.css( 'border-color', '' );
+					}
+					fields.push( {
+						id: $card.data( 'id' ),
+						type: $card.find( '.fswwp-cc-field-type' ).val(),
+						label: label,
+						placeholder: $card.find( '.fswwp-cc-field-placeholder' ).val().trim(),
+						required: $card.find( '.fswwp-cc-field-required' ).is( ':checked' ),
+						options: $card.find( '.fswwp-cc-field-options' ).val().trim()
+					} );
+				} );
+				steps.push( { id: stepId, label: stepLbl, fields: fields } );
 			} );
-		} );
+			payload.steps  = JSON.stringify( steps );
+			payload.fields = '[]'; // not used in multi mode, but sent.
+		} else {
+			// Collect flat fields.
+			var fields = [];
+			$sortable.find( '.fswwp-cc-field-card' ).each( function() {
+				var $card = $( this );
+				var label = $card.find( '.fswwp-cc-field-label' ).val().trim();
+				if ( ! label ) {
+					valid = false;
+					$card.css( 'border-color', '#d63638' );
+				} else {
+					$card.css( 'border-color', '' );
+				}
+				fields.push( {
+					id: $card.data( 'id' ),
+					type: $card.find( '.fswwp-cc-field-type' ).val(),
+					label: label,
+					placeholder: $card.find( '.fswwp-cc-field-placeholder' ).val().trim(),
+					required: $card.find( '.fswwp-cc-field-required' ).is( ':checked' ),
+					options: $card.find( '.fswwp-cc-field-options' ).val().trim()
+				} );
+			} );
+			payload.fields = JSON.stringify( fields );
+		}
 
 		if ( ! valid ) {
 			showMsg( 'Please fill in all field labels.', 'error' );
@@ -204,17 +441,10 @@
 
 		$btn.prop( 'disabled', true ).text( 'Saving…' );
 
-		$.post( window.ajaxurl, {
-			action:    'fswwp_cc_save_form',
-			nonce:     $sortable.data( 'nonce' ),
-			form_name: name,
-			form_id:   $formId.val(),
-			fields:    JSON.stringify( fields )
-		}, function( r ) {
+		$.post( window.ajaxurl, payload, function( r ) {
 			if ( r.success ) {
 				$formId.val( r.data.form_id );
 				showMsg( r.data.message, 'success' );
-				// Navigate to edit mode for the saved form.
 				setTimeout( function() {
 					window.location.search = '?page=fswwp-comments-core-builder&post_type=fswwp_review&form_id=' + r.data.form_id;
 				}, 800 );
@@ -228,12 +458,18 @@
 		} );
 	} );
 
-	// ---- Clear & New -------------------------------------------------------
+	// ======================================================================
+	//  CLEAR & NEW
+	// ======================================================================
+
 	$( '#fswwp-cc-new-form' ).on( 'click', function() {
 		window.location.search = '?page=fswwp-comments-core-builder&post_type=fswwp_review&new=1';
 	} );
 
-	// ---- Delete form (on list page) ----------------------------------------
+	// ======================================================================
+	//  DELETE FORM (list page)
+	// ======================================================================
+
 	$( '.fswwp-cc-delete-form' ).on( 'click', function() {
 		if ( ! confirm( 'Delete this form?' ) ) { return; }
 		var $btn = $( this );
@@ -248,14 +484,15 @@
 		} );
 	} );
 
-	// ---- Copy shortcode ----------------------------------------------------
-	// List page copy buttons.
+	// ======================================================================
+	//  COPY SHORTCODE
+	// ======================================================================
+
 	$( '.fswwp-cc-copy-btn' ).on( 'click', function() {
 		var code = $( this ).data( 'code' );
 		copyToClipboard( code, $( this ) );
 	} );
 
-	// Click-to-copy on shortcode text.
 	$( '.fswwp-cc-shortcode-copy' ).on( 'click', function() {
 		var code = $( this ).text();
 		copyToClipboard( code, $( this ) );
@@ -264,7 +501,6 @@
 	function copyToClipboard( text, $btn ) {
 		navigator.clipboard.writeText( text ).then( function() {
 			if ( $btn.length ) {
-				var orig = $btn.find( '.dashicons' ).length ? '' : $btn.text();
 				if ( $btn.find( '.dashicons' ).length ) {
 					$btn.find( '.dashicons' ).removeClass( 'dashicons-clipboard' ).addClass( 'dashicons-yes' );
 					setTimeout( function() {
@@ -273,14 +509,16 @@
 				}
 			}
 		} ).catch( function() {
-			// Fallback: select text for manual copy.
 			var $tmp = $( '<textarea>' ).val( text ).appendTo( 'body' ).select();
 			document.execCommand( 'copy' );
 			$tmp.remove();
 		} );
 	}
 
-	// ---- Helpers -----------------------------------------------------------
+	// ======================================================================
+	//  HELPERS
+	// ======================================================================
+
 	function showMsg( text, type ) {
 		$msg.removeClass( 'notice-success notice-error' )
 			.addClass( 'notice notice-' + type + ' notice-alt' )
@@ -291,10 +529,6 @@
 	function buildCard( id, type, label, placeholder, options, required ) {
 		var icon = typeIcons[ type ] || 'dashicons-edit';
 		var badge = typeLabels[ type ] || type;
-
-		var optsRow = type === 'select'
-			? '<label>Options</label><textarea class="fswwp-cc-field-options" rows="3" placeholder="One per line">' + ( options || '' ) + '</textarea><p class="description">One option per line.</p>'
-			: '';
 
 		return '<div class="fswwp-cc-field-card" data-id="' + id + '">' +
 			'<div class="fswwp-cc-field-header">' +

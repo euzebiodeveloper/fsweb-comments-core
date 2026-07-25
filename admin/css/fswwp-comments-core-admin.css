@@ -852,8 +852,16 @@
 	font-size: 16px !important;
 	width: 16px !important;
 	height: 16px !important;
-	line-height: 1 !important;
 	color: #50575e !important;
+}
+
+.button.fswwp-cc-copy-btn .dashicons {
+	line-height: 1 !important;
+}
+
+.button.fswwp-cc-copy-btn .dashicons-clipboard {
+	line-height: 1.2 !important;
+	writing-mode: vertical-rl !important;
 }
 
 .fswwp-cc-action-buttons {
@@ -1057,6 +1065,268 @@
 	font-size: 16px !important;
 	width: 16px !important;
 	height: 16px !important;
-	line-height: 1 !important;
 	color: #50575e !important;
+}
+
+.button.fswwp-cc-copy-btn-inline .dashicons {
+	line-height: 1 !important;
+}
+
+.button.fswwp-cc-copy-btn-inline .dashicons-clipboard {
+	line-height: 1.2 !important;
+	writing-mode: vertical-rl !important;
+}
+
+/* Ensure button-primary dashicons stay white; only background changes on hover */
+.button.button-primary .dashicons,
+.button.button-primary .dashicons-plus-alt {
+	color: #fff !important;
+}
+
+.button.button-primary:hover .dashicons,
+.button.button-primary:hover .dashicons-plus-alt {
+	color: #fff !important;
+}
+
+/* ======================================================================
+   Multi-step Builder
+   ====================================================================== */
+
+#fswwp-cc-steps-container {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.fswwp-cc-step {
+	background: #fff;
+	border: 2px dashed #c3c4c7;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.fswwp-cc-step-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	background: #f0f0f1;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.fswwp-cc-step-handle {
+	cursor: grab;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.fswwp-cc-step-label {
+	flex: 1;
+	border: 1px solid transparent;
+	background: transparent;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 4px;
+	color: #1d2327;
+	min-width: 120px;
+}
+
+.fswwp-cc-step-label:focus {
+	border-color: #2271b1;
+	background: #fff;
+	outline: none;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.fswwp-cc-step-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 6px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #fff;
+	background: #2271b1;
+	border-radius: 11px;
+}
+
+.fswwp-cc-step-delete {
+	cursor: pointer;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 26px;
+	height: 26px;
+	line-height: 26px !important;
+	text-align: center;
+	border-radius: 4px;
+	border: none;
+	background: transparent;
+}
+
+.fswwp-cc-step-delete:hover {
+	color: #d63638;
+	background: rgba(214, 54, 56, 0.08);
+}
+
+.fswwp-cc-step-fields {
+	padding: 12px 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 60px;
+}
+
+.fswwp-cc-step-fields:empty::after {
+	content: 'Drag fields here';
+	display: block;
+	text-align: center;
+	color: #8c8f94;
+	font-size: 13px;
+	padding: 20px 0;
+	font-style: italic;
+}
+
+.fswwp-cc-step-placeholder {
+	border: 2px dashed #2271b1 !important;
+	border-radius: 8px;
+	min-height: 80px;
+	background: rgba(34, 113, 177, 0.04);
+}
+
+#fswwp-cc-add-step {
+	align-self: flex-start;
+	padding: 8px 20px;
+	border: 2px dashed #8c8f94;
+	background: transparent;
+	color: #50575e;
+	font-size: 13px;
+	font-weight: 600;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+#fswwp-cc-add-step:hover {
+	border-color: #2271b1;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.04);
+}
+
+/* Multi-step toggle label */
+#fswwp-cc-multi-step-toggle {
+	font-size: 13px;
+	color: #3c434a;
+	margin-left: 4px;
+}
+
+/* Multi-step badge in list */
+.fswwp-cc-multi-badge {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 1px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.1);
+	border-radius: 4px;
+	vertical-align: middle;
+}
+
+/* ======================================================================
+   Review Editor — Meta box fields
+   ====================================================================== */
+
+.fswwp-review-editor-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.fswwp-review-editor-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.fswwp-review-editor-label {
+	font-weight: 600;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.fswwp-review-editor-required {
+	color: #d63638;
+	margin-left: 2px;
+}
+
+.fswwp-review-editor-input {
+	/* wrapper for alignment */
+}
+
+/* Star rating in admin meta box */
+.fswwp-review-editor-stars {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 3px;
+}
+
+.fswwp-review-editor-stars input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
+.fswwp-review-editor-stars label {
+	font-size: 22px;
+	color: #c3c4c7;
+	cursor: pointer;
+	transition: color 0.15s, transform 0.15s;
+}
+
+.fswwp-review-editor-stars label:hover,
+.fswwp-review-editor-stars label:hover ~ label {
+	color: #f0c040;
+	transform: scale(1.15);
+}
+
+.fswwp-review-editor-stars input:checked ~ label {
+	color: #f0c040;
+	transform: scale(1.05);
+}
+
+.fswwp-review-editor-rating-badge {
+	margin-left: 0;
+	margin-right: 8px;
+	font-size: 11px;
+	color: #50575e;
+	font-weight: 600;
+	background: #f0f0f1;
+	padding: 1px 7px;
+	border-radius: 3px;
+	white-space: nowrap;
+	align-self: center;
+}
+
+/* Image field in admin meta box */
+.fswwp-review-editor-image-empty {
+	width: 150px;
+	height: 100px;
+	border: 2px dashed #c3c4c7;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #8c8f94;
+	font-size: 13px;
+	margin-bottom: 8px;
+	background: #f9f9f9;
 }

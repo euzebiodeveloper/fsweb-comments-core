@@ -451,10 +451,17 @@ class Fswwp_Comments_Core_Admin {
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ( $forms as $fid => $form ) : ?>
+						<?php foreach ( $forms as $fid => $form ) :
+								$field_count = isset( $form['fields'] ) ? count( $form['fields'] ) : 0;
+								$is_multi    = ! empty( $form['multi_step'] );
+								$step_count  = ( $is_multi && ! empty( $form['steps'] ) ) ? count( $form['steps'] ) : 0;
+							?>
 							<tr>
 								<td>
 									<strong><?php echo esc_html( $form['name'] ); ?></strong>
+									<?php if ( $is_multi ) : ?>
+										<span class="fswwp-cc-multi-badge">Multi-step</span>
+									<?php endif; ?>
 								</td>
 								<td>
 									<div class="fswwp-cc-shortcode-copy-wrap">
@@ -464,7 +471,7 @@ class Fswwp_Comments_Core_Admin {
 										</button>
 									</div>
 								</td>
-								<td><?php echo count( $form['fields'] ); ?></td>
+								<td><?php echo (int) ( $is_multi ? $step_count . ' steps' : $field_count . ' fields' ); ?></td>
 								<td>
 									<div class="fswwp-cc-action-buttons">
 										<a href="<?php echo esc_url( add_query_arg( 'form_id', $fid, remove_query_arg( 'new' ) ) ); ?>" class="button button-small fswwp-cc-edit-btn" title="<?php esc_attr_e( 'Edit', 'fswwp-comments-core' ); ?>">
@@ -503,11 +510,17 @@ class Fswwp_Comments_Core_Admin {
 
 		// Fields: from saved form, or default template.
 		if ( $current ) {
-			$fields = $current['fields'];
+			$fields       = $current['fields'];
+			$multi_step   = ! empty( $current['multi_step'] );
+			$steps        = $multi_step && isset( $current['steps'] ) ? $current['steps'] : array();
 		} elseif ( $is_new ) {
-			$fields = $this->default_form_fields();
+			$fields     = $this->default_form_fields();
+			$multi_step = false;
+			$steps      = array();
 		} else {
-			$fields = array();
+			$fields     = array();
+			$multi_step = false;
+			$steps      = array();
 		}
 
 		$nonce    = wp_create_nonce( 'fswwp_builder_save' );
@@ -526,10 +539,14 @@ class Fswwp_Comments_Core_Admin {
 
 			<!-- Toolbar -->
 			<div class="fswwp-cc-builder-toolbar" style="margin-bottom:16px;">
-				<div style="display:flex;align-items:center;gap:12px;">
+				<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
 					<input type="text" id="fswwp-cc-form-name" class="regular-text"
 						value="<?php echo esc_attr( $current ? $current['name'] : '' ); ?>"
 						placeholder="<?php esc_attr_e( 'Form name', 'fswwp-comments-core' ); ?>">
+					<label id="fswwp-cc-multi-step-toggle" style="display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;">
+						<input type="checkbox" id="fswwp-cc-multi-step" <?php checked( $multi_step ); ?>>
+						<?php esc_html_e( 'Multi-step', 'fswwp-comments-core' ); ?>
+					</label>
 					<button type="button" id="fswwp-cc-new-form" class="button">
 						<?php esc_html_e( 'Clear & New', 'fswwp-comments-core' ); ?>
 					</button>
@@ -582,12 +599,45 @@ class Fswwp_Comments_Core_Admin {
 
 				<!-- Canvas -->
 				<div class="fswwp-cc-builder-canvas">
-					<div id="fswwp-cc-form-fields" class="fswwp-cc-fields-sortable" data-nonce="<?php echo esc_attr( $nonce ); ?>">
+					<div id="fswwp-cc-form-fields" class="fswwp-cc-fields-sortable" data-nonce="<?php echo esc_attr( $nonce ); ?>" style="<?php echo $multi_step ? 'display:none;' : ''; ?>">
 						<?php foreach ( $fields as $i => $field ) : ?>
 							<?php $this->render_field_card( $field, $i ); ?>
 						<?php endforeach; ?>
 					</div>
-					<div id="fswwp-cc-builder-empty" style="<?php echo ! empty( $fields ) ? 'display:none;' : ''; ?>">
+
+					<!-- Multi-step container -->
+					<div id="fswwp-cc-steps-container" style="<?php echo $multi_step ? '' : 'display:none;'; ?>">
+						<?php if ( $multi_step && ! empty( $steps ) ) : ?>
+							<?php foreach ( $steps as $si => $step ) : ?>
+								<div class="fswwp-cc-step" data-step-id="<?php echo esc_attr( $step['id'] ); ?>">
+									<div class="fswwp-cc-step-header">
+										<span class="dashicons dashicons-move fswwp-cc-step-handle"></span>
+										<input type="text" class="fswwp-cc-step-label" value="<?php echo esc_attr( $step['label'] ); ?>" placeholder="<?php esc_attr_e( 'Step name', 'fswwp-comments-core' ); ?>">
+										<span class="fswwp-cc-step-badge"><?php echo (int) ( $si + 1 ); ?></span>
+										<button type="button" class="fswwp-cc-step-delete dashicons dashicons-trash" title="<?php esc_attr_e( 'Delete step', 'fswwp-comments-core' ); ?>"></button>
+									</div>
+									<div class="fswwp-cc-step-fields fswwp-cc-fields-sortable" data-step="<?php echo esc_attr( $step['id'] ); ?>">
+										<?php foreach ( $step['fields'] as $fi => $field ) : ?>
+											<?php $this->render_field_card( $field, $fi ); ?>
+										<?php endforeach; ?>
+									</div>
+								</div>
+							<?php endforeach; ?>
+						<?php else : ?>
+							<div class="fswwp-cc-step" data-step-id="step_1">
+								<div class="fswwp-cc-step-header">
+									<span class="dashicons dashicons-move fswwp-cc-step-handle"></span>
+									<input type="text" class="fswwp-cc-step-label" value="<?php esc_attr_e( 'Step 1', 'fswwp-comments-core' ); ?>" placeholder="<?php esc_attr_e( 'Step name', 'fswwp-comments-core' ); ?>">
+									<span class="fswwp-cc-step-badge">1</span>
+									<button type="button" class="fswwp-cc-step-delete dashicons dashicons-trash" title="<?php esc_attr_e( 'Delete step', 'fswwp-comments-core' ); ?>"></button>
+								</div>
+								<div class="fswwp-cc-step-fields fswwp-cc-fields-sortable" data-step="step_1"></div>
+							</div>
+						<?php endif; ?>
+						<button type="button" id="fswwp-cc-add-step" class="button">+ Add Step</button>
+					</div>
+
+					<div id="fswwp-cc-builder-empty" style="<?php echo ! $multi_step && ! empty( $fields ) ? 'display:none;' : ( $multi_step ? 'display:none;' : '' ); ?>">
 						<p><?php esc_html_e( 'Drag fields here from the palette on the left. Click a field to edit its properties.', 'fswwp-comments-core' ); ?></p>
 					</div>
 					<div id="fswwp-cc-builder-message" class="notice" style="display:none;"></div>
@@ -787,25 +837,21 @@ class Fswwp_Comments_Core_Admin {
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$raw    = isset( $_POST['fields'] ) ? wp_unslash( $_POST['fields'] ) : '[]';
-		$name   = isset( $_POST['form_name'] ) ? sanitize_text_field( wp_unslash( $_POST['form_name'] ) ) : '';
-		$form_id = isset( $_POST['form_id'] ) ? sanitize_key( wp_unslash( $_POST['form_id'] ) ) : '';
+		$raw      = isset( $_POST['fields'] ) ? wp_unslash( $_POST['fields'] ) : '[]';
+		$name     = isset( $_POST['form_name'] ) ? sanitize_text_field( wp_unslash( $_POST['form_name'] ) ) : '';
+		$form_id  = isset( $_POST['form_id'] ) ? sanitize_key( wp_unslash( $_POST['form_id'] ) ) : '';
+		$multi    = isset( $_POST['multi_step'] ) && '1' === $_POST['multi_step'];
+		$raw_steps = isset( $_POST['steps'] ) ? wp_unslash( $_POST['steps'] ) : '[]';
 		// phpcs:enable
-
-		$fields = json_decode( $raw, true );
-		if ( ! is_array( $fields ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid data.', 'fswwp-comments-core' ) ) );
-		}
 
 		if ( '' === $name ) {
 			$name = __( 'Untitled Form', 'fswwp-comments-core' );
 		}
 
-		// Sanitize fields.
-		$clean = array();
+		// Sanitize helper for a single field.
 		$valid_types = array( 'image', 'text', 'textarea', 'email', 'url', 'date', 'select', 'rating' );
-		foreach ( $fields as $field ) {
-			$clean[] = array(
+		$sanitize_field = function( $field ) use ( $valid_types ) {
+			return array(
 				'id'          => sanitize_key( $field['id'] ),
 				'type'        => in_array( $field['type'], $valid_types, true ) ? $field['type'] : 'text',
 				'label'       => sanitize_text_field( $field['label'] ),
@@ -813,7 +859,7 @@ class Fswwp_Comments_Core_Admin {
 				'required'    => ! empty( $field['required'] ),
 				'options'     => isset( $field['options'] ) ? sanitize_textarea_field( $field['options'] ) : '',
 			);
-		}
+		};
 
 		// Load existing forms.
 		$forms = get_option( 'fswwp_review_forms', array() );
@@ -823,10 +869,54 @@ class Fswwp_Comments_Core_Admin {
 			$form_id = substr( wp_generate_password( 8, false, false ), 0, 8 );
 		}
 
-		$forms[ $form_id ] = array(
-			'name'   => $name,
-			'fields' => $clean,
+		$form_data = array(
+			'name'       => $name,
+			'multi_step' => $multi,
 		);
+
+		if ( $multi ) {
+			// Multi-step: sanitize steps.
+			$steps_data = json_decode( $raw_steps, true );
+			if ( ! is_array( $steps_data ) ) {
+				$steps_data = array();
+			}
+			$clean_steps = array();
+			foreach ( $steps_data as $step ) {
+				$clean_fields = array();
+				if ( ! empty( $step['fields'] ) && is_array( $step['fields'] ) ) {
+					foreach ( $step['fields'] as $f ) {
+						$clean_fields[] = $sanitize_field( $f );
+					}
+				}
+				$clean_steps[] = array(
+					'id'     => sanitize_key( isset( $step['id'] ) ? $step['id'] : '' ),
+					'label'  => sanitize_text_field( isset( $step['label'] ) ? $step['label'] : '' ),
+					'fields' => $clean_fields,
+				);
+			}
+			$form_data['steps'] = $clean_steps;
+			// Also store flat fields for backwards compat.
+			$all_fields = array();
+			foreach ( $clean_steps as $s ) {
+				foreach ( $s['fields'] as $f ) {
+					$all_fields[] = $f;
+				}
+			}
+			$form_data['fields'] = $all_fields;
+		} else {
+			// Normal: sanitize fields.
+			$fields = json_decode( $raw, true );
+			if ( ! is_array( $fields ) ) {
+				$fields = array();
+			}
+			$clean = array();
+			foreach ( $fields as $field ) {
+				$clean[] = $sanitize_field( $field );
+			}
+			$form_data['fields'] = $clean;
+		}
+
+		$forms[ $form_id ] = $form_data;
 
 		update_option( 'fswwp_review_forms', $forms );
 
@@ -1140,12 +1230,12 @@ class Fswwp_Comments_Core_Admin {
 	private function default_view_row_from_form( $form_id, $forms ) {
 		$components = $this->get_available_components( $form_id, $forms );
 
-		// Image on the left, remaining fields on the right.
+		// Left: image + name. Right: everything else.
 		$left  = array();
 		$right = array();
 
 		foreach ( $components as $comp ) {
-			if ( 'image' === $comp['type'] ) {
+			if ( 'image' === $comp['type'] || ( 'text' === $comp['type'] && false !== stripos( $comp['id'], 'name' ) ) ) {
 				$left[] = array( 'type' => $comp['type'], 'field_id' => $comp['id'] );
 			} else {
 				$right[] = array( 'type' => $comp['type'], 'field_id' => $comp['id'] );

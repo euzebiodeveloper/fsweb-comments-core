@@ -75,16 +75,19 @@
 }
 
 .fswwp-review-stars-display {
-	font-size: 18px;
+	font-size: 20px;
 	letter-spacing: 2px;
+	line-height: 1;
 }
 
 .fswwp-star {
 	color: #dcdcde;
+	font-size: 20px;
 }
 
 .fswwp-star--filled {
 	color: #f0c040;
+	font-size: 20px;
 }
 
 .fswwp-review-date {
@@ -101,4 +104,115 @@
 	color: #50575e;
 	text-transform: uppercase;
 	font-weight: 600;
+}
+
+/* ======================================================================
+   Multi-step Form
+   ====================================================================== */
+
+/* Step indicator bar */
+.fswwp-review-steps-indicator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 28px;
+	padding: 0 20px;
+	flex-wrap: wrap;
+}
+
+.fswwp-review-step-dot {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	position: relative;
+}
+
+.fswwp-review-step-num {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 700;
+	color: #8c8f94;
+	background: #f0f0f1;
+	border: 2px solid #dcdcde;
+	transition: all 0.2s;
+}
+
+.fswwp-review-step-dot.active .fswwp-review-step-num {
+	color: #fff;
+	background: #2271b1;
+	border-color: #2271b1;
+}
+
+.fswwp-review-step-label {
+	font-size: 12px;
+	color: #8c8f94;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.fswwp-review-step-dot.active .fswwp-review-step-label {
+	color: #1d2327;
+	font-weight: 600;
+}
+
+.fswwp-review-step-line {
+	flex: 1;
+	height: 2px;
+	background: #dcdcde;
+	margin: 0 8px;
+	margin-bottom: 18px;
+	min-width: 30px;
+}
+
+/* Step panel */
+.fswwp-review-step-panel {
+	animation: fswwpStepFadeIn 0.3s ease;
+}
+
+@keyframes fswwpStepFadeIn {
+	from { opacity: 0; transform: translateX(20px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+
+.fswwp-review-step-title {
+	margin: 0 0 16px;
+	font-size: 18px;
+	font-weight: 600;
+	color: #1d2327;
+	text-align: center;
+}
+
+/* Navigation buttons */
+.fswwp-review-steps-nav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 24px;
+}
+
+.fswwp-review-step-prev,
+.fswwp-review-step-next {
+	padding: 10px 24px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+	border-radius: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #1d2327;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.fswwp-review-step-prev:hover,
+.fswwp-review-step-next:hover {
+	border-color: #2271b1;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.04);
 }

@@ -567,16 +567,18 @@
 
 		$btn.prop( 'disabled', true ).text( 'Saving…' );
 		$.post( window.ajaxurl, {
-			action:    'fswwp_cc_save_view',
-			nonce:     nonce,
-			view_name: name,
-			view_id:   $( '#fswwp-cc-view-id' ).val(),
-			layout:    $( '#fswwp-cc-view-layout' ).val(),
-			count:     $( '#fswwp-cc-view-count' ).val(),
-			order:     $( '#fswwp-cc-view-order' ).val(),
-			category:  '',
-			form_id:   $formSelect.val(),
-			rows:      JSON.stringify( data )
+			action:     'fswwp_cc_save_view',
+			nonce:      nonce,
+			view_name:  name,
+			view_id:    $( '#fswwp-cc-view-id' ).val(),
+			layout:     $( '#fswwp-cc-view-layout' ).val(),
+			count:      $( '#fswwp-cc-view-count' ).val(),
+			order:      $( '#fswwp-cc-view-order' ).val(),
+			category:   '',
+			form_id:    $formSelect.val(),
+			skin:       $( '#fswwp-cc-view-skin' ).val(),
+			custom_css: $( '#fswwp-cc-view-custom-css' ).val(),
+			rows:       JSON.stringify( data )
 		}, function( r ) {
 			if ( r.success ) {
 				$( '#fswwp-cc-view-id' ).val( r.data.view_id );
@@ -714,7 +716,10 @@
 		$.each( fields, function( i, f ) {
 			var val = styles[ f.key ] || '';
 			html += '<div class="fswwp-cc-field-row">' +
-				'<label>' + f.label + '</label>';
+				'<div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;">' +
+				'<label style="flex:1;margin:0;">' + f.label + '</label>' +
+				'<button type="button" class="fswwp-cc-style-reset" title="Reset to default" data-key="' + f.key + '">&times;</button>' +
+				'</div>';
 
 			if ( f.type === 'select' ) {
 				html += '<select class="fswwp-cc-comp-style" data-key="' + f.key + '">';
@@ -723,7 +728,10 @@
 				} );
 				html += '</select>';
 			} else if ( f.type === 'color' ) {
-				html += '<input type="color" class="fswwp-cc-comp-style" data-key="' + f.key + '" value="' + ( val || '#000000' ) + '">';
+				html += '<div style="display:flex;gap:6px;align-items:center;">' +
+					'<input type="color" class="fswwp-cc-comp-style" data-key="' + f.key + '" value="' + ( val || '#000000' ) + '">' +
+					'<input type="text" class="fswwp-cc-comp-style-txt widefat" data-key="' + f.key + '" value="' + val + '" placeholder="' + ( f.placeholder || '#hex' ) + '" style="flex:1;">' +
+					'</div>';
 			} else if ( f.type === 'color_text' ) {
 				html += '<div style="display:flex;gap:6px;align-items:center;">' +
 					'<input type="color" class="fswwp-cc-comp-style-color" data-key="' + f.key + '" value="' + ( val && val !== 'transparent' ? val : '#ffffff' ) + '" style="width:36px;height:30px;padding:0;border:none;cursor:pointer;">' +
@@ -737,10 +745,34 @@
 
 		$compBody.html( html );
 
+		// Sync color ↔ text for color inputs.
+		$compBody.find( '.fswwp-cc-comp-style[type="color"]' ).on( 'input', function() {
+			var $txt = $( this ).closest( '.fswwp-cc-field-row' ).find( '.fswwp-cc-comp-style-txt' );
+			$txt.val( this.value );
+		} );
+		$compBody.find( '.fswwp-cc-comp-style-txt' ).on( 'input', function() {
+			var $color = $( this ).closest( '.fswwp-cc-field-row' ).find( 'input[type="color"].fswwp-cc-comp-style' );
+			$color.val( this.value );
+		} );
+
 		// Sync color_text inputs: text ↔ color picker.
 		$compBody.find( '.fswwp-cc-comp-style-color' ).on( 'input', function() {
 			var $txt = $( this ).closest( '.fswwp-cc-field-row' ).find( 'input[type="text"].fswwp-cc-comp-style' );
 			$txt.val( this.value );
+		} );
+
+		// Reset button — clears the field back to theme default.
+		$compBody.find( '.fswwp-cc-style-reset' ).on( 'click', function() {
+			var key  = $( this ).data( 'key' );
+			var $row = $( this ).closest( '.fswwp-cc-field-row' );
+			// Clear the main style input(s).
+			$row.find( '.fswwp-cc-comp-style, .fswwp-cc-comp-style-txt, .fswwp-cc-comp-style-color' ).each( function() {
+				if ( 'SELECT' === this.tagName ) {
+					this.selectedIndex = 0;
+				} else {
+					$( this ).val( '' );
+				}
+			} );
 		} );
 
 		$compModal.show();
@@ -754,11 +786,22 @@
 	function applyCompStyles() {
 		if ( ! currentComp ) { return; }
 		var styles = {};
+
+		// Read selects and text inputs (skip color pickers — read their text companions instead).
 		$compBody.find( '.fswwp-cc-comp-style' ).each( function() {
+			if ( 'color' === this.type ) { return; } // handled below
 			var key = $( this ).data( 'key' );
 			var val = $( this ).val().trim();
 			if ( val ) { styles[ key ] = val; }
 		} );
+
+		// Read color inputs via their text companions.
+		$compBody.find( '.fswwp-cc-comp-style-txt' ).each( function() {
+			var key = $( this ).data( 'key' );
+			var val = $( this ).val().trim();
+			if ( val ) { styles[ key ] = val; }
+		} );
+
 		// Also pick up color_text text inputs.
 		$compBody.find( '.fswwp-cc-comp-style-color' ).each( function() {
 			var key  = $( this ).data( 'key' );
@@ -770,28 +813,7 @@
 		currentComp.data( 'styles', styles );
 		currentComp.attr( 'data-styles', JSON.stringify( styles ) );
 
-		// Update preview on canvas.
-		applyPreviewStyles( currentComp, styles );
-
 		closeCompModal();
-	}
-
-	function applyPreviewStyles( $comp, styles ) {
-		var css = {};
-		$.each( styles, function( key, val ) {
-			var prop = key.replace( /_/g, '-' );
-			css[ prop ] = val;
-		} );
-
-		// For rating, apply star-size to font-size and star-color to color.
-		if ( $comp.data( 'type' ) === 'rating' && styles.star_size ) {
-			css[ 'font-size' ] = styles.star_size;
-		}
-		if ( $comp.data( 'type' ) === 'rating' && styles.star_color ) {
-			css[ 'color' ] = styles.star_color;
-		}
-
-		$comp.css( css );
 	}
 
 	// ---- Modal events ------------------------------------------------------
@@ -842,16 +864,18 @@
 
 		$btn.prop( 'disabled', true ).text( 'Saving…' );
 		$.post( window.ajaxurl, {
-			action:    'fswwp_cc_save_view',
-			nonce:     nonce,
-			view_name: name,
-			view_id:   $( '#fswwp-cc-view-id' ).val(),
-			layout:    $( '#fswwp-cc-view-layout' ).val(),
-			count:     $( '#fswwp-cc-view-count' ).val(),
-			order:     $( '#fswwp-cc-view-order' ).val(),
-			category:  '',
-			form_id:   $formSelect.val(),
-			rows:      JSON.stringify( data )
+			action:     'fswwp_cc_save_view',
+			nonce:      nonce,
+			view_name:  name,
+			view_id:    $( '#fswwp-cc-view-id' ).val(),
+			layout:     $( '#fswwp-cc-view-layout' ).val(),
+			count:      $( '#fswwp-cc-view-count' ).val(),
+			order:      $( '#fswwp-cc-view-order' ).val(),
+			category:   '',
+			form_id:    $formSelect.val(),
+			skin:       $( '#fswwp-cc-view-skin' ).val(),
+			custom_css: $( '#fswwp-cc-view-custom-css' ).val(),
+			rows:       JSON.stringify( data )
 		}, function( r ) {
 			if ( r.success ) {
 				$( '#fswwp-cc-view-id' ).val( r.data.view_id );
@@ -867,6 +891,15 @@
 			showMsg( 'Network error.', 'error' );
 			$btn.prop( 'disabled', false ).text( 'Save View' );
 		} );
+	} );
+
+	// ---- Skin selector: toggle custom CSS textarea -----------------------
+	$( '#fswwp-cc-view-skin' ).on( 'change', function() {
+		if ( 'custom' === $( this ).val() ) {
+			$( '#fswwp-cc-view-custom-css' ).slideDown( 200 );
+		} else {
+			$( '#fswwp-cc-view-custom-css' ).slideUp( 200 );
+		}
 	} );
 
 } )( jQuery );

@@ -58,7 +58,14 @@ class Fswwp_Comments_Core_Shortcode {
 			'category'   => '',
 			'order'      => 'newest',
 			'show_image' => 'yes',
+			'_skin'      => 'default',
+			'_custom_css' => '',
 		), $atts, 'fswwp_reviews' );
+
+		// Block output if license is not active.
+		if ( 'active' !== get_option( 'fswwp_license_status', 'inactive' ) ) {
+			return '';
+		}
 
 		// If a saved view ID is provided, merge its config.
 		if ( ! empty( $atts['id'] ) ) {
@@ -71,6 +78,8 @@ class Fswwp_Comments_Core_Shortcode {
 				$atts['category']   = isset( $view['category'] ) ? $view['category'] : '';
 				$atts['show_image'] = isset( $view['show_image'] ) && $view['show_image'] ? 'yes' : 'no';
 				$atts['_rows']      = isset( $view['rows'] ) ? $view['rows'] : null;
+				$atts['_skin']      = isset( $view['skin'] ) ? $view['skin'] : 'default';
+				$atts['_custom_css'] = isset( $view['custom_css'] ) ? $view['custom_css'] : '';
 			}
 		}
 
@@ -121,7 +130,7 @@ class Fswwp_Comments_Core_Shortcode {
 
 		// Enqueue assets on first shortcode render.
 		if ( ! self::$assets_loaded ) {
-			$this->enqueue_assets( $atts['layout'] );
+			$this->enqueue_assets( $atts['layout'], $atts['_skin'], $atts['_custom_css'] );
 			self::$assets_loaded = true;
 		}
 
@@ -205,10 +214,12 @@ class Fswwp_Comments_Core_Shortcode {
 	/**
 	 * Enqueue CSS and JS for the given layout.
 	 *
-	 * @param string $layout Layout name.
+	 * @param string $layout     Layout name.
+	 * @param string $skin       Skin name (default, dark, minimal, colorful, flat, custom).
+	 * @param string $custom_css Custom CSS string (only used when skin=custom).
 	 * @return void
 	 */
-	private function enqueue_assets( $layout ) {
+	private function enqueue_assets( $layout, $skin = 'default', $custom_css = '' ) {
 		$css_url = FSWWP_COMMENTS_CORE_URL . 'public/css/';
 		$js_url  = FSWWP_COMMENTS_CORE_URL . 'public/js/';
 		$version = FSWWP_COMMENTS_CORE_VERSION;
@@ -230,6 +241,30 @@ class Fswwp_Comments_Core_Shortcode {
 				array( 'fswwp-reviews-base' ),
 				$version
 			);
+		}
+
+		// Skin CSS — loaded after base + layout, so it overrides them.
+		$valid_skins = array( 'dark', 'minimal', 'colorful', 'flat' );
+		if ( in_array( $skin, $valid_skins, true ) ) {
+			$skin_css = FSWWP_COMMENTS_CORE_DIR . 'public/css/fswwp-reviews-skin-' . $skin . '.css';
+			if ( file_exists( $skin_css ) ) {
+				$skin_handle = 'fswwp-reviews-skin';
+				wp_enqueue_style(
+					$skin_handle,
+					$css_url . 'fswwp-reviews-skin-' . $skin . '.css',
+					array( 'fswwp-reviews-base' ),
+					$version
+				);
+			}
+		}
+
+		// Custom CSS — injected inline with highest priority.
+		// Uses a dummy handle registered after everything else so it comes last.
+		if ( 'custom' === $skin && ! empty( $custom_css ) ) {
+			$custom_handle = 'fswwp-reviews-custom';
+			wp_register_style( $custom_handle, false, array( 'fswwp-reviews-base' ), $version );
+			wp_enqueue_style( $custom_handle );
+			wp_add_inline_style( $custom_handle, $custom_css );
 		}
 
 		// Slider JS (Swiper-like minimal, only for slider layout).

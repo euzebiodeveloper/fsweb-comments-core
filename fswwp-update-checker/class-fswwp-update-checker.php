@@ -94,6 +94,14 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		private $assets;
 
 		/**
+		 * License page URL — shown in admin notices.
+		 *
+		 * @since 1.0.0
+		 * @var string
+		 */
+		private $license_url = '';
+
+		/**
 		 * Option name for metadata cache.
 		 *
 		 * @var string
@@ -266,6 +274,17 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		}
 
 		/**
+		 * Set the license page URL shown in admin notices.
+		 *
+		 * @since 1.0.0
+		 * @param string $url Full admin URL to the license settings page.
+		 * @return void
+		 */
+		public function set_license_url( $url ) {
+			$this->license_url = esc_url_raw( $url );
+		}
+
+		/**
 		 * Get the last license error, if any.
 		 *
 		 * @return string 'invalid_key', 'forbidden', or empty string.
@@ -425,21 +444,25 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 
 			if ( 'invalid_key' === $error ) {
 				$message = sprintf(
-					/* translators: %s: plugin name */
+					/* translators: 1: plugin name, 2: license page URL */
 					__(
-						'%s: Automatic updates are disabled because your license key is invalid or missing. Please enter a valid license key to receive updates.',
+						'%1$s is not activated. %2$sPlease activate your license%3$s to receive automatic updates.',
 						'fswwp-update-checker'
 					),
-					'<strong>' . esc_html( $plugin_name ) . '</strong>'
+					'<strong>' . esc_html( $plugin_name ) . '</strong>',
+					$this->license_url ? '<a href="' . esc_url( $this->license_url ) . '">' : '',
+					$this->license_url ? '</a>' : ''
 				);
 			} else {
 				$message = sprintf(
-					/* translators: %s: plugin name */
+					/* translators: 1: plugin name, 2: license page URL */
 					__(
-						'%s: Automatic updates are disabled — your license may be expired or assigned to a different domain. Please check your license status to resume updates.',
+						'%1$s: Automatic updates are disabled — your license may be expired or assigned to a different domain. %2$sCheck your license status%3$s to resume updates.',
 						'fswwp-update-checker'
 					),
-					'<strong>' . esc_html( $plugin_name ) . '</strong>'
+					'<strong>' . esc_html( $plugin_name ) . '</strong>',
+					$this->license_url ? '<a href="' . esc_url( $this->license_url ) . '">' : '',
+					$this->license_url ? '</a>' : ''
 				);
 			}
 
@@ -447,7 +470,10 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				'<div class="notice notice-warning"><p>%s</p></div>',
 				wp_kses(
 					$message,
-					array( 'strong' => array() )
+					array(
+						'strong' => array(),
+						'a'      => array( 'href' => array() ),
+					)
 				)
 			);
 		}

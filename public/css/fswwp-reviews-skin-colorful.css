@@ -1,0 +1,70 @@
+/**
+ * FSWWP Reviews — Skin: Colorful
+ *
+ * Vibrant, gradient-rich theme with bold colors.
+ * Loaded AFTER base styles so these rules take precedence.
+ *
+ * @package    Fswwp_Comments_Core
+ * @subpackage Fswwp_Comments_Core/public/css
+ * @since      1.0.0
+ */
+
+/* Card */
+.fswwp-review-card {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-radius: 12px;
+	padding: 28px;
+	box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.fswwp-review-card:hover {
+	box-shadow: 0 8px 30px rgba(102, 126, 234, 0.45);
+	transform: translateY(-4px);
+}
+
+/* Avatar */
+.fswwp-review-avatar {
+	border: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Name */
+.fswwp-review-name {
+	color: #fff;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+/* Content */
+.fswwp-review-content {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 15px;
+}
+
+/* Stars */
+.fswwp-star {
+	color: rgba(255, 255, 255, 0.25);
+	font-size: 22px;
+}
+
+.fswwp-star--filled {
+	color: #ffd700;
+}
+
+/* Date */
+.fswwp-review-date {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+/* Category tag */
+.fswwp-review-category {
+	background: rgba(255, 255, 255, 0.2);
+	color: #fff;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+/* Links */
+.fswwp-review-email,
+.fswwp-review-url {
+	color: #ffd700;
+}

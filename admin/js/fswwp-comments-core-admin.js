@@ -8,12 +8,15 @@
 ( function( $, data ) {
 	'use strict';
 
-	var $message  = $( '#fswwp-cc-license-message' );
-	var $status   = $( '#fswwp-cc-license-status' );
-	var $expires  = $( '#fswwp-cc-license-expires' );
-	var $expRow   = $( '#fswwp-cc-expires-row' );
-	var $keyInput = $( '#fswwp-cc-license-key' );
-	var $submit   = $( '.fswwp-cc-license-card .submit' );
+	var $message   = $( '#fswwp-cc-license-message' );
+	var $status    = $( '#fswwp-cc-license-status' );
+	var $expires   = $( '#fswwp-cc-license-expires' );
+	var $expRow    = $( '#fswwp-cc-expires-row' );
+	var $keyInput  = $( '#fswwp-cc-license-key' );
+	var $btnActivate   = $( '#fswwp-cc-activate-license' );
+	var $btnDeactivate = $( '#fswwp-cc-deactivate-license' );
+	var $btnValidate   = $( '#fswwp-cc-validate-license' );
+	var $spinner       = $( '#fswwp-cc-validate-spinner' );
 
 	function showMessage( text, type ) {
 		$message
@@ -21,6 +24,10 @@
 			.addClass( 'notice notice-' + type )
 			.html( '<p>' + $( '<span>' ).text( text ).html() + '</p>' )
 			.show();
+	}
+
+	function hideMessage() {
+		$message.hide();
 	}
 
 	function updateUI( status, expiresText ) {
@@ -43,10 +50,20 @@
 
 		if ( 'active' === status ) {
 			$keyInput.prop( 'readonly', true );
-			$submit.html( '<button type="button" id="fswwp-cc-deactivate-license" class="button button-secondary">Deactivate</button>' );
-		} else {
+			$btnActivate.hide();
+			$btnDeactivate.show();
+			$btnValidate.hide();
+		} else if ( 'inactive' === status ) {
 			$keyInput.prop( 'readonly', false );
-			$submit.html( '<button type="button" id="fswwp-cc-activate-license" class="button button-primary">Activate</button>' );
+			$btnDeactivate.hide();
+			$btnActivate.show();
+			$btnValidate.hide();
+		} else {
+			// expired, pending, invalid — show Verify, hide Activate/Deactivate.
+			$keyInput.prop( 'readonly', false );
+			$btnActivate.hide();
+			$btnDeactivate.hide();
+			$btnValidate.show();
 		}
 	}
 
@@ -55,6 +72,7 @@
 		var labelKey  = action + 'ing';
 		var origText  = $btn.text();
 
+		hideMessage();
 		$btn.prop( 'disabled', true ).text( data.i18n[ labelKey ] || '…' );
 
 		// Calls fswwp-license-checker's AJAX handlers.
@@ -64,6 +82,7 @@
 			license_key: key
 		}, function( response ) {
 			if ( response.success ) {
+				$btn.prop( 'disabled', false ).text( origText );
 				updateUI( response.data.status, response.data.expires || '' );
 				showMessage( response.data.message, 'success' );
 			} else {
@@ -90,6 +109,33 @@
 			return;
 		}
 		doAjax( 'deactivate', $keyInput.val().trim() );
+	} );
+
+	// Verify / sync license status with the remote server.
+	$( document ).on( 'click', '#fswwp-cc-validate-license', function() {
+		hideMessage();
+		$btnValidate.prop( 'disabled', true );
+		$spinner.show();
+
+		$.post( data.ajax_url, {
+			action:      'fswwp_validate_license',
+			nonce:       data.nonce,
+			license_key: $keyInput.val().trim()
+		}, function( response ) {
+			$btnValidate.prop( 'disabled', false );
+			$spinner.hide();
+
+			if ( response.success ) {
+				updateUI( response.data.status, response.data.expires || '' );
+				showMessage( response.data.message, 'success' );
+			} else {
+				showMessage( response.data.message, 'error' );
+			}
+		}, 'json' ).fail( function() {
+			$btnValidate.prop( 'disabled', false );
+			$spinner.hide();
+			showMessage( 'Network error. Please try again.', 'error' );
+		} );
 	} );
 
 	// Rating stars in Review Details meta box — update (4/5) badge on change.

@@ -197,6 +197,11 @@ class Fswwp_Comments_Core {
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_delete_view', $plugin_admin, 'ajax_delete_view' );
 		$this->loader->add_action( 'wp_ajax_fswwp_cc_get_form_components', $plugin_admin, 'ajax_get_form_components' );
 
+		// AJAX — license activation / deactivation.
+		$this->loader->add_action( 'wp_ajax_fswwp_activate_license', $plugin_admin, 'ajax_activate_license' );
+		$this->loader->add_action( 'wp_ajax_fswwp_deactivate_license', $plugin_admin, 'ajax_deactivate_license' );
+		$this->loader->add_action( 'wp_ajax_fswwp_validate_license', $plugin_admin, 'ajax_validate_license' );
+
 		// Review Editor — meta box + custom columns (self-registers via constructor).
 		new Fswwp_Comments_Core_Review_Editor();
 

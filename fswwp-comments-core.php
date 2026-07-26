@@ -44,6 +44,16 @@ define( 'FSWWP_COMMENTS_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FSWWP_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
 
 /**
+ * Base URL for the license API (fswwp-license-checker REST endpoints).
+ *
+ * Override in wp-config.php if needed:
+ *   define( 'FSWWP_LICENSE_API_URL', 'https://yoursite.com/wp-json/fswwp/v1/license' );
+ */
+if ( ! defined( 'FSWWP_LICENSE_API_URL' ) ) {
+	define( 'FSWWP_LICENSE_API_URL', 'https://flowsyncweb.local/wp-json/fswwp/v1/license' );
+}
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-fswwp-comments-core-activator.php
  */
@@ -79,6 +89,11 @@ require plugin_dir_path( __FILE__ ) . 'fswwp-update-checker/index.php';
 $fswwp_update_checker = new FSWWP_Update_Checker_1_0(
 	'http://127.0.0.1:8000/api/releases/fswwp-comments-core',
 	__FILE__
+);
+
+// Set the license page URL so admin notices link to the correct page.
+$fswwp_update_checker->set_license_url(
+	admin_url( 'edit.php?post_type=fswwp_review&page=fswwp-comments-core-license' )
 );
 
 // Inject license key so the update-checker sends it with every request.

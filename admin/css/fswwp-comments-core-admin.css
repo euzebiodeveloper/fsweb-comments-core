@@ -1330,3 +1330,59 @@
 	margin-bottom: 8px;
 	background: #f9f9f9;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Views Builder — Style (Skin) Block
+/* ------------------------------------------------------------------ */
+.fswwp-cc-builder-styles select {
+	margin-bottom: 8px;
+}
+
+.fswwp-cc-code-editor {
+	width: 100%;
+	font-family: "Courier New", Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	resize: vertical;
+	background: #1e1e2e;
+	color: #e0e0f0;
+	border: 1px solid #3a3a5c;
+	border-radius: 4px;
+	padding: 10px;
+	tab-size: 4;
+	box-sizing: border-box;
+	min-height: 160px;
+}
+
+.fswwp-cc-code-editor:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Component Modal — Reset button
+/* ------------------------------------------------------------------ */
+.fswwp-cc-style-reset {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 50%;
+	background: #fff;
+	color: #8c8f94;
+	font-size: 14px;
+	line-height: 1;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: all 0.15s;
+}
+
+.fswwp-cc-style-reset:hover {
+	border-color: #c00;
+	color: #c00;
+	background: #fef0f0;
+}

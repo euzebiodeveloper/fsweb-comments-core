@@ -9,6 +9,8 @@ jobs:
     # Só executa quando o PR for mergeado (não apenas fechado)
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -49,12 +51,19 @@ jobs:
           path: fswwp-comments-core.zip
           retention-days: 30
 
-      - name: Create Release (optional)
+      - name: Extract plugin version
+        id: version
+        run: |
+          VERSION=$(grep -oP 'Version:\s*\K[0-9]+\.[0-9]+\.[0-9]+' fswwp-comments-core.php)
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Versão detectada: ${VERSION}"
+
+      - name: Create Release
         if: github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'master'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: v${{ steps.version.outputs.VERSION }}
           body: |
             Build gerado automaticamente a partir do PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
 

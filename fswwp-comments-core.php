@@ -16,7 +16,7 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
@@ -33,10 +33,10 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Start at version 1.0.1 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.0' );
+define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.1' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -113,7 +113,7 @@ if ( ! empty( $fswwp_license_key ) ) {
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    1.0.1
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin bootstrap; contains plugin slug.
 function run_fswwp_comments_core() {

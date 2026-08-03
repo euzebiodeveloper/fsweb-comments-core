@@ -56,6 +56,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.1 - 2026-08-02 =
+* Adjust: Release test.
+
 = 1.0.0 =
 * Initial release.
 * Custom form builder with 8 field types.
@@ -64,6 +67,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.1 - 2026-08-02 =
+Adjust: Release test.
 
 = 1.0.0 =
 Initial release.

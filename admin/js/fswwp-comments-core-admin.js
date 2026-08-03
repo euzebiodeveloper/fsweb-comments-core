@@ -53,13 +53,19 @@
 			$btnActivate.hide();
 			$btnDeactivate.show();
 			$btnValidate.hide();
+		} else if ( 'pending' === status ) {
+			// Sold or Delivered with available slots — ready to activate.
+			$keyInput.prop( 'readonly', true );
+			$btnDeactivate.hide();
+			$btnActivate.show();
+			$btnValidate.show();
 		} else if ( 'inactive' === status ) {
 			$keyInput.prop( 'readonly', false );
 			$btnDeactivate.hide();
-			$btnActivate.show();
-			$btnValidate.hide();
+			$btnActivate.hide();
+			$btnValidate.show();
 		} else {
-			// expired, pending, invalid — show Verify, hide Activate/Deactivate.
+			// expired, invalid — show Verify, hide Activate/Deactivate.
 			$keyInput.prop( 'readonly', false );
 			$btnActivate.hide();
 			$btnDeactivate.hide();

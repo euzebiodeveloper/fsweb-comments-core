@@ -23,6 +23,17 @@ if ( ! defined( 'WPINC' ) ) {
 class Metadata {
 
 	/**
+	 * Maximum age of cached metadata in seconds (2 hours).
+	 *
+	 * After this time, get_cached() returns null so stale data
+	 * is never served — the next cron tick or manual check will
+	 * attempt a fresh fetch.
+	 *
+	 * @var int
+	 */
+	const CACHE_TTL = 2 * HOUR_IN_SECONDS;
+
+	/**
 	 * Remote JSON metadata URL.
 	 *
 	 * @var string
@@ -120,6 +131,20 @@ class Metadata {
 	}
 
 	/**
+	 * Get the last server error message, if any.
+	 *
+	 * Returns a generic error message when the last fetch failed due to
+	 * a network error, HTTP 5xx, invalid JSON response, or any other
+	 * non-license server-side problem.
+	 *
+	 * @return string Error message or empty string if the last fetch succeeded.
+	 */
+	public function get_last_server_error() {
+		$error = get_option( $this->option_name . '_server_error', '' );
+		return is_string( $error ) ? $error : '';
+	}
+
+	/**
 	 * Check whether a valid license is configured.
 	 *
 	 * Returns true only when a license key has been set AND no license
@@ -142,6 +167,10 @@ class Metadata {
 
 		if ( is_wp_error( $response ) ) {
 			$this->log( 'fetch_error', $response->get_error_message() );
+			update_option(
+				$this->option_name . '_server_error',
+				__( 'Update server is temporarily unreachable. Please try again later.', 'fswwp-update-checker' )
+			);
 			return null;
 		}
 
@@ -165,6 +194,10 @@ class Metadata {
 
 		if ( 200 !== $code ) {
 			$this->log( 'http_' . $code, 'Metadata endpoint returned HTTP ' . $code );
+			update_option(
+				$this->option_name . '_server_error',
+				__( 'Update server returned an error. Please try again later.', 'fswwp-update-checker' )
+			);
 			return null;
 		}
 
@@ -172,11 +205,16 @@ class Metadata {
 
 		if ( ! is_object( $body ) || empty( $body->version ) ) {
 			$this->log( 'invalid_metadata', 'Response is missing version field or is not valid JSON.' );
+			update_option(
+				$this->option_name . '_server_error',
+				__( 'Update server returned an invalid response. Please try again later.', 'fswwp-update-checker' )
+			);
 			return null;
 		}
 
-		// Success — clear any previous license error.
+		// Success — clear any previous license and server errors.
 		delete_option( $this->option_name . '_license_error' );
+		delete_option( $this->option_name . '_server_error' );
 
 		update_option( $this->option_name, $body );
 		update_option( $this->option_name . '_last_check', time() );
@@ -185,13 +223,26 @@ class Metadata {
 	}
 
 	/**
-	 * Get cached metadata from wp_options.
+	 * Get cached metadata from wp_options if still fresh.
+	 *
+	 * Returns null when the cache is older than CACHE_TTL (2 hours),
+	 * forcing the next cron tick or manual check to refresh it.
 	 *
 	 * @return object|null
 	 */
 	public function get_cached() {
 		$metadata = get_option( $this->option_name );
-		return is_object( $metadata ) ? $metadata : null;
+		if ( ! is_object( $metadata ) ) {
+			return null;
+		}
+
+		$last_check = (int) get_option( $this->option_name . '_last_check', 0 );
+		if ( ( time() - $last_check ) > self::CACHE_TTL ) {
+			// Cache expired — don't serve stale data.
+			return null;
+		}
+
+		return $metadata;
 	}
 
 	/**
@@ -204,6 +255,7 @@ class Metadata {
 		delete_option( $this->option_name . '_last_check' );
 		delete_option( $this->option_name . '_details' );
 		delete_option( $this->option_name . '_license_error' );
+		delete_option( $this->option_name . '_server_error' );
 	}
 
 	/**

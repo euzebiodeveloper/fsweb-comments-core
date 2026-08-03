@@ -346,6 +346,17 @@ class Fswwp_Comments_Core_Admin {
 		$license_status  = get_option( 'fswwp_license_status', 'inactive' );
 		$license_expires = get_option( 'fswwp_license_expires', '' );
 
+		// Always sync with the license server on page load so the status
+		// reflects reality — another site may have activated/deactivated
+		// the same license key since the last local check.
+		if ( ! empty( $license_key ) ) {
+			$synced = $this->sync_license_status( $license_key );
+			if ( $synced ) {
+				$license_status  = $synced['status'];
+				$license_expires = $synced['expires'];
+			}
+		}
+
 		?>
 		<div class="wrap fswwp-cc-license-wrap">
 			<h1><?php esc_html_e( 'Comments Core — License', 'fswwp-comments-core' ); ?></h1>
@@ -364,7 +375,7 @@ class Fswwp_Comments_Core_Admin {
 							<input type="text" id="fswwp-cc-license-key" name="fswwp_license_key" class="regular-text"
 								value="<?php echo esc_attr( $license_key ); ?>"
 								placeholder="<?php esc_attr_e( 'e.g. FSWWP-XXXX-XXXX-XXXX', 'fswwp-comments-core' ); ?>"
-								<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
+								<?php echo in_array( $license_status, array( 'active', 'pending' ), true ) ? 'readonly' : ''; ?>>
 						</td>
 					</tr>
 					<tr>
@@ -373,11 +384,11 @@ class Fswwp_Comments_Core_Admin {
 							<span id="fswwp-cc-license-status" class="fswwp-cc-status fswwp-cc-status--<?php echo esc_attr( $license_status ); ?>">
 								<?php
 								switch ( $license_status ) {
-									case 'active':  esc_html_e( 'Active', 'fswwp-comments-core' );  break;
-									case 'expired': esc_html_e( 'Expired', 'fswwp-comments-core' ); break;
-									case 'invalid': esc_html_e( 'Invalid', 'fswwp-comments-core' ); break;
-									case 'pending': esc_html_e( 'Pending', 'fswwp-comments-core' ); break;
-									default:        esc_html_e( 'Inactive', 'fswwp-comments-core' ); break;
+									case 'active':      esc_html_e( 'Active', 'fswwp-comments-core' );      break;
+									case 'expired':     esc_html_e( 'Expired', 'fswwp-comments-core' );     break;
+									case 'invalid':     esc_html_e( 'Invalid', 'fswwp-comments-core' );     break;
+									case 'pending':     esc_html_e( 'Pending', 'fswwp-comments-core' );     break;
+									default:            esc_html_e( 'Inactive', 'fswwp-comments-core' );     break;
 								}
 								?>
 							</span>
@@ -390,7 +401,7 @@ class Fswwp_Comments_Core_Admin {
 				</table>
 
 				<p class="submit">
-					<button type="button" id="fswwp-cc-activate-license" class="button button-primary" style="<?php echo 'active' === $license_status ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fswwp-comments-core' ); ?></button>
+					<button type="button" id="fswwp-cc-activate-license" class="button button-primary" style="<?php echo in_array( $license_status, array( 'active' ), true ) ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fswwp-comments-core' ); ?></button>
 					<button type="button" id="fswwp-cc-deactivate-license" class="button button-secondary" style="<?php echo 'active' === $license_status ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Deactivate', 'fswwp-comments-core' ); ?></button>
 					<?php $show_verify = in_array( $license_status, array( 'expired', 'pending', 'invalid' ), true ); ?>
 					<button type="button" id="fswwp-cc-validate-license" class="button button-secondary" style="<?php echo $show_verify ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Verify License', 'fswwp-comments-core' ); ?></button>
@@ -516,19 +527,19 @@ class Fswwp_Comments_Core_Admin {
 		) );
 
 		// Always deactivate locally, even if the API call fails.
-		update_option( 'fswwp_license_status', 'inactive' );
+		update_option( 'fswwp_license_status', 'pending' );
 		update_option( 'fswwp_license_expires', '' );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_success( array(
 				'message' => __( 'License deactivated locally. The remote server could not be reached.', 'fswwp-comments-core' ),
-				'status'  => 'inactive',
+				'status'  => 'pending',
 			) );
 		}
 
 		wp_send_json_success( array(
 			'message' => __( 'License deactivated successfully!', 'fswwp-comments-core' ),
-			'status'  => 'inactive',
+			'status'  => 'pending',
 		) );
 	}
 
@@ -558,7 +569,7 @@ class Fswwp_Comments_Core_Admin {
 			wp_send_json_error( array( 'message' => __( 'No license key saved. Please enter a key first.', 'fswwp-comments-core' ) ) );
 		}
 
-		$api_url = FSWWP_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fswwp-comments-core';
+		$api_url = FSWWP_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fswwp-comments-core&domain=' . urlencode( home_url() );
 
 		$response = wp_remote_get( $api_url, array(
 			'timeout'   => 15,
@@ -612,9 +623,55 @@ class Fswwp_Comments_Core_Admin {
 				return __( 'License key is invalid.', 'fswwp-comments-core' );
 			case 'pending':
 				return __( 'License is pending activation.', 'fswwp-comments-core' );
+				return __( 'License was deactivated. Activate it again to resume updates.', 'fswwp-comments-core' );
 			default:
 				return __( 'License is not active.', 'fswwp-comments-core' );
 		}
+	}
+
+	/**
+	 * Sync local license status with the remote server.
+	 *
+	 * Called on page load so the UI always reflects reality — another site
+	 * may have activated or deactivated the same license key since the
+	 * last local check.
+	 *
+	 * @since  1.2.0
+	 * @param  string $license_key The license key to check.
+	 * @return array|null           Array with status/expires, or null on failure.
+	 */
+	private function sync_license_status( $license_key ) {
+		$api_url = FSWWP_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fswwp-comments-core&domain=' . urlencode( home_url() );
+
+		$response = wp_remote_get( $api_url, array(
+			'timeout'   => 10,
+			'sslverify' => false,
+		) );
+
+		if ( is_wp_error( $response ) ) {
+			return null;
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $code ) {
+			return null;
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $body ) || ! isset( $body['status'] ) ) {
+			return null;
+		}
+
+		$remote_status   = sanitize_text_field( $body['status'] );
+		$remote_expires  = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
+
+		update_option( 'fswwp_license_status', $remote_status );
+		update_option( 'fswwp_license_expires', $remote_expires );
+
+		return array(
+			'status'  => $remote_status,
+			'expires' => $remote_expires,
+		);
 	}
 
 	/**
@@ -628,7 +685,9 @@ class Fswwp_Comments_Core_Admin {
 	 */
 	public function render_builder_page() {
 		$forms   = get_option( 'fswwp_review_forms', array() );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET params for display routing only.
 		$edit_id = isset( $_GET['form_id'] ) ? sanitize_key( wp_unslash( $_GET['form_id'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET params for display routing only.
 		$is_new  = isset( $_GET['new'] ) && '1' === $_GET['new'];
 
 		// --- Builder mode --------------------------------------------------
@@ -1051,7 +1110,7 @@ class Fswwp_Comments_Core_Admin {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'fswwp-comments-core' ) ) );
 		}
 
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON decoded & sanitized per-field below.
 		$raw      = isset( $_POST['fields'] ) ? wp_unslash( $_POST['fields'] ) : '[]';
 		$name     = isset( $_POST['form_name'] ) ? sanitize_text_field( wp_unslash( $_POST['form_name'] ) ) : '';
 		$form_id  = isset( $_POST['form_id'] ) ? sanitize_key( wp_unslash( $_POST['form_id'] ) ) : '';
@@ -1180,7 +1239,9 @@ class Fswwp_Comments_Core_Admin {
 	 */
 	public function render_views_page() {
 		$views   = get_option( 'fswwp_review_views', array() );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET params for display routing only.
 		$edit_id = isset( $_GET['view_id'] ) ? sanitize_key( wp_unslash( $_GET['view_id'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET params for display routing only.
 		$is_new  = isset( $_GET['new'] ) && '1' === $_GET['new'];
 
 		// --- Builder mode --------------------------------------------------
@@ -1624,7 +1685,7 @@ class Fswwp_Comments_Core_Admin {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'fswwp-comments-core' ) ) );
 		}
 
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON decoded & sanitized per-row below.
 		$name    = isset( $_POST['view_name'] ) ? sanitize_text_field( wp_unslash( $_POST['view_name'] ) ) : '';
 		$view_id = isset( $_POST['view_id'] ) ? sanitize_key( wp_unslash( $_POST['view_id'] ) ) : '';
 		$layout  = isset( $_POST['layout'] ) ? sanitize_key( wp_unslash( $_POST['layout'] ) ) : 'grid';

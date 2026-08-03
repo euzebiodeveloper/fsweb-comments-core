@@ -17,6 +17,7 @@
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
  * Version:           1.0.0
+ * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
  * License:           GPL-2.0+
@@ -50,13 +51,14 @@ define( 'FSWWP_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
  *   define( 'FSWWP_LICENSE_API_URL', 'https://yoursite.com/wp-json/fswwp/v1/license' );
  */
 if ( ! defined( 'FSWWP_LICENSE_API_URL' ) ) {
-	define( 'FSWWP_LICENSE_API_URL', 'https://flowsyncweb.local/wp-json/fswwp/v1/license' );
+	define( 'FSWWP_LICENSE_API_URL', 'https://flowsyncweb.com/wp-json/fswwp/v1/license' );
 }
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-fswwp-comments-core-activator.php
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Required by register_activation_hook.
 function activate_fswwp_comments_core() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core-activator.php';
 	Fswwp_Comments_Core_Activator::activate();
@@ -66,6 +68,7 @@ function activate_fswwp_comments_core() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-fswwp-comments-core-deactivator.php
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Required by register_deactivation_hook.
 function deactivate_fswwp_comments_core() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core-deactivator.php';
 	Fswwp_Comments_Core_Deactivator::deactivate();
@@ -87,7 +90,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core.php';
  */
 require plugin_dir_path( __FILE__ ) . 'fswwp-update-checker/index.php';
 $fswwp_update_checker = new FSWWP_Update_Checker_1_0(
-	'http://127.0.0.1:8000/api/releases/fswwp-comments-core',
+	'https://api.flowsyncweb.com/api/releases/fswwp-comments-core',
 	__FILE__
 );
 
@@ -112,6 +115,7 @@ if ( ! empty( $fswwp_license_key ) ) {
  *
  * @since    1.0.0
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin bootstrap; contains plugin slug.
 function run_fswwp_comments_core() {
 
 	$plugin = new Fswwp_Comments_Core();

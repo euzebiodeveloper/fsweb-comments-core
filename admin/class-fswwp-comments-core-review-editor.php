@@ -115,7 +115,7 @@ class Fswwp_Comments_Core_Review_Editor {
 				continue;
 			}
 
-			// phpcs:disable WordPress.Security.NonceVerification.Missing
+			// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized per-type in switch below.
 			$raw = isset( $_POST[ 'fswwp_field_' . $field_id ] ) ? wp_unslash( $_POST[ 'fswwp_field_' . $field_id ] ) : '';
 			// phpcs:enable
 
@@ -367,7 +367,7 @@ class Fswwp_Comments_Core_Review_Editor {
 		?>
 		<div class="fswwp-review-editor-stars" data-field="<?php echo esc_attr( $field_id ); ?>">
 			<span class="fswwp-review-editor-rating-badge">
-				(<span class="fswwp-review-editor-rating-current"><?php echo $current; ?></span>/5)
+				(<span class="fswwp-review-editor-rating-current"><?php echo esc_html( $current ); ?></span>/5)
 			</span>
 			<?php for ( $i = 5; $i >= 1; $i-- ) : ?>
 				<input type="radio"
@@ -464,7 +464,7 @@ class Fswwp_Comments_Core_Review_Editor {
 			case 'fswwp_image':
 				$thumb = get_the_post_thumbnail( $post_id, array( 40, 40 ) );
 				if ( $thumb ) {
-					echo $thumb; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — WP generates safe HTML.
+					echo wp_kses_post( $thumb );
 				} else {
 					// Try image field from meta.
 					$img = get_post_meta( $post_id, 'fswwp_image', true );
@@ -480,10 +480,10 @@ class Fswwp_Comments_Core_Review_Editor {
 			case 'fswwp_rating':
 				$rating = (int) get_post_meta( $post_id, 'fswwp_rating', true );
 				if ( $rating > 0 ) {
-					echo '<span style="color:#f0c040;font-size:16px;letter-spacing:1px;">'
+					echo wp_kses_post('<span style="color:#f0c040;font-size:16px;letter-spacing:1px;">'
 						. str_repeat( '★', $rating )
 						. str_repeat( '☆', 5 - $rating )
-						. '</span>';
+						. '</span>' );
 				} else {
 					echo '<span style="color:#c3c4c7;">—</span>';
 				}

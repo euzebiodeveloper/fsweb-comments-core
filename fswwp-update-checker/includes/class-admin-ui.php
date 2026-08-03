@@ -180,7 +180,8 @@ class AdminUi {
 			</title>
 			<?php wp_admin_css( 'common' ); ?>
 			<?php wp_admin_css( 'forms' ); ?>
-			<link rel="stylesheet" href="<?php echo esc_url( $this->assets_url . 'css/admin.css' ); ?>">
+			<?php wp_enqueue_style( 'fswwp-update-checker-admin' ); ?>
+			<?php wp_print_styles( 'fswwp-update-checker-admin' ); ?>
 		</head><body class="fswwp-rollback-body">
 			<h2>
 				<?php echo esc_html( $this->plugin_name ); ?>
@@ -270,7 +271,8 @@ class AdminUi {
 			</title>
 			<?php wp_admin_css( 'common' ); ?>
 			<?php wp_admin_css( 'forms' ); ?>
-			<link rel="stylesheet" href="<?php echo esc_url( $this->assets_url . 'css/admin.css' ); ?>">
+			<?php wp_enqueue_style( 'fswwp-update-checker-admin' ); ?>
+			<?php wp_print_styles( 'fswwp-update-checker-admin' ); ?>
 		</head><body class="fswwp-rollback-body">
 			<h2>
 				<?php echo esc_html( $this->plugin_name ); ?>

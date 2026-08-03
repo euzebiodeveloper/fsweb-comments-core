@@ -14,12 +14,16 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variable, not a global.
 $wrap_class = 'fswwp-reviews';
 if ( 'slider' === $layout ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variable, not a global.
 	$wrap_class .= ' fswwp-reviews--slider';
 } elseif ( 'list' === $layout ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variable, not a global.
 	$wrap_class .= ' fswwp-reviews--list';
 } else {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template-scoped variable, not a global.
 	$wrap_class .= ' fswwp-reviews--grid';
 }
 ?>
@@ -30,7 +34,7 @@ if ( 'slider' === $layout ) {
 		<?php while ( $reviews->have_posts() ) : $reviews->the_post(); ?>
 			<div class="fswwp-review-slide">
 				<div class="fswwp-review-card">
-					<?php render_rows( $rows, get_the_ID() ); ?>
+					<?php fswwp_render_rows( $rows, get_the_ID() ); ?>
 				</div>
 			</div>
 		<?php endwhile; ?>
@@ -44,7 +48,7 @@ if ( 'slider' === $layout ) {
 <div class="<?php echo esc_attr( $wrap_class ); ?>">
 	<?php while ( $reviews->have_posts() ) : $reviews->the_post(); ?>
 		<div class="fswwp-review-card">
-			<?php render_rows( $rows, get_the_ID() ); ?>
+			<?php fswwp_render_rows( $rows, get_the_ID() ); ?>
 		</div>
 	<?php endwhile; ?>
 </div>
@@ -54,7 +58,7 @@ if ( 'slider' === $layout ) {
 /**
  * Render rows for a single review card.
  */
-function render_rows( $rows, $post_id ) {
+function fswwp_render_rows( $rows, $post_id ) {
 	foreach ( $rows as $row ) {
 		echo '<div class="fswwp-review-row" style="display:flex;gap:16px;">';
 		if ( isset( $row['columns'] ) ) {
@@ -64,7 +68,7 @@ function render_rows( $rows, $post_id ) {
 				echo '<div class="fswwp-review-col" style="flex:' . (int) $w . ';">';
 				if ( isset( $col['components'] ) ) {
 					foreach ( $col['components'] as $comp ) {
-						render_component( $comp, $post_id );
+						fswwp_render_component( $comp, $post_id );
 					}
 				}
 				echo '</div>';
@@ -77,7 +81,7 @@ function render_rows( $rows, $post_id ) {
 /**
  * Build inline style string from component styles array.
  */
-function build_comp_style( $comp ) {
+function fswwp_build_comp_style( $comp ) {
 	if ( empty( $comp['styles'] ) || ! is_array( $comp['styles'] ) ) {
 		return '';
 	}
@@ -111,15 +115,15 @@ function build_comp_style( $comp ) {
 /**
  * Render a single component.
  */
-function render_component( $comp, $post_id ) {
+function fswwp_render_component( $comp, $post_id ) {
 	$type     = $comp['type'];
 	$field_id = isset( $comp['field_id'] ) ? $comp['field_id'] : '';
 
 	switch ( $type ) {
 		case 'image':
 			if ( has_post_thumbnail( $post_id ) ) {
-				$is = build_comp_style( $comp );
-				echo '<div class="fswwp-review-image"' . $is . '>';
+				$is = fswwp_build_comp_style( $comp );
+				echo '<div class="fswwp-review-image"' . wp_kses_post( $is ) . '>';
 				echo get_the_post_thumbnail( $post_id, 'medium', array( 'class' => 'fswwp-review-avatar', 'style' => ( $is ? 'width:100%;height:auto;' : '' ) ) );
 				echo '</div>';
 			}
@@ -128,7 +132,7 @@ function render_component( $comp, $post_id ) {
 		case 'name':
 			$title = get_the_title( $post_id );
 			if ( $title ) {
-				echo '<h4 class="fswwp-review-name"' . build_comp_style( $comp ) . '>' . esc_html( $title ) . '</h4>';
+				echo '<h4 class="fswwp-review-name"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . esc_html( $title ) . '</h4>';
 			}
 			break;
 
@@ -136,12 +140,13 @@ function render_component( $comp, $post_id ) {
 		case 'textarea':
 			$post = get_post( $post_id );
 			// For textarea, try post content first, then meta.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook, not a custom hook.
 			$text = $post ? apply_filters( 'the_content', $post->post_content ) : '';
 			if ( ! $text && $field_id ) {
 				$text = get_post_meta( $post_id, $field_id, true );
 			}
 			if ( $text ) {
-				echo '<div class="fswwp-review-content"' . build_comp_style( $comp ) . '>' . wp_kses_post( $text ) . '</div>';
+				echo '<div class="fswwp-review-content"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . wp_kses_post( $text ) . '</div>';
 			}
 			break;
 
@@ -149,7 +154,7 @@ function render_component( $comp, $post_id ) {
 			$rating = $field_id ? get_post_meta( $post_id, $field_id, true ) : get_post_meta( $post_id, 'rating', true );
 			if ( $rating ) {
 				$stars = (int) $rating;
-				echo '<div class="fswwp-review-stars-display"' . build_comp_style( $comp ) . '>';
+				echo '<div class="fswwp-review-stars-display"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>';
 				for ( $i = 1; $i <= 5; $i++ ) {
 					echo '<span class="fswwp-star ' . ( $i <= $stars ? 'fswwp-star--filled' : '' ) . '">&#9733;</span>';
 				}
@@ -158,18 +163,18 @@ function render_component( $comp, $post_id ) {
 			break;
 
 		case 'date':
-			echo '<span class="fswwp-review-date"' . build_comp_style( $comp ) . '>' . esc_html( get_the_date( '', $post_id ) ) . '</span>';
+			echo '<span class="fswwp-review-date"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . esc_html( get_the_date( '', $post_id ) ) . '</span>';
 			break;
 
 		case 'category':
 			$cats = get_the_terms( $post_id, 'fswwp_review_category' );
 			if ( $cats && ! is_wp_error( $cats ) ) {
-				echo '<span class="fswwp-review-category"' . build_comp_style( $comp ) . '>';
+				echo '<span class="fswwp-review-category"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>';
 				$names = array();
 				foreach ( $cats as $cat ) {
-					$names[] = esc_html( $cat->name );
+					$names[] = $cat->name;
 				}
-				echo implode( ', ', $names );
+				echo esc_html( implode( ', ', $names ) );
 				echo '</span>';
 			}
 			break;
@@ -179,7 +184,7 @@ function render_component( $comp, $post_id ) {
 			if ( $field_id && ( false !== stripos( $field_id, 'name' ) ) ) {
 				$title = get_the_title( $post_id );
 				if ( $title ) {
-					echo '<h4 class="fswwp-review-name"' . build_comp_style( $comp ) . '>' . esc_html( $title ) . '</h4>';
+					echo '<h4 class="fswwp-review-name"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . esc_html( $title ) . '</h4>';
 				}
 				break;
 			}
@@ -191,11 +196,11 @@ function render_component( $comp, $post_id ) {
 				$value = get_post_meta( $post_id, $field_id, true );
 				if ( $value ) {
 					if ( 'url' === $type ) {
-						echo '<a href="' . esc_url( $value ) . '" class="fswwp-review-url" target="_blank" rel="nofollow"' . build_comp_style( $comp ) . '>' . esc_html( $value ) . '</a>';
+						echo '<a href="' . esc_url( $value ) . '" class="fswwp-review-url" target="_blank" rel="nofollow"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . esc_html( $value ) . '</a>';
 					} elseif ( 'email' === $type ) {
-						echo '<a href="mailto:' . esc_attr( $value ) . '" class="fswwp-review-email"' . build_comp_style( $comp ) . '>' . esc_html( $value ) . '</a>';
+						echo '<a href="mailto:' . esc_attr( $value ) . '" class="fswwp-review-email"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . esc_html( $value ) . '</a>';
 					} else {
-						echo '<span class="fswwp-review-meta"' . build_comp_style( $comp ) . '>' . esc_html( $value ) . '</span>';
+						echo '<span class="fswwp-review-meta"' . wp_kses_post( fswwp_build_comp_style( $comp ) ) . '>' . esc_html( $value ) . '</span>';
 					}
 				}
 			}

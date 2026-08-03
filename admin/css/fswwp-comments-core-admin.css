@@ -26,6 +26,7 @@
 	border: 1px solid #dcdcde;
 }
 
+
 .fswwp-cc-status--expired {
 	background: #fcf9e8;
 	color: #996800;
@@ -136,6 +137,7 @@
 .fswwp-cc-stat-card--inactive .fswwp-cc-stat-number {
 	color: #d63638;
 }
+
 
 /* Dashboard grid (2 columns) */
 .fswwp-cc-dash-grid {

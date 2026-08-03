@@ -504,7 +504,7 @@ class Fswwp_Comments_Core_Form_Shortcode {
 		switch ( $field['type'] ) {
 			case 'image':
 				echo '<div class="fswwp-review-image-upload">';
-				echo '<input type="file" name="' . esc_attr( $field['id'] ) . '" accept="image/*"' . $attrs . ' class="fswwp-review-image-input">';
+				echo '<input type="file" name="' . esc_attr( $field['id'] ) . '" accept="image/*"' . wp_kses_post( $attrs ) . ' class="fswwp-review-image-input">';
 				echo '<div class="fswwp-review-image-placeholder">';
 				echo '<span class="fswwp-review-image-plus">+</span>';
 				echo '<span class="fswwp-review-image-text">' . esc_html__( 'Click to upload', 'fswwp-comments-core' ) . '</span>';
@@ -514,23 +514,23 @@ class Fswwp_Comments_Core_Form_Shortcode {
 				break;
 
 			case 'textarea':
-				echo '<textarea name="' . esc_attr( $field['id'] ) . '" rows="4"' . $attrs . '></textarea>';
+				echo '<textarea name="' . esc_attr( $field['id'] ) . '" rows="4"' . wp_kses_post( $attrs ) . '></textarea>';
 				break;
 
 			case 'email':
-				echo '<input type="email" name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
+				echo '<input type="email" name="' . esc_attr( $field['id'] ) . '"' . wp_kses_post( $attrs ) . '>';
 				break;
 
 			case 'url':
-				echo '<input type="url" name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
+				echo '<input type="url" name="' . esc_attr( $field['id'] ) . '"' . wp_kses_post( $attrs ) . '>';
 				break;
 
 			case 'date':
-				echo '<input type="date" name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
+				echo '<input type="date" name="' . esc_attr( $field['id'] ) . '"' . wp_kses_post( $attrs ) . '>';
 				break;
 
 			case 'select':
-				echo '<select name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
+				echo '<select name="' . esc_attr( $field['id'] ) . '"' . wp_kses_post( $attrs ) . '>';
 				echo '<option value="">' . esc_html__( '— Select —', 'fswwp-comments-core' ) . '</option>';
 				if ( ! empty( $field['options'] ) ) {
 					$opts = explode( "\n", $field['options'] );
@@ -547,14 +547,14 @@ class Fswwp_Comments_Core_Form_Shortcode {
 			case 'rating':
 				echo '<div class="fswwp-review-stars">';
 				for ( $i = 5; $i >= 1; $i-- ) {
-					echo '<input type="radio" id="' . esc_attr( $field['id'] . '_' . $i ) . '" name="' . esc_attr( $field['id'] ) . '" value="' . (int) $i . '"' . $attrs . '>';
+					echo '<input type="radio" id="' . esc_attr( $field['id'] . '_' . $i ) . '" name="' . esc_attr( $field['id'] ) . '" value="' . (int) $i . '"' . wp_kses_post( $attrs ) . '>';
 					echo '<label for="' . esc_attr( $field['id'] . '_' . $i ) . '" title="' . (int) $i . '">★</label>';
 				}
 				echo '</div>';
 				break;
 
 			default: // text.
-				echo '<input type="text" name="' . esc_attr( $field['id'] ) . '"' . $attrs . '>';
+				echo '<input type="text" name="' . esc_attr( $field['id'] ) . '"' . wp_kses_post( $attrs ) . '>';
 				break;
 		}
 	}
@@ -645,7 +645,7 @@ class Fswwp_Comments_Core_Form_Shortcode {
 			// Handle image — file upload via $_FILES.
 			if ( 'image' === $field_type ) {
 				$file_value = '';
-				// phpcs:disable WordPress.Security.NonceVerification.Missing
+				// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- isset() guards access; wp_handle_upload validates file.
 				if ( isset( $_FILES[ $field_id ] ) && UPLOAD_ERR_OK === $_FILES[ $field_id ]['error'] ) {
 					require_once ABSPATH . 'wp-admin/includes/file.php';
 					require_once ABSPATH . 'wp-admin/includes/image.php';

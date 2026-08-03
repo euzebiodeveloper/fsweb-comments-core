@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * FSWWP Update Checker — Main Plugin Class
  *
@@ -185,15 +189,14 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			$slug_used_by = apply_filters( $slug_filter, false );
 
 			if ( $slug_used_by ) {
-				// Translators: %1$s is the slug, %2$s is the path of the plugin that already uses it.
+				$message = sprintf(
+					/* translators: %1$s is the slug, %2$s is the path of the plugin that already uses it. */
+					__( 'Plugin slug "%1$s" is already in use by %2$s. Each plugin must have a unique slug.', 'fswwp-update-checker' ),
+					$this->slug,
+					$slug_used_by
+				);
 				wp_die(
-					esc_html(
-						sprintf(
-							__( 'Plugin slug "%1$s" is already in use by %2$s. Each plugin must have a unique slug.', 'fswwp-update-checker' ),
-							$this->slug,
-							$slug_used_by
-						)
-					),
+					esc_html( $message ),
 					esc_html__( 'Update Checker Conflict', 'fswwp-update-checker' ),
 					array( 'response' => 500 )
 				);
@@ -329,8 +332,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		/**
 		 * Inject update data into the site_transient_update_plugins.
 		 *
-		 * Blocks updates when a license error is recorded (no key, invalid key,
-		 * domain mismatch, or expired license).
+		 * Blocks updates when a license error or server error is recorded.
 		 *
 		 * @param \stdClass $transient The update_plugins transient value.
 		 * @return \stdClass
@@ -338,6 +340,11 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		public function inject_update( $transient ) {
 			$license_error = $this->metadata->get_last_license_error();
 			if ( ! empty( $license_error ) ) {
+				return $transient;
+			}
+
+			$server_error = $this->metadata->get_last_server_error();
+			if ( ! empty( $server_error ) ) {
 				return $transient;
 			}
 
@@ -426,21 +433,33 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		}
 
 		/**
-		 * Admin notice — warns the user about license problems.
+		 * Admin notice — warns the user about license or server problems.
 		 *
 		 * Rendered via admin_notices hook when the license check returns
-		 * 401 (invalid key) or 403 (domain mismatch / expired).
+		 * 401 (invalid key), 403 (domain mismatch / expired), or when the
+		 * update server is unreachable.
 		 *
 		 * @return void
 		 */
 		public function license_admin_notice() {
+			$plugin_name = $this->updates->get_plugin_name();
+
+			// Server error takes priority — user needs to know the API is down.
+			$server_error = $this->metadata->get_last_server_error();
+			if ( ! empty( $server_error ) ) {
+				printf(
+					'<div class="notice notice-error"><p><strong>%s:</strong> %s</p></div>',
+					esc_html( $plugin_name ),
+					esc_html( $server_error )
+				);
+				return;
+			}
+
 			$error = $this->metadata->get_last_license_error();
 
 			if ( empty( $error ) ) {
 				return;
 			}
-
-			$plugin_name = $this->updates->get_plugin_name();
 
 			if ( 'invalid_key' === $error ) {
 				$message = sprintf(

@@ -16,7 +16,8 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.0
+ * Version:           1.0.1
+ * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
  * License:           GPL-2.0+
@@ -32,15 +33,32 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Start at version 1.0.1 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.0' );
+define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.1' );
+
+/**
+ * Plugin directory path and URL (with trailing slash).
+ */
+define( 'FSWWP_COMMENTS_CORE_DIR', plugin_dir_path( __FILE__ ) );
+define( 'FSWWP_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
+
+/**
+ * Base URL for the license API (fswwp-license-checker REST endpoints).
+ *
+ * Override in wp-config.php if needed:
+ *   define( 'FSWWP_LICENSE_API_URL', 'https://yoursite.com/wp-json/fswwp/v1/license' );
+ */
+if ( ! defined( 'FSWWP_LICENSE_API_URL' ) ) {
+	define( 'FSWWP_LICENSE_API_URL', 'https://flowsyncweb.com/wp-json/fswwp/v1/license' );
+}
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-fswwp-comments-core-activator.php
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Required by register_activation_hook.
 function activate_fswwp_comments_core() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core-activator.php';
 	Fswwp_Comments_Core_Activator::activate();
@@ -50,6 +68,7 @@ function activate_fswwp_comments_core() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-fswwp-comments-core-deactivator.php
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Required by register_deactivation_hook.
 function deactivate_fswwp_comments_core() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core-deactivator.php';
 	Fswwp_Comments_Core_Deactivator::deactivate();
@@ -70,10 +89,22 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-fswwp-comments-core.php';
  * @see https://github.com/flowsyncweb/fswwp-update-checker
  */
 require plugin_dir_path( __FILE__ ) . 'fswwp-update-checker/index.php';
-new FSWWP_Update_Checker_1_0(
-	'http://127.0.0.1:8000/api/releases/fswwp-comments-core',
+$fswwp_update_checker = new FSWWP_Update_Checker_1_0(
+	'https://api.flowsyncweb.com/api/releases/fswwp-comments-core',
 	__FILE__
 );
+
+// Set the license page URL so admin notices link to the correct page.
+$fswwp_update_checker->set_license_url(
+	admin_url( 'edit.php?post_type=fswwp_review&page=fswwp-comments-core-license' )
+);
+
+// Inject license key so the update-checker sends it with every request.
+// Without a valid key the API returns 401 and updates are blocked.
+$fswwp_license_key = get_option( 'fswwp_license_key', '' );
+if ( ! empty( $fswwp_license_key ) ) {
+	$fswwp_update_checker->set_license( $fswwp_license_key );
+}
 
 /**
  * Begins execution of the plugin.
@@ -82,8 +113,9 @@ new FSWWP_Update_Checker_1_0(
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    1.0.1
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin bootstrap; contains plugin slug.
 function run_fswwp_comments_core() {
 
 	$plugin = new Fswwp_Comments_Core();

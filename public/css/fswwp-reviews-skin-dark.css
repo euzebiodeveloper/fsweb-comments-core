@@ -1,0 +1,67 @@
+/**
+ * FSWWP Reviews — Skin: Dark
+ *
+ * Dark theme override for review cards.
+ * Loaded AFTER base styles so these rules take precedence.
+ *
+ * @package    Fswwp_Comments_Core
+ * @subpackage Fswwp_Comments_Core/public/css
+ * @since      1.0.0
+ */
+
+/* Card */
+.fswwp-review-card {
+	background: #1e1e2e;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fswwp-review-card:hover {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+	transform: translateY(-2px);
+}
+
+/* Avatar */
+.fswwp-review-avatar {
+	border-color: #3a3a5c;
+}
+
+/* Name */
+.fswwp-review-name {
+	color: #e0e0f0;
+}
+
+/* Content */
+.fswwp-review-content {
+	color: #b0b0c8;
+}
+
+/* Stars */
+.fswwp-star {
+	color: #3a3a5c;
+}
+
+.fswwp-star--filled {
+	color: #f5c542;
+}
+
+/* Date */
+.fswwp-review-date {
+	color: #6a6a8a;
+}
+
+/* Category tag */
+.fswwp-review-category {
+	background: #2a2a40;
+	color: #b0b0c8;
+}
+
+/* Links */
+.fswwp-review-email,
+.fswwp-review-url {
+	color: #7eb8f4;
+}
+
+.fswwp-review-email:hover,
+.fswwp-review-url:hover {
+	color: #b0d4fc;
+}

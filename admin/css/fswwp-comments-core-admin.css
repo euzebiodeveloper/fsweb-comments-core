@@ -1,4 +1,1390 @@
 /**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
+ * FSWWP Comments Core — Admin Styles
  */
+
+/* ------------------------------------------------------------------ */
+/*  License status badges
+/* ------------------------------------------------------------------ */
+.fswwp-cc-status {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 3px;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 1.6;
+}
+
+.fswwp-cc-status--active {
+	background: #edfaef;
+	color: #1e7e34;
+	border: 1px solid #b7e1c1;
+}
+
+.fswwp-cc-status--inactive {
+	background: #f0f0f1;
+	color: #646970;
+	border: 1px solid #dcdcde;
+}
+
+
+.fswwp-cc-status--expired {
+	background: #fcf9e8;
+	color: #996800;
+	border: 1px solid #f0d87e;
+}
+
+.fswwp-cc-status--invalid {
+	background: #fcf0f1;
+	color: #b52727;
+	border: 1px solid #f1adad;
+}
+
+.fswwp-cc-status--pending {
+	background: #f0f6fc;
+	color: #1d5c96;
+	border: 1px solid #b8d6f0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  License page card
+/* ------------------------------------------------------------------ */
+.fswwp-cc-license-wrap .fswwp-cc-license-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px 24px;
+	margin-top: 16px;
+	max-width: 720px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.fswwp-cc-license-card .description {
+	margin: 0 0 16px;
+	font-size: 14px;
+}
+
+.fswwp-cc-license-card .submit {
+	margin: 0;
+	padding: 16px 0 0;
+}
+
+#fswwp-cc-license-message {
+	margin: 12px 0 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Welcome page
+/* ------------------------------------------------------------------ */
+.fswwp-cc-welcome {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 24px;
+	margin-top: 16px;
+	max-width: 640px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.fswwp-cc-welcome p {
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dashboard
+/* ------------------------------------------------------------------ */
+.fswwp-cc-dashboard h1 {
+	margin-bottom: 20px;
+}
+
+/* Stats cards row */
+.fswwp-cc-stats {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.fswwp-cc-stat-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 20px;
+	text-align: center;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.fswwp-cc-stat-number {
+	display: block;
+	font-size: 28px;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1.2;
+	margin-bottom: 4px;
+}
+
+.fswwp-cc-stat-label {
+	font-size: 13px;
+	color: #646970;
+}
+
+.fswwp-cc-stat-card--active .fswwp-cc-stat-number {
+	color: #00a32a;
+}
+
+.fswwp-cc-stat-card--expired .fswwp-cc-stat-number,
+.fswwp-cc-stat-card--invalid .fswwp-cc-stat-number,
+.fswwp-cc-stat-card--inactive .fswwp-cc-stat-number {
+	color: #d63638;
+}
+
+
+/* Dashboard grid (2 columns) */
+.fswwp-cc-dash-grid {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 24px;
+}
+
+.fswwp-cc-dash-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	overflow: hidden;
+}
+
+.fswwp-cc-dash-panel-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 20px;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.fswwp-cc-dash-panel-header h2 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* Recent reviews table */
+.fswwp-cc-recent-table {
+	border: none;
+}
+
+.fswwp-cc-recent-table thead th {
+	font-size: 12px;
+	color: #646970;
+}
+
+.fswwp-cc-has-thumb {
+	margin-left: 6px;
+	font-size: 12px;
+}
+
+.fswwp-cc-empty {
+	padding: 24px 20px;
+	color: #646970;
+	margin: 0;
+	font-size: 14px;
+}
+
+/* Quick actions */
+.fswwp-cc-quick-actions {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.fswwp-cc-quick-actions .button {
+	text-align: center;
+	justify-content: center;
+}
+
+/* Shortcode help box */
+.fswwp-cc-shortcode-help {
+	padding: 16px 20px;
+	border-top: 1px solid #e2e4e7;
+	background: #f6f7f7;
+}
+
+.fswwp-cc-shortcode-help h3 {
+	margin: 0 0 8px;
+	font-size: 13px;
+}
+
+.fswwp-cc-shortcode-help code {
+	font-size: 13px;
+	padding: 4px 8px;
+}
+
+@media (max-width: 960px) {
+	.fswwp-cc-stats {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.fswwp-cc-dash-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 480px) {
+	.fswwp-cc-stats {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  Form Builder
+/* ------------------------------------------------------------------ */
+.fswwp-cc-builder-wrap .description {
+	margin-bottom: 16px;
+}
+
+.fswwp-cc-builder {
+	display: grid;
+	grid-template-columns: 260px 1fr;
+	gap: 24px;
+	align-items: start;
+}
+
+/* Palette (left) */
+.fswwp-cc-builder-palette {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 16px;
+	position: sticky;
+	top: 40px;
+}
+
+.fswwp-cc-builder-palette h3 {
+	margin: 0 0 12px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.fswwp-cc-palette-items {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: 16px;
+}
+
+.fswwp-cc-palette-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	cursor: grab;
+	font-size: 13px;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.fswwp-cc-palette-item:hover {
+	background: #f0f0f1;
+	border-color: #2271b1;
+}
+
+.fswwp-cc-palette-item .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #646970;
+}
+
+/* Canvas (right) */
+.fswwp-cc-builder-canvas {
+	min-height: 300px;
+}
+
+.fswwp-cc-builder-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.fswwp-cc-builder-toolbar h3 {
+	margin: 0;
+	font-size: 14px;
+}
+
+/* Sortable field list */
+.fswwp-cc-fields-sortable {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 60px;
+}
+
+/* Field card */
+.fswwp-cc-field-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	overflow: hidden;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.fswwp-cc-field-card:hover {
+	border-color: #8c8f94;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.fswwp-cc-field-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 14px;
+	cursor: default;
+}
+
+.fswwp-cc-field-handle {
+	cursor: grab;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.fswwp-cc-field-label-text {
+	flex: 1;
+	font-size: 14px;
+}
+
+.fswwp-cc-field-type-badge {
+	font-size: 11px;
+	background: #f0f0f1;
+	padding: 2px 8px;
+	border-radius: 3px;
+	color: #50575e;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+.fswwp-cc-field-toggle,
+.fswwp-cc-field-delete {
+	border: none;
+	background: #d63638;
+	cursor: pointer;
+	padding: 0;
+	color: #fff;
+	font-size: 16px !important;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.15s;
+	line-height: 1 !important;
+}
+
+.fswwp-cc-field-toggle:hover,
+.fswwp-cc-field-delete:hover {
+	background: #b32d2e;
+}
+
+/* Field body */
+.fswwp-cc-field-body {
+	padding: 0 14px 14px;
+	border-top: 1px solid #e2e4e7;
+	background: #f9f9f9;
+}
+
+.fswwp-cc-field-row {
+	padding: 10px 0 0;
+}
+
+.fswwp-cc-field-row label {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3c434a;
+	margin-bottom: 4px;
+}
+
+.fswwp-cc-field-row input[type="text"],
+.fswwp-cc-field-row select,
+.fswwp-cc-field-row textarea {
+	width: 100%;
+	max-width: 400px;
+}
+
+.fswwp-cc-field-row textarea {
+	resize: vertical;
+}
+
+/* Sortable placeholder */
+.fswwp-cc-field-placeholder {
+	background: #f0f6fc;
+	border: 2px dashed #2271b1;
+	border-radius: 6px;
+	height: 48px;
+}
+
+/* Empty state */
+#fswwp-cc-builder-empty {
+	padding: 40px 20px;
+	text-align: center;
+	border: 2px dashed #dcdcde;
+	border-radius: 6px;
+	color: #8c8f94;
+}
+
+/* Save feedback */
+#fswwp-cc-builder-message {
+	margin-top: 16px;
+}
+
+@media (max-width: 782px) {
+	.fswwp-cc-builder {
+		grid-template-columns: 1fr;
+	}
+
+	.fswwp-cc-builder-palette {
+		position: static;
+	}
+
+	.fswwp-cc-palette-items {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.fswwp-cc-palette-item {
+		flex: 0 0 auto;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  Views Builder — row/column layout
+/* ------------------------------------------------------------------ */
+
+.fswwp-cc-views-canvas {
+	flex: 1;
+	min-height: 200px;
+}
+
+/* Row */
+.fswwp-cc-view-row {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	overflow: hidden;
+}
+
+.fswwp-cc-view-row-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.fswwp-cc-row-handle {
+	cursor: grab;
+	color: #8c8f94;
+	font-size: 16px;
+}
+
+.fswwp-cc-view-row-toolbar strong {
+	font-size: 12px;
+	flex: 1;
+}
+
+.fswwp-cc-col-btn {
+	border: 1px solid #c3c4c7;
+	background: #fff;
+	border-radius: 3px;
+	padding: 3px 10px;
+	font-size: 12px;
+	cursor: pointer;
+	line-height: 1.4;
+	transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.fswwp-cc-col-btn:hover {
+	border-color: #2271b1;
+	color: #2271b1;
+}
+
+.fswwp-cc-col-btn.active {
+	background: #2271b1;
+	color: #fff;
+	border-color: #2271b1;
+}
+
+.fswwp-cc-delete-row {
+	border: none;
+	background: #d63638;
+	cursor: pointer;
+	color: #fff;
+	font-size: 16px !important;
+	padding: 0;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.15s;
+	margin-left: auto;
+	line-height: 1 !important;
+}
+
+.fswwp-cc-delete-row:hover {
+	background: #b32d2e;
+}
+
+/* Columns */
+.fswwp-cc-view-cols {
+	display: flex;
+	align-items: stretch;
+	min-height: 60px;
+}
+
+.fswwp-cc-view-col {
+	border-right: 1px dashed #e2e4e7;
+	padding: 8px;
+	display: flex;
+	flex-direction: column;
+}
+
+.fswwp-cc-view-col:last-child {
+	border-right: none;
+}
+
+.fswwp-cc-col-inner {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-height: 64px;
+	border: 2px dashed transparent;
+	border-radius: 4px;
+	transition: border-color 0.15s, background 0.15s;
+}
+
+/* Always-visible drop zone indicator on empty inner containers */
+.fswwp-cc-col-inner:empty {
+	border-color: #dcdcde;
+	background: #f9f9f9;
+}
+
+.fswwp-cc-col-inner:empty::after {
+	content: "Drop component here";
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	font-size: 12px;
+	color: #8c8f94;
+}
+
+/* Highlight intensifies during drag */
+.fswwp-cc-col-inner.fswwp-cc-col-droppable:empty {
+	border-color: #2271b1;
+	background: #f0f6fc;
+}
+
+.fswwp-cc-col-inner.fswwp-cc-col-droppable:empty::after {
+	color: #2271b1;
+}
+
+/* Component — now uses .fswwp-cc-field-card styles */
+.fswwp-cc-view-comp {
+	/* field-card handles all styling */
+}
+
+.fswwp-cc-comp--dragging {
+	/* space collapsed via JS negative margin */
+}
+
+.fswwp-cc-view-comp:active {
+	/* handled by field-card */
+}
+
+.fswwp-cc-view-comp .dashicons {
+	/* field-card handles icon styling */
+}
+
+.fswwp-cc-comp-delete {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: #8c8f94;
+	margin-left: auto;
+	font-size: 14px !important;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+	flex-shrink: 0;
+	transition: color 0.15s, background 0.15s;
+	line-height: 1 !important;
+}
+
+.fswwp-cc-comp-delete:hover {  /* retained for backward compat, delete btn now uses .fswwp-cc-field-delete */
+	color: #d63638;
+	background: rgba(214, 54, 56, 0.08);
+}
+
+.fswwp-cc-comp-type-label {
+	display: inline-block;
+	padding: 2px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.08);
+	border-radius: 4px;
+	margin-bottom: 12px;
+}
+
+/* Sortable placeholders */
+.fswwp-cc-row-placeholder {
+	background: #f0f6fc;
+	border: 2px dashed #2271b1;
+	border-radius: 6px;
+	height: 52px;
+	margin-bottom: 12px;
+}
+
+.fswwp-cc-comp-placeholder {
+	background: transparent;
+	height: 0;
+	margin: 0;
+}
+
+/* ---- Empty placeholder slots (static grid cells) ------------------------ */
+
+.fswwp-cc-view-comp--empty {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	padding: 7px 10px !important;
+	border: 2px dashed #dcdcde !important;
+	border-radius: 4px !important;
+	background: #fafafa !important;
+	color: #8c8f94 !important;
+	font-size: 13px !important;
+	margin-bottom: 4px !important;
+	box-sizing: border-box !important;
+	min-height: 50px !important;
+}
+
+/* Empty slot lights up when a component is dragged over it */
+.fswwp-cc-view-comp--empty.fswwp-cc-empty--hover {
+	border-color: #2271b1 !important;
+	background: #f0f6fc !important;
+	color: #2271b1 !important;
+	box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.2);
+}
+
+/* Extra slot that appears during drag — same look as normal empty slot. */
+.fswwp-cc-view-comp--extra {
+	/* no extra styling — the class exists only for JS identification */
+}
+
+/* Row highlight during drag */
+.fswwp-cc-row--dragging {
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.25);
+}
+
+.fswwp-cc-row--dragging .fswwp-cc-view-row-toolbar {
+	background: #f0f6fc;
+}
+
+#fswwp-cc-view-message {
+	margin-top: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Template list
+/* ------------------------------------------------------------------ */
+.fswwp-cc-list-toolbar {
+	margin-bottom: 16px;
+}
+
+.fswwp-cc-templates-table {
+	margin-top: 8px;
+}
+
+.fswwp-cc-templates-table th,
+.fswwp-cc-templates-table td {
+	vertical-align: middle;
+}
+
+.fswwp-cc-shortcode-copy-wrap {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.fswwp-cc-shortcode-copy-wrap code {
+	font-size: 13px;
+	cursor: pointer;
+	user-select: all;
+}
+
+/* Dashicon inside buttons (New Form / New View / Add Row) */
+.fswwp-cc-btn-icon {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	line-height: 1 !important;
+	vertical-align: middle;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ── Table action buttons ── */
+/* Combined specificity with .button to beat WordPress core styles */
+
+/* Edit — yellow bg, dark icon */
+.button.fswwp-cc-edit-btn {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	border-radius: 4px;
+	background: #f0c33c !important;
+	border-color: #dba617 !important;
+	color: #3c434a !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-edit-btn:hover {
+	background: #dba617 !important;
+	border-color: #c49a0f !important;
+}
+
+.button.fswwp-cc-edit-btn .dashicons,
+.button.fswwp-cc-edit-btn .dashicons-edit {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	line-height: 1 !important;
+	color: #3c434a !important;
+}
+
+/* Delete — red bg, white icon */
+.button.fswwp-cc-delete-form,
+.button.fswwp-cc-delete-view {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	border-radius: 4px;
+	background: #d63638 !important;
+	border-color: #b32d2e !important;
+	color: #fff !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-delete-form:hover,
+.button.fswwp-cc-delete-view:hover {
+	background: #b32d2e !important;
+	border-color: #962325 !important;
+}
+
+.button.fswwp-cc-delete-form .dashicons,
+.button.fswwp-cc-delete-form .dashicons-trash,
+.button.fswwp-cc-delete-view .dashicons,
+.button.fswwp-cc-delete-view .dashicons-trash {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	line-height: 1 !important;
+	color: #fff !important;
+}
+
+/* Copy — subtle blue bg, outlined */
+.button.fswwp-cc-copy-btn {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	border-radius: 4px;
+	background: #eaf0f6 !important;
+	border: 1px solid #94a3b8 !important;
+	color: #50575e !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-copy-btn:hover {
+	background: #d4dfeb !important;
+	border-color: #64748b !important;
+}
+
+.button.fswwp-cc-copy-btn .dashicons,
+.button.fswwp-cc-copy-btn .dashicons-clipboard {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	color: #50575e !important;
+}
+
+.button.fswwp-cc-copy-btn .dashicons {
+	line-height: 1 !important;
+}
+
+.button.fswwp-cc-copy-btn .dashicons-clipboard {
+	line-height: 1.2 !important;
+	writing-mode: vertical-rl !important;
+}
+
+.fswwp-cc-action-buttons {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.fswwp-cc-empty-state {
+	padding: 40px 20px;
+	text-align: center;
+	border: 2px dashed #dcdcde;
+	border-radius: 6px;
+	color: #8c8f94;
+	margin-top: 16px;
+}
+
+.fswwp-cc-empty-state p {
+	font-size: 14px;
+	margin: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Field card — icon + edit button
+/* ------------------------------------------------------------------ */
+.fswwp-cc-field-icon {
+	color: #50575e;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.fswwp-cc-field-edit {
+	border: none;
+	background: #f0c33c;
+	cursor: pointer;
+	padding: 0;
+	color: #3c434a;
+	font-size: 16px !important;
+	width: 26px;
+	height: 26px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.15s;
+	margin-left: auto;
+	line-height: 1 !important;
+}
+
+.fswwp-cc-field-edit:hover {
+	background: #dba617;
+}
+
+.fswwp-cc-field-header {
+	cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Modal
+/* ------------------------------------------------------------------ */
+.fswwp-cc-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.fswwp-cc-modal-backdrop {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.fswwp-cc-modal-content {
+	position: relative;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	width: 480px;
+	max-width: 90vw;
+	max-height: 85vh;
+	overflow-y: auto;
+	z-index: 1;
+}
+
+.fswwp-cc-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	border-bottom: 1px solid #e2e4e7;
+}
+
+.fswwp-cc-modal-header h3 {
+	margin: 0;
+	font-size: 15px;
+}
+
+.fswwp-cc-modal-close {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: #8c8f94;
+	font-size: 18px;
+	padding: 2px;
+}
+
+.fswwp-cc-modal-close:hover {
+	color: #d63638;
+}
+
+.fswwp-cc-modal-body {
+	padding: 20px;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row {
+	padding: 8px 0;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row:first-child {
+	padding-top: 0;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row label {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3c434a;
+	margin-bottom: 4px;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row input[type="text"],
+.fswwp-cc-modal-body .fswwp-cc-field-row select,
+.fswwp-cc-modal-body .fswwp-cc-field-row textarea {
+	width: 100%;
+}
+
+.fswwp-cc-modal-body .fswwp-cc-field-row textarea {
+	resize: vertical;
+}
+
+.fswwp-cc-modal-body .description {
+	margin-top: 4px;
+	font-size: 12px;
+}
+
+.fswwp-cc-modal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 12px 20px;
+	border-top: 1px solid #e2e4e7;
+	background: #f6f7f7;
+	border-radius: 0 0 8px 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Copy button feedback
+/* ------------------------------------------------------------------ */
+.button.fswwp-cc-copy-btn .dashicons-yes,
+.button.fswwp-cc-copy-btn-inline .dashicons-yes {
+	color: #00a32a !important;
+}
+
+.button.fswwp-cc-copy-btn-inline {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 30px;
+	width: 30px;
+	height: 30px;
+	min-height: 30px;
+	padding: 0 !important;
+	line-height: 1 !important;
+	vertical-align: middle !important;
+	background: #eaf0f6 !important;
+	border: 1px solid #94a3b8 !important;
+	border-radius: 4px;
+	color: #50575e !important;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.button.fswwp-cc-copy-btn-inline:hover {
+	background: #d4dfeb !important;
+	border-color: #64748b !important;
+}
+
+.button.fswwp-cc-copy-btn-inline .dashicons,
+.button.fswwp-cc-copy-btn-inline .dashicons-clipboard {
+	display: block !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	color: #50575e !important;
+}
+
+.button.fswwp-cc-copy-btn-inline .dashicons {
+	line-height: 1 !important;
+}
+
+.button.fswwp-cc-copy-btn-inline .dashicons-clipboard {
+	line-height: 1.2 !important;
+	writing-mode: vertical-rl !important;
+}
+
+/* Ensure button-primary dashicons stay white; only background changes on hover */
+.button.button-primary .dashicons,
+.button.button-primary .dashicons-plus-alt {
+	color: #fff !important;
+}
+
+.button.button-primary:hover .dashicons,
+.button.button-primary:hover .dashicons-plus-alt {
+	color: #fff !important;
+}
+
+/* ======================================================================
+   Multi-step Builder
+   ====================================================================== */
+
+#fswwp-cc-steps-container {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.fswwp-cc-step {
+	background: #fff;
+	border: 2px dashed #c3c4c7;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.fswwp-cc-step-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	background: #f0f0f1;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.fswwp-cc-step-handle {
+	cursor: grab;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.fswwp-cc-step-label {
+	flex: 1;
+	border: 1px solid transparent;
+	background: transparent;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 4px;
+	color: #1d2327;
+	min-width: 120px;
+}
+
+.fswwp-cc-step-label:focus {
+	border-color: #2271b1;
+	background: #fff;
+	outline: none;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.fswwp-cc-step-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 6px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #fff;
+	background: #2271b1;
+	border-radius: 11px;
+}
+
+.fswwp-cc-step-delete {
+	cursor: pointer;
+	color: #8c8f94;
+	font-size: 16px;
+	width: 26px;
+	height: 26px;
+	line-height: 26px !important;
+	text-align: center;
+	border-radius: 4px;
+	border: none;
+	background: transparent;
+}
+
+.fswwp-cc-step-delete:hover {
+	color: #d63638;
+	background: rgba(214, 54, 56, 0.08);
+}
+
+.fswwp-cc-step-fields {
+	padding: 12px 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 60px;
+}
+
+.fswwp-cc-step-fields:empty::after {
+	content: 'Drag fields here';
+	display: block;
+	text-align: center;
+	color: #8c8f94;
+	font-size: 13px;
+	padding: 20px 0;
+	font-style: italic;
+}
+
+.fswwp-cc-step-placeholder {
+	border: 2px dashed #2271b1 !important;
+	border-radius: 8px;
+	min-height: 80px;
+	background: rgba(34, 113, 177, 0.04);
+}
+
+#fswwp-cc-add-step {
+	align-self: flex-start;
+	padding: 8px 20px;
+	border: 2px dashed #8c8f94;
+	background: transparent;
+	color: #50575e;
+	font-size: 13px;
+	font-weight: 600;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+#fswwp-cc-add-step:hover {
+	border-color: #2271b1;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.04);
+}
+
+/* Multi-step toggle label */
+#fswwp-cc-multi-step-toggle {
+	font-size: 13px;
+	color: #3c434a;
+	margin-left: 4px;
+}
+
+/* Multi-step badge in list */
+.fswwp-cc-multi-badge {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 1px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.1);
+	border-radius: 4px;
+	vertical-align: middle;
+}
+
+/* ======================================================================
+   Review Editor — Meta box fields
+   ====================================================================== */
+
+.fswwp-review-editor-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.fswwp-review-editor-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.fswwp-review-editor-label {
+	font-weight: 600;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.fswwp-review-editor-required {
+	color: #d63638;
+	margin-left: 2px;
+}
+
+.fswwp-review-editor-input {
+	/* wrapper for alignment */
+}
+
+/* Star rating in admin meta box */
+.fswwp-review-editor-stars {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 3px;
+}
+
+.fswwp-review-editor-stars input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
+.fswwp-review-editor-stars label {
+	font-size: 22px;
+	color: #c3c4c7;
+	cursor: pointer;
+	transition: color 0.15s, transform 0.15s;
+}
+
+.fswwp-review-editor-stars label:hover,
+.fswwp-review-editor-stars label:hover ~ label {
+	color: #f0c040;
+	transform: scale(1.15);
+}
+
+.fswwp-review-editor-stars input:checked ~ label {
+	color: #f0c040;
+	transform: scale(1.05);
+}
+
+.fswwp-review-editor-rating-badge {
+	margin-left: 0;
+	margin-right: 8px;
+	font-size: 11px;
+	color: #50575e;
+	font-weight: 600;
+	background: #f0f0f1;
+	padding: 1px 7px;
+	border-radius: 3px;
+	white-space: nowrap;
+	align-self: center;
+}
+
+/* Image field in admin meta box */
+.fswwp-review-editor-image-empty {
+	width: 150px;
+	height: 100px;
+	border: 2px dashed #c3c4c7;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #8c8f94;
+	font-size: 13px;
+	margin-bottom: 8px;
+	background: #f9f9f9;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Views Builder — Style (Skin) Block
+/* ------------------------------------------------------------------ */
+.fswwp-cc-builder-styles select {
+	margin-bottom: 8px;
+}
+
+.fswwp-cc-code-editor {
+	width: 100%;
+	font-family: "Courier New", Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	resize: vertical;
+	background: #1e1e2e;
+	color: #e0e0f0;
+	border: 1px solid #3a3a5c;
+	border-radius: 4px;
+	padding: 10px;
+	tab-size: 4;
+	box-sizing: border-box;
+	min-height: 160px;
+}
+
+.fswwp-cc-code-editor:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Component Modal — Reset button
+/* ------------------------------------------------------------------ */
+.fswwp-cc-style-reset {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 50%;
+	background: #fff;
+	color: #8c8f94;
+	font-size: 14px;
+	line-height: 1;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: all 0.15s;
+}
+
+.fswwp-cc-style-reset:hover {
+	border-color: #c00;
+	color: #c00;
+	background: #fef0f0;
+}

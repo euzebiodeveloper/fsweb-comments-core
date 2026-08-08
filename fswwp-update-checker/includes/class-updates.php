@@ -150,12 +150,18 @@ class Updates {
 			return $url;
 		}
 
-		// Only append to our own API URLs — never leak the key elsewhere.
+		// Only append to our own API URLs — never leak credentials elsewhere.
 		if ( false === strpos( $url, 'api.flowsyncweb.com' ) ) {
 			return $url;
 		}
 
-		return add_query_arg( 'license_key', rawurlencode( $license ), $url );
+		return add_query_arg(
+			array(
+				'license_key' => rawurlencode( $license ),
+				'domain'      => rawurlencode( home_url() ),
+			),
+			$url
+		);
 	}
 
 	/**

@@ -168,6 +168,16 @@ class Metadata {
 	}
 
 	/**
+	 * Get the configured license key.
+	 *
+	 * @since 1.1.0
+	 * @return string
+	 */
+	public function get_license() {
+		return $this->license_key;
+	}
+
+	/**
 	 * Force-fetch metadata from the remote endpoint and cache it.
 	 *
 	 * @return object|null Decoded JSON metadata, or null on failure.

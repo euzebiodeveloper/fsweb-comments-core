@@ -70,7 +70,7 @@ class Fswwp_Comments_Core {
 		if ( defined( 'FSWWP_COMMENTS_CORE_VERSION' ) ) {
 			$this->version = FSWWP_COMMENTS_CORE_VERSION;
 		} else {
-			$this->version = '1.0.2';
+			$this->version = '1.0.3';
 		}
 		$this->plugin_name = 'fswwp-comments-core';
 

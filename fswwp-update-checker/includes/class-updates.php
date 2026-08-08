@@ -214,6 +214,58 @@ class Updates {
 	/**
 	 * Build the plugin_info object for the plugins_api response from REMOTE data.
 	 *
+	 * Uses remote README.txt (fetched from /api/releases/{slug}/readme) for
+	 * sections, remote metadata for version/author/etc., and local assets
+	 * for icons/banners/screenshots. Falls back gracefully when metadata
+	 * is unavailable.
+	 *
+	 * @since 1.1.0
+	 * @param string $readme_content Raw README.txt content from the API.
+	 * @return \stdClass
+	 */
+	public function build_remote_plugin_info( $readme_content ) {
+		$meta = $this->metadata->get_cached();
+
+		$info                 = new \stdClass();
+		$info->name           = ( $meta && ! empty( $meta->name ) ) ? $meta->name : $this->slug;
+		$info->slug           = $this->slug;
+		$info->version        = ( $meta && ! empty( $meta->version ) ) ? $meta->version : '';
+		$info->author         = ( $meta && ! empty( $meta->author ) ) ? $meta->author : '';
+		$info->author_profile = ( $meta && ! empty( $meta->author_profile ) ) ? $meta->author_profile : '';
+		$info->requires       = ( $meta && ! empty( $meta->requires ) ) ? $meta->requires : '';
+		$info->tested         = ( $meta && ! empty( $meta->tested ) ) ? $meta->tested : '';
+		$info->requires_php   = ( $meta && ! empty( $meta->requires_php ) ) ? $meta->requires_php : '';
+		$info->homepage       = ( $meta && ! empty( $meta->homepage ) ) ? $meta->homepage : '';
+		$info->download_link  = ( $meta && ! empty( $meta->download_url ) ) ? $meta->download_url : '';
+		$info->last_updated   = ( $meta && ! empty( $meta->last_updated ) ) ? $meta->last_updated : '';
+
+		// Icons / banners from local plugin assets.
+		$info->icons   = $this->build_local_icons();
+		$info->banners = $this->build_local_banners();
+
+		// Sections from remote README.txt (latest version from GitHub main).
+		$sections = ReadmeParser::parse_from_string( $readme_content );
+
+		// Normalise keys to lowercase for WordPress compatibility.
+		$normalised = array();
+		foreach ( $sections as $key => $html ) {
+			$normalised[ strtolower( $key ) ] = $html;
+		}
+
+		// Override screenshots with local images (if available).
+		$local_screenshots = $this->build_local_screenshots();
+		if ( '' !== $local_screenshots ) {
+			$normalised['screenshots'] = $local_screenshots;
+		}
+
+		$info->sections = $normalised;
+
+		return $info;
+	}
+
+	/**
+	 * Build the plugin_info object for the plugins_api response from REMOTE data.
+	 *
 	 * @deprecated 1.1.0 Use build_local_plugin_info() instead. Kept for backward
 	 *             compatibility with any external code that might call it directly.
 	 *

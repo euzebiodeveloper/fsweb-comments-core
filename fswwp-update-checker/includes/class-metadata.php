@@ -48,6 +48,14 @@ class Metadata {
 	private $details_url;
 
 	/**
+	 * Full URL for the readme endpoint (returns raw README.txt).
+	 *
+	 * @since 1.1.0
+	 * @var string
+	 */
+	private $readme_url;
+
+	/**
 	 * wp_options key for cached metadata.
 	 *
 	 * @var string
@@ -85,6 +93,7 @@ class Metadata {
 	public function __construct( $metadata_url, $slug, $option_name ) {
 		$this->metadata_url = esc_url_raw( $metadata_url );
 		$this->details_url  = esc_url_raw( rtrim( $metadata_url, '/' ) . '/details' );
+		$this->readme_url   = esc_url_raw( rtrim( $metadata_url, '/' ) . '/readme' );
 		$this->slug         = $slug;
 		$this->option_name  = $option_name;
 	}
@@ -100,6 +109,7 @@ class Metadata {
 	 */
 	public function set_license( $license_key ) {
 		$this->license_key = sanitize_text_field( $license_key );
+		error_log( '[FSWWP Update Checker] Metadata::set_license() key: ' . substr( $this->license_key, 0, 8 ) . '... (len: ' . strlen( $this->license_key ) . ')' );
 
 		// If we have a key, clear any stale error from a previous
 		// failed check (e.g. cron ran before activation).
@@ -166,6 +176,7 @@ class Metadata {
 		$response = $this->fetch( $this->metadata_url );
 
 		if ( is_wp_error( $response ) ) {
+			error_log( '[FSWWP Update Checker] fetch_and_cache WP_Error: ' . $response->get_error_message() );
 			$this->log( 'fetch_error', $response->get_error_message() );
 			update_option(
 				$this->option_name . '_server_error',
@@ -175,6 +186,8 @@ class Metadata {
 		}
 
 		$code = wp_remote_retrieve_response_code( $response );
+		$raw_body = wp_remote_retrieve_body( $response );
+		error_log( '[FSWWP Update Checker] fetch_and_cache HTTP ' . $code . ' body: ' . $raw_body );
 
 		// 401 — no license key or invalid key.
 		if ( 401 === $code ) {
@@ -205,9 +218,20 @@ class Metadata {
 
 		if ( ! is_object( $body ) || empty( $body->version ) ) {
 			$this->log( 'invalid_metadata', 'Response is missing version field or is not valid JSON.' );
+
+			// Try to extract a server-provided error message from the response.
+			$server_message = '';
+			if ( is_object( $body ) ) {
+				if ( ! empty( $body->data->message ) ) {
+					$server_message = sanitize_text_field( $body->data->message );
+				} elseif ( ! empty( $body->message ) ) {
+					$server_message = sanitize_text_field( $body->message );
+				}
+			}
+
 			update_option(
 				$this->option_name . '_server_error',
-				__( 'Update server returned an invalid response. Please try again later.', 'fswwp-update-checker' )
+				$server_message ?: __( 'Update server returned an invalid response. Please try again later.', 'fswwp-update-checker' )
 			);
 			return null;
 		}
@@ -254,6 +278,20 @@ class Metadata {
 		delete_option( $this->option_name );
 		delete_option( $this->option_name . '_last_check' );
 		delete_option( $this->option_name . '_details' );
+		delete_option( $this->option_name . '_license_error' );
+		delete_option( $this->option_name . '_server_error' );
+	}
+
+	/**
+	 * Clear only the error flags (license + server), keeping cached metadata intact.
+	 *
+	 * Use this when valid cached metadata exists but stale error flags
+	 * from a previous transient failure are blocking update injection.
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	public function clear_errors() {
 		delete_option( $this->option_name . '_license_error' );
 		delete_option( $this->option_name . '_server_error' );
 	}
@@ -334,6 +372,68 @@ class Metadata {
 		return $this->metadata_url;
 	}
 
+	/**
+	 * Get the readme URL.
+	 *
+	 * @since 1.1.0
+	 * @return string
+	 */
+	public function get_readme_url() {
+		return $this->readme_url;
+	}
+
+	/**
+	 * Fetch README.txt from the remote /readme endpoint.
+	 *
+	 * Uses a transient to cache the result for 24 hours, avoiding
+	 * an HTTP request on every "View Details" click. The endpoint
+	 * is public (no license key required) and returns the raw
+	 * README.txt from the latest release on GitHub.
+	 *
+	 * @since 1.1.0
+	 * @return string|null Raw README.txt content, or null on failure.
+	 */
+	public function fetch_readme() {
+		$transient_key = $this->option_name . '_readme';
+		$cached        = get_transient( $transient_key );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$response = wp_remote_get(
+			$this->readme_url,
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Accept' => 'text/plain',
+				),
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			$this->log( 'readme_fetch_error', $response->get_error_message() );
+			return null;
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $code ) {
+			$this->log( 'readme_http_' . $code, 'Readme endpoint returned HTTP ' . $code );
+			return null;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		if ( empty( $body ) ) {
+			return null;
+		}
+
+		// Cache for 24 hours — the README rarely changes between releases.
+		set_transient( $transient_key, $body, DAY_IN_SECONDS );
+
+		return $body;
+	}
+
 	// ------------------------------------------------------------------//
 	//  Private helpers
 	// ------------------------------------------------------------------//
@@ -350,6 +450,8 @@ class Metadata {
 			'domain'         => home_url(),
 			'plugin_version' => $this->plugin_version,
 		);
+
+		error_log( '[FSWWP Update Checker] fetch() POST to ' . $url . ' | body: ' . wp_json_encode( $body ) );
 
 		$args = apply_filters(
 			'fswwp_update_checker_http_args',

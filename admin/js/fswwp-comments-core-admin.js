@@ -54,8 +54,8 @@
 			$btnDeactivate.show();
 			$btnValidate.hide();
 		} else if ( 'pending' === status ) {
-			// Sold or Delivered with available slots — ready to activate.
-			$keyInput.prop( 'readonly', true );
+			// Key not yet confirmed — allow editing so the user can fix it.
+			$keyInput.prop( 'readonly', false );
 			$btnDeactivate.hide();
 			$btnActivate.show();
 			$btnValidate.show();

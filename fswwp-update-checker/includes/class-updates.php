@@ -114,7 +114,7 @@ class Updates {
 		$update->plugin          = $this->plugin_basename;
 		$update->new_version     = $meta->version;
 		$update->url             = ! empty( $meta->homepage ) ? $meta->homepage : '';
-		$update->package         = ! empty( $meta->download_url ) ? $meta->download_url : '';
+		$update->package         = $this->build_package_url( $meta );
 		$update->requires        = ! empty( $meta->requires ) ? $meta->requires : '';
 		$update->tested          = ! empty( $meta->tested ) ? $meta->tested : '';
 		$update->requires_php    = ! empty( $meta->requires_php ) ? $meta->requires_php : '';
@@ -128,6 +128,34 @@ class Updates {
 		}
 
 		return $update;
+	}
+
+	/**
+	 * Build the package download URL, appending the license key
+	 * as a query param for API authentication.
+	 *
+	 * @since 1.1.0
+	 * @param object $meta Decoded JSON metadata.
+	 * @return string
+	 */
+	private function build_package_url( $meta ) {
+		$url = ! empty( $meta->download_url ) ? $meta->download_url : '';
+
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		$license = $this->metadata->get_license();
+		if ( empty( $license ) ) {
+			return $url;
+		}
+
+		// Only append to our own API URLs — never leak the key elsewhere.
+		if ( false === strpos( $url, 'api.flowsyncweb.com' ) ) {
+			return $url;
+		}
+
+		return add_query_arg( 'license_key', rawurlencode( $license ), $url );
 	}
 
 	/**

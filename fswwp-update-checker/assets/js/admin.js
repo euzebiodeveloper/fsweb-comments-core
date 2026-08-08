@@ -177,7 +177,7 @@
 			  'or <a href="' + escAttr( update.update_url ) + '" class="update-link">update now</a>.';
 
 		var $updateRow = $( '<tr class="plugin-update-tr active fswwp-auto-update-row" ' +
-			'data-slug="' + escAttr( update.plugin_basename ) + '" ' +
+			'data-slug="' + escAttr( update.slug ) + '" ' +
 			'data-plugin="' + escAttr( update.plugin_basename ) + '">' +
 			'<td colspan="4" class="plugin-update colspanchange">' +
 			'<div class="update-message notice inline notice-warning notice-alt">' +

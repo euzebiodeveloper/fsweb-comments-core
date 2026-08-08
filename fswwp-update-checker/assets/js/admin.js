@@ -121,16 +121,21 @@
 					// Update available — inject the native-looking
 					// update row directly (no page reload).
 					injectUpdateRow( $row, response.data );
-				} else {
-					// Already on the latest version.
+				} else if ( $link ) {
+					// Manual click — show the "latest version" confirmation.
+					// Auto-check stays silent so the plugins page stays clean.
 					showInlineNotice( $row, response.data.message, 'success' );
 				}
-			} else {
-				// Error (e.g. no license, API down).
+			} else if ( $link ) {
+				// Manual click — show the error inline.
+				// Auto-check stays silent: PHP admin_notices already handles
+				// license/server errors globally, no need to clutter each row.
 				showInlineNotice( $row, response.data.message || 'Check failed.', 'warning' );
 			}
 		}, 'json' ).fail( function() {
-			showInlineNotice( $row, data.i18n.networkError || 'Network error.', 'error' );
+			if ( $link ) {
+				showInlineNotice( $row, data.i18n.networkError || 'Network error.', 'error' );
+			}
 		} ).always( function() {
 			if ( $link ) {
 				$link.text( origText );

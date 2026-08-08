@@ -118,9 +118,9 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		 * @param string $metadata_url  URL to the JSON metadata endpoint.
 		 * @param string $plugin_file   Full path to the main plugin file (__FILE__).
 		 * @param string $slug          Optional slug. Defaults to the plugin filename without .php.
-		 * @param int    $check_period  How often to check (hours). 0 disables automatic checks.
+		 * @param int    $check_period  How often to check (hours). 0 disables automatic checks. Default: 2.
 		 */
-		public function __construct( $metadata_url, $plugin_file, $slug = '', $check_period = 12 ) {
+		public function __construct( $metadata_url, $plugin_file, $slug = '', $check_period = 2 ) {
 			$this->plugin_basename = plugin_basename( $plugin_file );
 			$this->slug            = ! empty( $slug )
 				? sanitize_title( $slug )

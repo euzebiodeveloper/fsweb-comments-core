@@ -177,6 +177,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 
 			$this->assets = new \FSWWP\UpdateChecker\V1\Assets(
 				$this->slug,
+				$this->plugin_basename,
 				$nonce_action,
 				$assets_url,
 				'1.0.0'
@@ -332,20 +333,36 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		/**
 		 * Inject update data into the site_transient_update_plugins.
 		 *
-		 * Blocks updates when a license error or server error is recorded.
+		 * License errors (401/403) always block updates — the license is
+		 * invalid or expired and the remote API won't serve downloads.
+		 *
+		 * Server errors (network issues, HTTP 5xx) only block updates when
+		 * there is NO valid cached metadata to fall back on. A stale
+		 * server_error from a previous transient failure must not prevent
+		 * serving a cached update that was fetched successfully before
+		 * the error occurred.
 		 *
 		 * @param \stdClass $transient The update_plugins transient value.
 		 * @return \stdClass
 		 */
 		public function inject_update( $transient ) {
+			// License errors are permanent — always block.
 			$license_error = $this->metadata->get_last_license_error();
 			if ( ! empty( $license_error ) ) {
 				return $transient;
 			}
 
+			// Server errors are transient — only block if there's no
+			// valid cached metadata to fall back on.
 			$server_error = $this->metadata->get_last_server_error();
 			if ( ! empty( $server_error ) ) {
-				return $transient;
+				$cached = $this->metadata->get_cached();
+				if ( ! $cached ) {
+					return $transient;
+				}
+				// Cache is valid — clear the stale error so it doesn't
+				// keep blocking future requests.
+				$this->metadata->clear_errors();
 			}
 
 			return $this->updates->inject_into_transient( $transient );
@@ -354,9 +371,10 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		/**
 		 * Intercept plugins_api() calls for plugin information.
 		 *
-		 * Everything comes from local data (plugin headers + README.txt +
-		 * local icon/banner/screenshot assets). No API call — "View Details"
-		 * always reflects the *installed* version.
+		 * Standard "View Details" uses local README.txt + plugin headers.
+		 * When an update is available (remote version > installed), the
+		 * "View version X.Y.Z details" link triggers a remote README fetch
+		 * from the API so the user sees the changelog of the latest release.
 		 *
 		 * @param mixed  $result Default result.
 		 * @param string $action API action.
@@ -372,6 +390,29 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				return $result;
 			}
 
+			// Only fetch remote README when there's an update available
+			// (i.e. the "View version X.Y.Z details" link). The standard
+			// "View Details" link always shows the installed version.
+			$meta = $this->metadata->get_cached();
+			if ( $meta && ! empty( $meta->version ) ) {
+				$installed = $this->updates->get_installed_version();
+				if ( $installed && version_compare( $meta->version, $installed, '>' ) ) {
+					$readme = $this->metadata->fetch_readme();
+					if ( null !== $readme ) {
+						return $this->updates->build_remote_plugin_info( $readme );
+					}
+
+					// API unreachable — don't fall back to local README
+					// (that would show the old version's content, which
+					// is misleading when the user clicked "View version X.Y.Z").
+					return new \WP_Error(
+						'fswwp_readme_unavailable',
+						__( 'Update information is temporarily unavailable. Please try again in a few moments.', 'fswwp-update-checker' )
+					);
+				}
+			}
+
+			// Standard "View Details": local data.
 			return $this->updates->build_local_plugin_info();
 		}
 

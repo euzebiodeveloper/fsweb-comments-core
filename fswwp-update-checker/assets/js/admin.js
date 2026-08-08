@@ -2,8 +2,8 @@
  * FSWWP Update Checker — Admin Scripts
  *
  * Handles the version rollback modal interaction inside the
- * "Previous Versions" thickbox, and the "Check for Updates"
- * inline AJAX action.
+ * "Previous Versions" thickbox, the "Check for Updates"
+ * inline AJAX action, and automatic update checks on page load.
  *
  * Depends on jQuery (available in WP admin) and the global
  * FSWWP_UpdateChecker_Rollback object (localized via wp_localize_script).
@@ -85,47 +85,112 @@
 	} );
 
 	// ------------------------------------------------------------------//
-	//  Check for Updates — inline AJAX
+	//  Check for Updates — inline AJAX (shared by auto + manual)
 	// ------------------------------------------------------------------//
 
 	/**
-	 * Handle "Check for Updates" click: POST to admin-ajax,
-	 * show inline feedback. Reloads only when an update is found
-	 * (so WordPress shows the native update notice).
+	 * Perform an update check and show the result inline.
+	 *
+	 * Called automatically on page load AND when the user clicks
+	 * the "Check for Updates" link. On success with an available
+	 * update, the update notice row is injected directly into the
+	 * DOM — no page reload required.
+	 *
+	 * Auto-check (force=false) serves cached metadata when still
+	 * fresh, avoiding an HTTP request on every page load. Manual
+	 * clicks (force=true) always fetch from the remote API.
+	 *
+	 * @param {jQuery}  $row   The plugin <tr> element.
+	 * @param {jQuery}  $link  The "Check for Updates" <a> element (or null for auto-check).
+	 * @param {boolean} force  Whether to bypass the cache and force a fresh fetch.
 	 */
-	$doc.on( 'click', '.fswwp-check-updates', function( e ) {
-		e.preventDefault();
+	function doUpdateCheck( $row, $link, force ) {
+		var origText = $link ? $link.text() : '';
 
-		var $link    = $( this );
-		var $row     = $link.closest( 'tr' );
-		var origText = $link.text();
-
-		$link.text( data.i18n.checking || 'Checking\u2026' );
+		if ( $link ) {
+			$link.text( data.i18n.checking || 'Checking\u2026' );
+		}
 
 		$.post( window.ajaxurl, {
-			action:      $link.data( 'action' ),
-			_ajax_nonce: $link.data( 'nonce' )
+			action:      data.checkAction,
+			_ajax_nonce: data.checkNonce,
+			force:       force ? '1' : '0'
 		}, function( response ) {
 			if ( response.success ) {
 				if ( response.data.has_update ) {
-					// Update available — reload so WordPress shows the
-					// "Update now" link inline on the plugins page.
-					window.location.reload();
+					// Update available — inject the native-looking
+					// update row directly (no page reload).
+					injectUpdateRow( $row, response.data );
 				} else {
-					// Already on the latest version — show inline success.
+					// Already on the latest version.
 					showInlineNotice( $row, response.data.message, 'success' );
-					$link.text( origText );
 				}
 			} else {
-				// Error (e.g. no license, API down) — show inline warning.
+				// Error (e.g. no license, API down).
 				showInlineNotice( $row, response.data.message || 'Check failed.', 'warning' );
-				$link.text( origText );
 			}
 		}, 'json' ).fail( function() {
 			showInlineNotice( $row, data.i18n.networkError || 'Network error.', 'error' );
-			$link.text( origText );
+		} ).always( function() {
+			if ( $link ) {
+				$link.text( origText );
+			}
 		} );
-	} );
+	}
+
+	/**
+	 * Inject a WordPress-native update notice row below the plugin row.
+	 *
+	 * Builds the same <tr class="plugin-update-tr"> markup that WordPress
+	 * core uses for plugin updates, so it looks and behaves identically:
+	 * the "View version X.Y.Z details" link opens the thickbox, and the
+	 * "update now" link triggers the standard WordPress upgrade flow.
+	 *
+	 * @param {jQuery} $row     The plugin <tr> element.
+	 * @param {object} update   Data from the AJAX response.
+	 */
+	function injectUpdateRow( $row, update ) {
+		// Remove any previous inline notice or update row.
+		$row.next( '.fswwp-inline-notice' ).remove();
+		$row.next( '.plugin-update-tr:not(.fswwp-inline-notice)' ).remove();
+
+		// Add the `update` class so WordPress CSS fuses the rows.
+		$row.addClass( 'update' );
+
+		var message = wp.i18n && wp.i18n.sprintf
+			? wp.i18n.sprintf(
+				/* translators: 1: plugin name, 2: new version number */
+				wp.i18n.__( 'There is a new version of %1$s available. <a href="%3$s" class="thickbox open-plugin-details-modal">View version %2$s details</a> or <a href="%4$s" class="update-link">update now</a>.' ),
+				update.plugin_name,
+				update.latest_version,
+				update.details_url,
+				update.update_url
+			)
+			: 'There is a new version of <strong>' + escHtml( update.plugin_name ) + '</strong> available. ' +
+			  '<a href="' + escAttr( update.details_url ) + '" class="thickbox open-plugin-details-modal">' +
+			  'View version ' + escHtml( update.latest_version ) + ' details</a> ' +
+			  'or <a href="' + escAttr( update.update_url ) + '" class="update-link">update now</a>.';
+
+		var $updateRow = $( '<tr class="plugin-update-tr active fswwp-auto-update-row" ' +
+			'data-slug="' + escAttr( update.plugin_basename ) + '" ' +
+			'data-plugin="' + escAttr( update.plugin_basename ) + '">' +
+			'<td colspan="4" class="plugin-update colspanchange">' +
+			'<div class="update-message notice inline notice-warning notice-alt">' +
+			'<p>' + message + '</p>' +
+			'</div></td></tr>' );
+
+		$row.after( $updateRow );
+
+		// Re-bind thickbox for the newly injected link.
+		if ( window.tb_init && typeof window.tb_init === 'function' ) {
+			window.tb_init( 'a.thickbox, area.thickbox, input.thickbox' );
+		}
+
+		// Accessibility: announce the update to screen readers.
+		if ( wp.a11y && wp.a11y.speak ) {
+			wp.a11y.speak( update.message );
+		}
+	}
 
 	/**
 	 * Show (or replace) an inline notice below a plugin row.
@@ -136,11 +201,12 @@
 	 *
 	 * @param {jQuery} $row    The plugin <tr> element.
 	 * @param {string} message Notice text (plain text, will be escaped).
-	 * @param {string} type    'warning' or 'error'.
+	 * @param {string} type    'warning', 'error', or 'success'.
 	 */
 	function showInlineNotice( $row, message, type ) {
-		// Remove any previous inline notice from this row.
+		// Remove any previous inline notice or auto-update row.
 		$row.next( '.fswwp-inline-notice' ).remove();
+		$row.next( '.fswwp-auto-update-row' ).remove();
 
 		var cls = 'notice-error';
 		if ( 'warning' === type ) {
@@ -155,10 +221,86 @@
 		var $notice = $( '<tr class="plugin-update-tr active fswwp-inline-notice">' +
 			'<td colspan="4" class="plugin-update colspanchange">' +
 			'<div class="update-message notice inline ' + cls + ' notice-alt">' +
-			'<p>' + $( '<span>' ).text( message ).html() + '</p>' +
+			'<p>' + escHtml( message ) + '</p>' +
 			'</div></td></tr>' );
 
 		$row.after( $notice );
 	}
+
+	/**
+	 * Escape HTML entities in a plain-text string.
+	 *
+	 * @param {string} str Raw string.
+	 * @return {string} HTML-escaped string.
+	 */
+	function escHtml( str ) {
+		var div = document.createElement( 'div' );
+		div.appendChild( document.createTextNode( str ) );
+		return div.innerHTML;
+	}
+
+	/**
+	 * Escape a value for use inside an HTML attribute.
+	 *
+	 * @param {string} str Raw string.
+	 * @return {string} Attribute-safe string.
+	 */
+	function escAttr( str ) {
+		return String( str )
+			.replace( /&/g, '&amp;' )
+			.replace( /"/g, '&quot;' )
+			.replace( /'/g, '&#39;' )
+			.replace( /</g, '&lt;' )
+			.replace( />/g, '&gt;' );
+	}
+
+	/**
+	 * Find the plugin row that contains a "Check for Updates" link.
+	 *
+	 * Walks up from the link to the closest <tr> that represents
+	 * a plugin row on the plugins.php page.
+	 *
+	 * @param {jQuery} $link The "Check for Updates" <a> element.
+	 * @return {jQuery} The plugin's <tr> element.
+	 */
+	function findPluginRow( $link ) {
+		return $link.closest( 'tr' );
+	}
+
+	// ------------------------------------------------------------------//
+	//  Manual "Check for Updates" click handler
+	// ------------------------------------------------------------------//
+
+	$doc.on( 'click', '.fswwp-check-updates', function( e ) {
+		e.preventDefault();
+
+		var $link = $( this );
+		var $row  = findPluginRow( $link );
+
+		doUpdateCheck( $row, $link, true );
+	} );
+
+	// ------------------------------------------------------------------//
+	//  Auto-check on plugins page load
+	// ------------------------------------------------------------------//
+
+	/**
+	 * Automatically run an update check for every plugin that has
+	 * a "Check for Updates" link. This ensures the user sees the
+	 * latest status immediately — no manual click required.
+	 */
+	$doc.ready( function() {
+		$( '.fswwp-check-updates' ).each( function() {
+			var $link = $( this );
+			var $row  = findPluginRow( $link );
+
+			// Only auto-check rows that don't already have an
+			// active update row injected by WordPress core.
+			// force=false => serve from cache when fresh (no HTTP).
+			if ( ! $row.hasClass( 'update' ) ) {
+				doUpdateCheck( $row, null, false );
+			}
+		} );
+	} );
 
 } )( jQuery, window.FSWWP_UpdateChecker_Rollback || {} );

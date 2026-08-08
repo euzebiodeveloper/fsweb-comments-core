@@ -109,8 +109,8 @@ class Cron {
 		$key = 'fswwp_every_' . $this->check_period . 'hours';
 
 		if ( ! isset( $schedules[ $key ] ) ) {
+			/* translators: %d: number of hours */
 			$display_label = sprintf(
-				/* translators: %d: number of hours */
 				__( 'Every %d hours', 'fswwp-update-checker' ),
 				$this->check_period
 			);

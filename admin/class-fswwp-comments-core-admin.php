@@ -375,7 +375,7 @@ class Fswwp_Comments_Core_Admin {
 							<input type="text" id="fswwp-cc-license-key" name="fswwp_license_key" class="regular-text"
 								value="<?php echo esc_attr( $license_key ); ?>"
 								placeholder="<?php esc_attr_e( 'e.g. FSWWP-XXXX-XXXX-XXXX', 'fswwp-comments-core' ); ?>"
-								<?php echo in_array( $license_status, array( 'active', 'pending' ), true ) ? 'readonly' : ''; ?>>
+								<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
 						</td>
 					</tr>
 					<tr>

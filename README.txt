@@ -4,7 +4,7 @@ Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.2 - 2026-08-08 =
+* Adjust: Release test.
+
 = 1.0.1 - 2026-08-02 =
 * Adjust: Release test.
 
@@ -67,6 +70,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.2 - 2026-08-08 =
+Adjust: Release test.
 
 = 1.0.1 - 2026-08-02 =
 Adjust: Release test.

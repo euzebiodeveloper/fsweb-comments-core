@@ -171,9 +171,13 @@ class Rollback {
 		// 3. Install selected version.
 		$skin     = new \WP_Ajax_Upgrader_Skin();
 		$upgrader = new \Plugin_Upgrader( $skin );
+
+		error_log( '[FSWWP Update Checker] ajax_install_version — Download URL: ' . $download_url . ' | Version: ' . $version );
+
 		$result   = $upgrader->install( $download_url );
 
 		if ( is_wp_error( $result ) ) {
+			error_log( '[FSWWP Update Checker] ajax_install_version — Install failed. URL: ' . $download_url . ' | Error: ' . $result->get_error_message() );
 			wp_send_json_error( array(
 				'message' => $result->get_error_message(),
 			) );
@@ -224,32 +228,53 @@ class Rollback {
 			) );
 		}
 
-		$meta = $this->metadata->fetch_and_cache();
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified above.
+		$force = isset( $_POST['force'] ) && ( '1' === $_POST['force'] || 'true' === $_POST['force'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		if ( ! $meta ) {
-			wp_send_json_error( array(
-				'message' => __( 'Could not fetch update information.', 'fswwp-update-checker' ),
-			) );
+		// Cache-first strategy: if not forced, serve cached metadata when
+		// it's still fresh (within CACHE_TTL). This avoids an HTTP request
+		// on every plugins.php page load. Manual clicks still force-refresh.
+		$meta = null;
+		if ( ! $force ) {
+			$meta = $this->metadata->get_cached();
+			if ( $meta ) {
+				// Cache is fresh — clear any stale error flags from
+				// previous transient failures so they don't block the
+				// update injection on the next page load.
+				$this->metadata->clear_errors();
+			}
 		}
 
-		$current_version = $this->updates->get_installed_version();
-		$has_update      = $current_version
-			&& version_compare( $meta->version, $current_version, '>' );
+		if ( ! $meta ) {
+			$meta = $this->metadata->fetch_and_cache();
 
-		wp_send_json_success( array(
-			'has_update'      => $has_update,
-			'latest_version'  => $meta->version,
-			'current_version' => $current_version,
-			'message'         => $has_update
-				? sprintf(
-					/* translators: %s: latest version number */
-					__( 'Update available: version %s', 'fswwp-update-checker' ),
-					$meta->version
-				)
-				: __( 'You are running the latest version.', 'fswwp-update-checker' ),
-		) );
+			if ( ! $meta ) {
+				// Use the specific error from the API when available.
+				$server_error  = $this->metadata->get_last_server_error();
+				$license_error = $this->metadata->get_last_license_error();
+				error_log( '[FSWWP Update Checker] ajax_check_for_updates — server_error: ' . var_export( $server_error, true ) . ', license_error: ' . var_export( $license_error, true ) );
 
-		wp_die();
+				$error_message = $server_error ?: $license_error;
+
+				// Translate known error codes to human-readable messages.
+				if ( 'invalid_key' === $error_message || 'forbidden' === $error_message ) {
+					$error_message = __( 'A valid license key is required to check for updates.', 'fswwp-update-checker' );
+				}
+
+				wp_send_json_error( array(
+					'message' => $error_message ?: __( 'Could not fetch update information.', 'fswwp-update-checker' ),
+				) );
+			}
+		}
+
+		// Purge the update_plugins transient so WordPress picks up the fresh
+		// metadata on the next transient check (no page reload required —
+		// the JS injects the update row inline).
+		delete_site_transient( 'update_plugins' );
+		wp_clean_plugins_cache();
+
+		$this->send_check_response( $meta );
 	}
 
 	/**
@@ -264,6 +289,67 @@ class Rollback {
 	// ------------------------------------------------------------------//
 	//  Private helpers
 	// ------------------------------------------------------------------//
+
+	/**
+	 * Build and send the JSON success response for an update check.
+	 *
+	 * Extracted so ajax_check_for_updates() can call it with either
+	 * cached or freshly-fetched metadata.
+	 *
+	 * @param object $meta Decoded JSON metadata from the update API.
+	 * @return void
+	 */
+	private function send_check_response( $meta ) {
+		$current_version = $this->updates->get_installed_version();
+		$has_update      = $current_version
+			&& version_compare( $meta->version, $current_version, '>' );
+
+		// Build the "View details" URL for the update notice.
+		$details_url = add_query_arg(
+			array(
+				'tab'       => 'plugin-information',
+				'plugin'    => dirname( $this->plugin_basename ),
+				'section'   => 'changelog',
+				'TB_iframe' => 'true',
+				'width'     => 772,
+				'height'    => 550,
+			),
+			admin_url( 'plugin-install.php' )
+		);
+
+		// Build the "Update now" URL.
+		$update_url = add_query_arg(
+			array(
+				'action'   => 'upgrade-plugin',
+				'plugin'   => $this->plugin_basename,
+				'_wpnonce' => wp_create_nonce( 'upgrade-plugin_' . $this->plugin_basename ),
+			),
+			admin_url( 'update.php' )
+		);
+
+		$plugin_name = $this->updates->get_plugin_name();
+
+		wp_send_json_success( array(
+			'has_update'      => $has_update,
+			'latest_version'  => $meta->version,
+			'current_version' => $current_version,
+			'package_url'     => ! empty( $meta->download_url ) ? $meta->download_url : '',
+			'plugin_name'     => $plugin_name,
+			'plugin_basename' => $this->plugin_basename,
+			'details_url'     => $details_url,
+			'update_url'      => $update_url,
+			'from_cache'      => true, // JS uses this to know the response came from cache.
+			'message'         => $has_update
+				? sprintf(
+					/* translators: %s: latest version number */
+					__( 'Update available: version %s', 'fswwp-update-checker' ),
+					$meta->version
+				)
+				: __( 'You are running the latest version.', 'fswwp-update-checker' ),
+		) );
+
+		wp_die();
+	}
 
 	/**
 	 * Build a normalized versions array from metadata.

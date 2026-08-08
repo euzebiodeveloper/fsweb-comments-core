@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.1 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.1' );
+define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.2' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -103,7 +103,10 @@ $fswwp_update_checker->set_license_url(
 // Without a valid key the API returns 401 and updates are blocked.
 $fswwp_license_key = get_option( 'fswwp_license_key', '' );
 if ( ! empty( $fswwp_license_key ) ) {
+	error_log( '[FSWWP Comments Core] Bootstrap: setting license key: ' . substr( $fswwp_license_key, 0, 8 ) . '...' );
 	$fswwp_update_checker->set_license( $fswwp_license_key );
+} else {
+	error_log( '[FSWWP Comments Core] Bootstrap: no license key found in options (fswwp_license_key is empty).' );
 }
 
 /**

@@ -30,6 +30,13 @@ class Assets {
 	private $slug;
 
 	/**
+	 * Plugin basename (e.g. 'my-plugin/my-plugin.php').
+	 *
+	 * @var string
+	 */
+	private $plugin_basename;
+
+	/**
 	 * Nonce action for AJAX.
 	 *
 	 * @var string
@@ -53,16 +60,18 @@ class Assets {
 	/**
 	 * Constructor.
 	 *
-	 * @param string $slug         Plugin slug.
-	 * @param string $nonce_action Nonce action string.
-	 * @param string $assets_url   URL to the assets/ directory.
-	 * @param string $version      Plugin version (cache busting).
+	 * @param string $slug            Plugin slug.
+	 * @param string $plugin_basename Plugin basename (e.g. 'my-plugin/my-plugin.php').
+	 * @param string $nonce_action    Nonce action string.
+	 * @param string $assets_url      URL to the assets/ directory.
+	 * @param string $version         Plugin version (cache busting).
 	 */
-	public function __construct( $slug, $nonce_action, $assets_url, $version = '1.0.0' ) {
-		$this->slug         = $slug;
-		$this->nonce_action = $nonce_action;
-		$this->assets_url   = rtrim( $assets_url, '/\\' ) . '/';
-		$this->version      = $version;
+	public function __construct( $slug, $plugin_basename, $nonce_action, $assets_url, $version = '1.0.0' ) {
+		$this->slug            = $slug;
+		$this->plugin_basename = $plugin_basename;
+		$this->nonce_action    = $nonce_action;
+		$this->assets_url      = rtrim( $assets_url, '/\\' ) . '/';
+		$this->version         = $version;
 	}
 
 	/**
@@ -102,11 +111,12 @@ class Assets {
 			'fswwp-update-checker-admin',
 			'FSWWP_UpdateChecker_Rollback',
 			array(
-				'action'      => 'fswwp_install_version_' . $this->slug,
-				'nonce'       => wp_create_nonce( $this->nonce_action ),
-				'checkAction' => 'fswwp_check_updates_' . $this->slug,
-				'checkNonce'  => wp_create_nonce( 'fswwp_check_updates_' . $this->slug ),
-				'i18n'        => array(
+				'action'         => 'fswwp_install_version_' . $this->slug,
+				'nonce'          => wp_create_nonce( $this->nonce_action ),
+				'checkAction'    => 'fswwp_check_updates_' . $this->slug,
+				'checkNonce'     => wp_create_nonce( 'fswwp_check_updates_' . $this->slug ),
+				'pluginBasename' => $this->plugin_basename,
+				'i18n'           => array(
 					'installBtn'    => __( 'Install Selected Version', 'fswwp-update-checker' ),
 					'installing'    => __( 'Installing…', 'fswwp-update-checker' ),
 					'downloading'   => __( 'Downloading and installing version', 'fswwp-update-checker' ),

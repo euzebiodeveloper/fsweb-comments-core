@@ -114,6 +114,31 @@ class ReadmeParser {
 		return isset( $sections[ $key ] ) ? $sections[ $key ] : '';
 	}
 
+	/**
+	 * Parse raw README content from a string (no file needed).
+	 *
+	 * Useful for parsing README.txt content fetched from a remote API
+	 * (e.g. GitHub main branch) without needing a local file on disk.
+	 *
+	 * @since 1.1.0
+	 * @param string $content Raw README.txt content.
+	 * @return array Associative array of section_name => HTML content.
+	 */
+	public static function parse_from_string( $content ) {
+		$instance = new self( '' );
+		$instance->file_path     = '';
+		$instance->sections      = null;
+		$instance->short_description = '';
+
+		if ( empty( $content ) ) {
+			$instance->sections = array();
+			return $instance->sections;
+		}
+
+		$instance->sections = $instance->parse( $content );
+		return $instance->sections;
+	}
+
 	// ------------------------------------------------------------------//
 	//  Internal parsing
 	// ------------------------------------------------------------------//

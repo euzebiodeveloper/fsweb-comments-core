@@ -390,29 +390,34 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				return $result;
 			}
 
-			// Only fetch remote README when there's an update available
-			// (i.e. the "View version X.Y.Z details" link). The standard
-			// "View Details" link always shows the installed version.
-			$meta = $this->metadata->get_cached();
-			if ( $meta && ! empty( $meta->version ) ) {
-				$installed = $this->updates->get_installed_version();
-				if ( $installed && version_compare( $meta->version, $installed, '>' ) ) {
-					$readme = $this->metadata->fetch_readme();
-					if ( null !== $readme ) {
-						return $this->updates->build_remote_plugin_info( $readme );
-					}
+			// Determine which link was clicked:
+			// - "View version X.Y.Z details" (update notice) includes section=changelog
+			// - "View Details" (standard plugin row link) does NOT include section
+			$is_update_view = isset( $_REQUEST['section'] );
 
-					// API unreachable — don't fall back to local README
-					// (that would show the old version's content, which
-					// is misleading when the user clicked "View version X.Y.Z").
-					return new \WP_Error(
-						'fswwp_readme_unavailable',
-						__( 'Update information is temporarily unavailable. Please try again in a few moments.', 'fswwp-update-checker' )
-					);
+			if ( $is_update_view ) {
+				// Update notice — fetch remote README when there's an update.
+				$meta = $this->metadata->get_cached();
+				if ( $meta && ! empty( $meta->version ) ) {
+					$installed = $this->updates->get_installed_version();
+					if ( $installed && version_compare( $meta->version, $installed, '>' ) ) {
+						$readme = $this->metadata->fetch_readme();
+						if ( null !== $readme ) {
+							return $this->updates->build_remote_plugin_info( $readme );
+						}
+
+						// API unreachable — don't fall back to local README
+						// (that would show the old version's content, which
+						// is misleading when the user clicked "View version X.Y.Z").
+						return new \WP_Error(
+							'fswwp_readme_unavailable',
+							__( 'Update information is temporarily unavailable. Please try again in a few moments.', 'fswwp-update-checker' )
+						);
+					}
 				}
 			}
 
-			// Standard "View Details": local data.
+			// Standard "View Details": local data. No API call, ever.
 			return $this->updates->build_local_plugin_info();
 		}
 

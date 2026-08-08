@@ -220,6 +220,14 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			// Cleanup on plugin uninstall.
 			add_action( 'uninstall_' . $this->plugin_basename, array( $this, 'cleanup' ) );
 
+			// Inject license key into all HTTP requests to our API so
+			// downloads (plugin updates) are authenticated.
+			add_filter( 'http_request_args', array( $this, 'add_license_to_api_requests' ), 10, 2 );
+
+			// Clear our cache after a successful plugin update so stale
+			// metadata doesn't linger.
+			add_action( 'upgrader_process_complete', array( $this, 'on_upgrader_complete' ), 10, 2 );
+
 			// Admin-only hooks.
 			if ( is_admin() ) {
 				// Plugin row links.
@@ -324,6 +332,74 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			$this->remove_hooks();
 			$this->cron->clear();
 			$this->metadata->clear_cache();
+		}
+
+		/**
+		 * Inject the license key into HTTP requests to our update API.
+		 *
+		 * WordPress core does not attach license keys when downloading
+		 * plugin updates (it just does a plain GET on the package URL).
+		 * We intercept every HTTP request bound for api.flowsyncweb.com
+		 * and add the X-License-Key header so the download endpoint can
+		 * validate the license and serve the ZIP.
+		 *
+		 * @since 1.1.0
+		 * @param array  $args HTTP request arguments.
+		 * @param string $url  The request URL.
+		 * @return array
+		 */
+		public function add_license_to_api_requests( $args, $url ) {
+			$license = $this->metadata->get_license();
+
+			if ( empty( $license ) ) {
+				return $args;
+			}
+
+			// Only touch requests to our API — never leak the key elsewhere.
+			if ( false === strpos( $url, 'api.flowsyncweb.com' ) ) {
+				return $args;
+			}
+
+			if ( ! isset( $args['headers'] ) || ! is_array( $args['headers'] ) ) {
+				$args['headers'] = array();
+			}
+
+			$args['headers']['X-License-Key'] = $license;
+
+			return $args;
+		}
+
+		/**
+		 * Clear our metadata cache after WordPress completes a plugin
+		 * update, install, or delete. This prevents stale download URLs
+		 * and version numbers from persisting after the plugin changes.
+		 *
+		 * @since 1.1.0
+		 * @param \WP_Upgrader $upgrader   Upgrader instance.
+		 * @param array        $hook_extra Extra hook data (type, plugin, etc.).
+		 * @return void
+		 */
+		public function on_upgrader_complete( $upgrader, $hook_extra ) {
+			if ( empty( $hook_extra['type'] ) || 'plugin' !== $hook_extra['type'] ) {
+				return;
+			}
+
+			// Check if our plugin was affected.
+			$plugins = array();
+			if ( ! empty( $hook_extra['plugin'] ) ) {
+				$plugins[] = $hook_extra['plugin'];
+			} elseif ( ! empty( $hook_extra['plugins'] ) && is_array( $hook_extra['plugins'] ) ) {
+				$plugins = $hook_extra['plugins'];
+			}
+
+			if ( ! in_array( $this->plugin_basename, $plugins, true ) ) {
+				return;
+			}
+
+			// Clear everything so the next transient check does a fresh fetch.
+			$this->metadata->clear_cache();
+			delete_site_transient( 'update_plugins' );
+			wp_clean_plugins_cache();
 		}
 
 		// ------------------------------------------------------------------//
@@ -563,6 +639,8 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			remove_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 			remove_action( 'admin_notices', array( $this, 'license_admin_notice' ) );
 			remove_filter( 'cron_schedules', array( $this->cron, 'register_schedule' ) );
+			remove_filter( 'http_request_args', array( $this, 'add_license_to_api_requests' ), 10 );
+			remove_action( 'upgrader_process_complete', array( $this, 'on_upgrader_complete' ), 10 );
 		}
 	}
 }

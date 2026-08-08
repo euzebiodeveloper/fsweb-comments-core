@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.1 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.1' );
+define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.2' );
 
 /**
  * Plugin directory path and URL (with trailing slash).

@@ -56,6 +56,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.6 - 2026-08-08 =
+* Adjust: Release test.
+
 = 1.0.5 - 2026-08-08 =
 * Adjust: Release test.
 
@@ -79,6 +82,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.6 - 2026-08-08 =
+Adjust: Release test.
 
 = 1.0.5 - 2026-08-08 =
 Adjust: Release test.

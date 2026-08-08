@@ -331,6 +331,7 @@ class Rollback {
 
 		wp_send_json_success( array(
 			'has_update'      => $has_update,
+			'slug'            => $this->slug,
 			'latest_version'  => $meta->version,
 			'current_version' => $current_version,
 			'package_url'     => ! empty( $meta->download_url ) ? $meta->download_url : '',
@@ -338,7 +339,7 @@ class Rollback {
 			'plugin_basename' => $this->plugin_basename,
 			'details_url'     => $details_url,
 			'update_url'      => $update_url,
-			'from_cache'      => true, // JS uses this to know the response came from cache.
+			'from_cache'      => true,
 			'message'         => $has_update
 				? sprintf(
 					/* translators: %s: latest version number */

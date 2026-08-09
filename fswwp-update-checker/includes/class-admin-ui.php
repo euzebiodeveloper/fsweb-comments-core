@@ -180,9 +180,10 @@ class AdminUi {
 			</title>
 			<?php wp_admin_css( 'common' ); ?>
 			<?php wp_admin_css( 'forms' ); ?>
-			<?php wp_enqueue_style( 'fswwp-update-checker-admin' ); ?>
+			<?php $this->enqueue_thickbox_assets(); ?>
 			<?php wp_print_styles( 'fswwp-update-checker-admin' ); ?>
 		</head><body class="fswwp-rollback-body">
+			<?php wp_print_scripts( 'fswwp-update-checker-admin' ); ?>
 			<h2>
 				<?php echo esc_html( $this->plugin_name ); ?>
 				&mdash;
@@ -271,9 +272,10 @@ class AdminUi {
 			</title>
 			<?php wp_admin_css( 'common' ); ?>
 			<?php wp_admin_css( 'forms' ); ?>
-			<?php wp_enqueue_style( 'fswwp-update-checker-admin' ); ?>
+			<?php $this->enqueue_thickbox_assets(); ?>
 			<?php wp_print_styles( 'fswwp-update-checker-admin' ); ?>
 		</head><body class="fswwp-rollback-body">
+			<?php wp_print_scripts( 'fswwp-update-checker-admin' ); ?>
 			<h2>
 				<?php echo esc_html( $this->plugin_name ); ?>
 				&mdash;
@@ -292,6 +294,57 @@ class AdminUi {
 			</div>
 		</body></html>
 		<?php
+	}
+
+	/**
+	 * Enqueue CSS and JS assets for the thickbox iframe.
+	 *
+	 * Called inside render_versions_modal() and render_license_required_modal()
+	 * so the thickbox popup has its own copy of the stylesheet and scripts.
+	 * Without this, the "Install Selected Version" button stays disabled
+	 * because the JS that handles radio selection never loads.
+	 *
+	 * @since 1.1.1
+	 * @return void
+	 */
+	private function enqueue_thickbox_assets() {
+		$version = '1.0.0';
+
+		wp_enqueue_style(
+			'fswwp-update-checker-admin',
+			$this->assets_url . 'css/admin.css',
+			array(),
+			$version
+		);
+
+		wp_enqueue_script(
+			'fswwp-update-checker-admin',
+			$this->assets_url . 'js/admin.js',
+			array( 'jquery' ),
+			$version,
+			true
+		);
+
+		wp_localize_script(
+			'fswwp-update-checker-admin',
+			'FSWWP_UpdateChecker_Rollback',
+			array(
+				'action'         => 'fswwp_install_version_' . $this->slug,
+				'nonce'          => wp_create_nonce( 'fswwp_rollback_' . $this->slug ),
+				'checkAction'    => 'fswwp_check_updates_' . $this->slug,
+				'checkNonce'     => wp_create_nonce( 'fswwp_check_updates_' . $this->slug ),
+				'pluginBasename' => $this->plugin_basename,
+				'i18n'           => array(
+					'installBtn'    => __( 'Install Selected Version', 'fswwp-update-checker' ),
+					'installing'    => __( 'Installing…', 'fswwp-update-checker' ),
+					'downloading'   => __( 'Downloading and installing version', 'fswwp-update-checker' ),
+					'networkError'  => __( 'Network error. Please try again.', 'fswwp-update-checker' ),
+					'checking'      => __( 'Checking for updates…', 'fswwp-update-checker' ),
+					'noLicense'     => __( 'A valid license key is required to check for updates.', 'fswwp-update-checker' ),
+					'latestVersion' => __( 'You are running the latest version.', 'fswwp-update-checker' ),
+				),
+			)
+		);
 	}
 
 	/**

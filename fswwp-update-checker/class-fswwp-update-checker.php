@@ -220,16 +220,16 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			// Cleanup on plugin uninstall.
 			add_action( 'uninstall_' . $this->plugin_basename, array( $this, 'cleanup' ) );
 
-			// Inject license key into all HTTP requests to our API so
-			// downloads (plugin updates) are authenticated.
-			add_filter( 'http_request_args', array( $this, 'add_license_to_api_requests' ), 10, 2 );
-
 			// Clear our cache after a successful plugin update so stale
 			// metadata doesn't linger.
 			add_action( 'upgrader_process_complete', array( $this, 'on_upgrader_complete' ), 10, 2 );
 
 			// Admin-only hooks.
 			if ( is_admin() ) {
+				// Auto-refresh the plugins page after a successful
+				// update via update.php (the standard "update now" flow).
+				add_action( 'admin_head-update.php', array( $this, 'auto_refresh_after_update' ) );
+
 				// Plugin row links.
 				add_filter(
 					'plugin_row_meta',
@@ -335,41 +335,6 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 		}
 
 		/**
-		 * Inject the license key into HTTP requests to our update API.
-		 *
-		 * WordPress core does not attach license keys when downloading
-		 * plugin updates (it just does a plain GET on the package URL).
-		 * We intercept every HTTP request bound for api.flowsyncweb.com
-		 * and add the X-License-Key header so the download endpoint can
-		 * validate the license and serve the ZIP.
-		 *
-		 * @since 1.1.0
-		 * @param array  $args HTTP request arguments.
-		 * @param string $url  The request URL.
-		 * @return array
-		 */
-		public function add_license_to_api_requests( $args, $url ) {
-			$license = $this->metadata->get_license();
-
-			if ( empty( $license ) ) {
-				return $args;
-			}
-
-			// Only touch requests to our API — never leak the key elsewhere.
-			if ( false === strpos( $url, 'api.flowsyncweb.com' ) ) {
-				return $args;
-			}
-
-			if ( ! isset( $args['headers'] ) || ! is_array( $args['headers'] ) ) {
-				$args['headers'] = array();
-			}
-
-			$args['headers']['X-License-Key'] = $license;
-
-			return $args;
-		}
-
-		/**
 		 * Clear our metadata cache after WordPress completes a plugin
 		 * update, install, or delete. This prevents stale download URLs
 		 * and version numbers from persisting after the plugin changes.
@@ -396,10 +361,41 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				return;
 			}
 
+			// Only clear cache on SUCCESS — not on failure.
+			if ( isset( $upgrader->skin->result ) && is_wp_error( $upgrader->skin->result ) ) {
+				return;
+			}
+
 			// Clear everything so the next transient check does a fresh fetch.
 			$this->metadata->clear_cache();
 			delete_site_transient( 'update_plugins' );
 			wp_clean_plugins_cache();
+		}
+
+		/**
+		 * Inject a small script on update.php that auto-redirects to
+		 * plugins.php after a successful upgrade.
+		 *
+		 * Hooked to admin_head-update.php — runs only on the WordPress
+		 * core update screen. When the page shows a success message
+		 * (no errors), the user is redirected back to the plugins list
+		 * after a short delay so they can see the updated status.
+		 *
+		 * @since 1.1.1
+		 * @return void
+		 */
+		public function auto_refresh_after_update() {
+			?>
+			<script type="text/javascript">
+			jQuery( function( $ ) {
+				if ( $( '.updated, .notice-success, #message.updated, div.updated, .update-message.notice-success' ).length ) {
+					setTimeout( function() {
+						window.location.href = '<?php echo esc_js( admin_url( 'plugins.php' ) ); ?>';
+					}, 1500 );
+				}
+			} );
+			</script>
+			<?php
 		}
 
 		// ------------------------------------------------------------------//
@@ -639,7 +635,6 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 			remove_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 			remove_action( 'admin_notices', array( $this, 'license_admin_notice' ) );
 			remove_filter( 'cron_schedules', array( $this->cron, 'register_schedule' ) );
-			remove_filter( 'http_request_args', array( $this, 'add_license_to_api_requests' ), 10 );
 			remove_action( 'upgrader_process_complete', array( $this, 'on_upgrader_complete' ), 10 );
 		}
 	}

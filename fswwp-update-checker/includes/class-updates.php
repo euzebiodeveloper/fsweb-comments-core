@@ -158,7 +158,7 @@ class Updates {
 		return add_query_arg(
 			array(
 				'license_key' => rawurlencode( $license ),
-				'domain'      => rawurlencode( home_url() ),
+				'domain'      => rawurlencode( wp_parse_url( home_url(), PHP_URL_HOST ) ),
 			),
 			$url
 		);

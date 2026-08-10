@@ -162,7 +162,8 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				$plugin_name,
 				$assets_url,
 				$this->metadata,
-				$this->updates
+				$this->updates,
+				'1.0.1'
 			);
 
 			$this->rollback = new \FSWWP\UpdateChecker\V1\Rollback(
@@ -180,7 +181,7 @@ if ( ! class_exists( 'FSWWP_Update_Checker_1_0', false ) ) {
 				$this->plugin_basename,
 				$nonce_action,
 				$assets_url,
-				'1.0.0'
+				'1.0.1'
 			);
 
 			// ------------------------------------------------------------------//

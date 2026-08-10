@@ -54,28 +54,33 @@
 			download_url: downloadUrl,
 			version:      version
 		}, function( response ) {
+			console.log( '[FSWWP] install_version response:', response );
 			if ( response.success ) {
 				$result
 					.removeClass( 'error' )
 					.addClass( 'success' )
 					.html( '<p>' + response.data.message + '</p>' );
 
-				// Reload the plugins page after a short delay
+				// Reload the parent plugins page after a short delay
 				// so the version number updates in the UI.
 				setTimeout( function() {
+					console.log( '[FSWWP] reloading — window.parent:', window.parent, 'tb_remove:', window.parent && window.parent.tb_remove );
 					if ( window.parent && window.parent.tb_remove ) {
 						window.parent.tb_remove();
 					}
-					window.location.reload();
+					console.log( '[FSWWP] calling window.parent.location.reload()' );
+					window.parent.location.reload();
 				}, 1500 );
 			} else {
+				console.log( '[FSWWP] install_version failed:', response.data.message );
 				$btn.prop( 'disabled', false ).text( data.i18n.installBtn || 'Install Selected Version' );
 				$result
 					.removeClass( 'success' )
 					.addClass( 'error' )
 					.html( '<p>' + response.data.message + '</p>' );
 			}
-		}, 'json' ).fail( function() {
+		}, 'json' ).fail( function( jqXHR, textStatus, errorThrown ) {
+			console.log( '[FSWWP] install_version network error:', textStatus, errorThrown );
 			$btn.prop( 'disabled', false ).text( data.i18n.installBtn || 'Install Selected Version' );
 			$result
 				.removeClass( 'success' )

@@ -66,6 +66,13 @@ class AdminUi {
 	private $updates;
 
 	/**
+	 * Plugin version (for cache busting).
+	 *
+	 * @var string
+	 */
+	private $version;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string   $slug            Plugin slug.
@@ -74,14 +81,16 @@ class AdminUi {
 	 * @param string   $assets_url      URL to the assets/ directory.
 	 * @param Metadata $metadata        Metadata repository.
 	 * @param Updates  $updates         Update manager.
+	 * @param string   $version         Plugin version for cache busting.
 	 */
-	public function __construct( $slug, $plugin_basename, $plugin_name, $assets_url, Metadata $metadata, Updates $updates ) {
+	public function __construct( $slug, $plugin_basename, $plugin_name, $assets_url, Metadata $metadata, Updates $updates, $version = '1.0.0' ) {
 		$this->slug            = $slug;
 		$this->plugin_basename = $plugin_basename;
 		$this->plugin_name     = $plugin_name;
 		$this->assets_url      = rtrim( $assets_url, '/\\' ) . '/';
 		$this->metadata        = $metadata;
 		$this->updates         = $updates;
+		$this->version         = $version;
 	}
 
 	/**
@@ -308,20 +317,19 @@ class AdminUi {
 	 * @return void
 	 */
 	private function enqueue_thickbox_assets() {
-		$version = '1.0.0';
 
 		wp_enqueue_style(
 			'fswwp-update-checker-admin',
 			$this->assets_url . 'css/admin.css',
 			array(),
-			$version
+			$this->version
 		);
 
 		wp_enqueue_script(
 			'fswwp-update-checker-admin',
 			$this->assets_url . 'js/admin.js',
 			array( 'jquery' ),
-			$version,
+			$this->version,
 			true
 		);
 

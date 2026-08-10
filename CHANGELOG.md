@@ -1,3 +1,6 @@
+# 1.0.8 - 09/08/2026
+  * Adjusts: Release test.
+
 # 1.0.7 - 09/08/2026
   * Adjusts: Release test.
 

@@ -4,7 +4,7 @@ Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.8
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,30 +56,6 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
-= 1.0.8 - 2026-08-09 =
-Adjust: Release test.
-
-= 1.0.7 - 2026-08-09 =
-Adjust: Release test.
-
-= 1.0.6 - 2026-08-08 =
-* Adjust: Release test.
-
-= 1.0.5 - 2026-08-08 =
-* Adjust: Release test.
-
-= 1.0.4 - 2026-08-08 =
-* Adjust: Release test.
-
-= 1.0.3 - 2026-08-08 =
-* Adjust: Release test.
-
-= 1.0.2 - 2026-08-08 =
-* Adjust: Release test.
-
-= 1.0.1 - 2026-08-02 =
-* Adjust: Release test.
-
 = 1.0.0 =
 * Initial release.
 * Custom form builder with 8 field types.
@@ -88,30 +64,6 @@ Adjust: Release test.
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
-
-= 1.0.8 - 2026-08-09 =
-Adjust: Release test.
-
-= 1.0.7 - 2026-08-09 =
-Adjust: Release test.
-
-= 1.0.6 - 2026-08-08 =
-Adjust: Release test.
-
-= 1.0.5 - 2026-08-08 =
-Adjust: Release test.
-
-= 1.0.4 - 2026-08-08 =
-Adjust: Release test.
-
-= 1.0.3 - 2026-08-08 =
-Adjust: Release test.
-
-= 1.0.2 - 2026-08-08 =
-Adjust: Release test.
-
-= 1.0.1 - 2026-08-02 =
-Adjust: Release test.
 
 = 1.0.0 =
 Initial release.

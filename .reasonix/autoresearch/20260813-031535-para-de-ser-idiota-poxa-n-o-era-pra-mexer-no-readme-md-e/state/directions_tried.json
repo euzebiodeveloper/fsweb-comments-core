@@ -1,0 +1,16 @@
+[
+  {
+    "fingerprint": "pronto-agora-s-o-yml-foi-alterado-o-alvo-correto-o-que-f-8a2c75a2",
+    "summary": "Pronto. Agora só o `.yml` foi alterado — o alvo correto. O que fiz em `.github/workflows/build-zip.yml`:",
+    "first_seen_iteration": 1,
+    "last_seen_iteration": 1,
+    "count": 1
+  },
+  {
+    "fingerprint": "verifica-o-conclu-da-o-yml-cont-m-o-novo-step-extract-ch-7ff04826",
+    "summary": "Verificação concluída — o `.yml` contém o novo step `Extract changelog` (linha 74), a seção `## 🔖 Changelog` no corpo do release (linha 116) e a refe",
+    "first_seen_iteration": 2,
+    "last_seen_iteration": 2,
+    "count": 1
+  }
+]

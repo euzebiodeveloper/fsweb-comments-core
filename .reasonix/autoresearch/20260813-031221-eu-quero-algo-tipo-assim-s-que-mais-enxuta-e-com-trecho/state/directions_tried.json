@@ -1,0 +1,16 @@
+[
+  {
+    "fingerprint": "reescrito-o-readme-md-ficou-44-mais-enxuto-5140-2874-byt-0686ae65",
+    "summary": "Reescrito. O `README.md` ficou **44% mais enxuto** (5140 → 2874 bytes), com as seções condensadas e um **trecho do changelog** adicionado (a entrada `1.0.0`",
+    "first_seen_iteration": 1,
+    "last_seen_iteration": 1,
+    "count": 1
+  },
+  {
+    "fingerprint": "verifica-o-conclu-da-o-readme-md-est-em-2874-bytes-enxut-f6409a9d",
+    "summary": "Verificação concluída: o `README.md` está em 2874 bytes (enxuto) e contém a seção `## 🔖 Changelog` com a entrada `1.0.0`.",
+    "first_seen_iteration": 2,
+    "last_seen_iteration": 2,
+    "count": 1
+  }
+]

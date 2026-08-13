@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "iteration": 2,
+  "current_direction": "Verificação concluída — o `.yml` contém o novo step `Extract changelog` (linha 74), a seção `## 🔖 Changelog` no corpo do release (linha 116) e a refe",
+  "stale_count": 1,
+  "pivot_count": 0,
+  "blocked_reason": "",
+  "updated_at": "2026-08-13T03:20:56.6052954Z"
+}

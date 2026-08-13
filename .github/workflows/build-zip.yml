@@ -71,6 +71,28 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "Versão detectada: ${VERSION}"
 
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          if [ -f CHANGELOG.md ]; then
+            CHANGELOG="$(awk -v v="${VERSION}" '
+              index($0, "# " v " ") == 1 { print "###" substr($0, 2); found=1; next }
+              found && index($0, "# ") == 1 { exit }
+              found { print }
+            ' CHANGELOG.md)"
+          else
+            CHANGELOG=""
+          fi
+          if [ -z "${CHANGELOG}" ]; then
+            CHANGELOG="- No changelog entry found for v${VERSION}."
+          fi
+          {
+            echo "CHANGELOG<<EOF"
+            echo "${CHANGELOG}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create Release
         if: github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'master'
         uses: softprops/action-gh-release@v2
@@ -78,8 +100,26 @@ jobs:
           tag_name: v${{ steps.version.outputs.VERSION }}
           name: v${{ steps.version.outputs.VERSION }}
           body: |
-            Build gerado automaticamente a partir do PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
+            # 💬 Comments Core v${{ steps.version.outputs.VERSION }}
 
+            A lightweight, high-performance comment and feedback management system for WordPress — custom forms, star ratings, and review displays, all without code.
+
+            ## ✨ Features
+
+            - 🧱 **Form Builder** — drag-and-drop forms with 8 field types
+            - ⭐ **Star Ratings** — built-in rating field
+            - 🖼️ **Views Builder** — grid, slider, and list layouts with skins and custom CSS
+            - 📷 **Image Uploads** — attach photos to reviews
+            - 🛡️ **Moderation** — submissions held as pending for approval
+            - 🔐 **License & Auto-updates** — one-click updates from your server
+
+            ## 🔖 Changelog
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ---
+
+            Build gerado automaticamente a partir do PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
             **Branch:** ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}
             **Commit:** ${{ github.event.pull_request.merge_commit_sha }}
           files: fswwp-comments-core.zip

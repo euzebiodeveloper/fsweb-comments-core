@@ -172,12 +172,9 @@ class Rollback {
 		$skin     = new \WP_Ajax_Upgrader_Skin();
 		$upgrader = new \Plugin_Upgrader( $skin );
 
-		error_log( '[FSWWP Update Checker] ajax_install_version — Download URL: ' . $download_url . ' | Version: ' . $version );
-
 		$result   = $upgrader->install( $download_url );
 
 		if ( is_wp_error( $result ) ) {
-			error_log( '[FSWWP Update Checker] ajax_install_version — Install failed. URL: ' . $download_url . ' | Error: ' . $result->get_error_message() );
 			wp_send_json_error( array(
 				'message' => $result->get_error_message(),
 			) );
@@ -253,7 +250,6 @@ class Rollback {
 				// Use the specific error from the API when available.
 				$server_error  = $this->metadata->get_last_server_error();
 				$license_error = $this->metadata->get_last_license_error();
-				error_log( '[FSWWP Update Checker] ajax_check_for_updates — server_error: ' . var_export( $server_error, true ) . ', license_error: ' . var_export( $license_error, true ) );
 
 				$error_message = $server_error ?: $license_error;
 

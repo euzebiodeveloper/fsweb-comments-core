@@ -109,7 +109,6 @@ class Metadata {
 	 */
 	public function set_license( $license_key ) {
 		$this->license_key = sanitize_text_field( $license_key );
-		error_log( '[FSWWP Update Checker] Metadata::set_license() key: ' . substr( $this->license_key, 0, 8 ) . '... (len: ' . strlen( $this->license_key ) . ')' );
 
 		// If we have a key, clear any stale error from a previous
 		// failed check (e.g. cron ran before activation).
@@ -186,7 +185,6 @@ class Metadata {
 		$response = $this->fetch( $this->metadata_url );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( '[FSWWP Update Checker] fetch_and_cache WP_Error: ' . $response->get_error_message() );
 			$this->log( 'fetch_error', $response->get_error_message() );
 			update_option(
 				$this->option_name . '_server_error',
@@ -196,8 +194,6 @@ class Metadata {
 		}
 
 		$code = wp_remote_retrieve_response_code( $response );
-		$raw_body = wp_remote_retrieve_body( $response );
-		error_log( '[FSWWP Update Checker] fetch_and_cache HTTP ' . $code . ' body: ' . $raw_body );
 
 		// 401 — no license key or invalid key.
 		if ( 401 === $code ) {
@@ -460,8 +456,6 @@ class Metadata {
 			'domain'         => home_url(),
 			'plugin_version' => $this->plugin_version,
 		);
-
-		error_log( '[FSWWP Update Checker] fetch() POST to ' . $url . ' | body: ' . wp_json_encode( $body ) );
 
 		$args = apply_filters(
 			'fswwp_update_checker_http_args',

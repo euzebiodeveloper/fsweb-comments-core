@@ -1,26 +1,9 @@
-# 1.0.8 - 09/08/2026
-  * Adjusts: Release test.
-
-# 1.0.7 - 09/08/2026
-  * Adjusts: Release test.
-
-# 1.0.6 - 08/08/2026
-  * Adjusts: Release test.
-
-# 1.0.5 - 08/08/2026
-  * Adjusts: Release test.
-
-# 1.0.4 - 08/08/2026
-  * Adjusts: Release test.
-
-# 1.0.3 - 08/08/2026
-  * Adjusts: Release test.
-
-# 1.0.2 - 08/08/2026
-  * Adjusts: Release test.
-
-# 1.0.1 - 02/08/2026
-  * Adjusts: Release test.
-
 # 1.0.0 - 13/07/2026
-  * New: Project start.
+  * New: Initial release.
+  * Drag-and-drop Form Builder with 8 field types (text, textarea, email, URL, date, select, rating, image).
+  * Multi-step forms and star ratings.
+  * Image uploads with featured-image support.
+  * Views Builder with grid, slider, and list layouts, skins, and custom CSS.
+  * Review moderation queue (submissions are held as pending).
+  * License activation and automatic updates.
+  * Shortcodes: [fswwp_reviews] and [fswwp_review_form].

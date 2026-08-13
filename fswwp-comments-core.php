@@ -16,7 +16,7 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.8
+ * Version:           1.0.0
  * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
@@ -33,10 +33,10 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.1 and use SemVer - https://semver.org
+ * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.8' );
+define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.0' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -103,10 +103,7 @@ $fswwp_update_checker->set_license_url(
 // Without a valid key the API returns 401 and updates are blocked.
 $fswwp_license_key = get_option( 'fswwp_license_key', '' );
 if ( ! empty( $fswwp_license_key ) ) {
-	error_log( '[FSWWP Comments Core] Bootstrap: setting license key: ' . substr( $fswwp_license_key, 0, 8 ) . '...' );
 	$fswwp_update_checker->set_license( $fswwp_license_key );
-} else {
-	error_log( '[FSWWP Comments Core] Bootstrap: no license key found in options (fswwp_license_key is empty).' );
 }
 
 /**
@@ -116,7 +113,7 @@ if ( ! empty( $fswwp_license_key ) ) {
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.1
+ * @since    1.0.0
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin bootstrap; contains plugin slug.
 function run_fswwp_comments_core() {

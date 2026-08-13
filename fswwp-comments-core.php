@@ -33,7 +33,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.1 and use SemVer - https://semver.org
+ * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'FSWWP_COMMENTS_CORE_VERSION', '1.0.0' );
@@ -113,7 +113,7 @@ if ( ! empty( $fswwp_license_key ) ) {
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.1
+ * @since    1.0.0
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin bootstrap; contains plugin slug.
 function run_fswwp_comments_core() {

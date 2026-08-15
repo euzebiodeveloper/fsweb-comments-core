@@ -151,16 +151,6 @@ class Fswwp_Comments_Core_Admin {
 			array( $this, 'render_main_page' )
 		);
 
-		// License.
-		add_submenu_page(
-			$parent,
-			__( 'License', 'fswwp-comments-core' ),
-			__( 'License', 'fswwp-comments-core' ),
-			'manage_options',
-			'fswwp-comments-core-license',
-			array( $this, 'render_license_page' )
-		);
-
 		// Form Builder.
 		add_submenu_page(
 			$parent,
@@ -179,6 +169,16 @@ class Fswwp_Comments_Core_Admin {
 			'manage_options',
 			'fswwp-comments-core-views',
 			array( $this, 'render_views_page' )
+		);
+
+		// License.
+		add_submenu_page(
+			$parent,
+			__( 'License', 'fswwp-comments-core' ),
+			__( 'License', 'fswwp-comments-core' ),
+			'manage_options',
+			'fswwp-comments-core-license',
+			array( $this, 'render_license_page' )
 		);
 	}
 

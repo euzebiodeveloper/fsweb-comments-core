@@ -22,7 +22,7 @@
  * @link       https://flowsyncweb.com
  * @since      1.0.0
  *
- * @package    Fswwp_Comments_Core
+ * @package    Fsweb_Comments_Core
  */
 
 // If uninstall not called from WordPress, then exit.

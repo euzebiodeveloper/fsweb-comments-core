@@ -1,6 +1,6 @@
 <?php
 /**
- * FSWWP Reviews — Slider Template
+ * FSWEB Reviews — Slider Template
  *
  * Variables available:
  *   $reviews    — WP_Query result
@@ -13,23 +13,23 @@ if ( ! defined( 'WPINC' ) ) {
 }
 ?>
 
-<div class="fswwp-reviews fswwp-reviews--slider" data-fswwp-slider>
-	<div class="fswwp-reviews-track">
+<div class="fsweb-reviews fsweb-reviews--slider" data-fsweb-slider>
+	<div class="fsweb-reviews-track">
 		<?php while ( $reviews->have_posts() ) : $reviews->the_post(); ?>
-			<div class="fswwp-review-slide">
-				<div class="fswwp-review-card">
+			<div class="fsweb-review-slide">
+				<div class="fsweb-review-card">
 					<?php if ( $show_image && has_post_thumbnail() ) : ?>
-						<div class="fswwp-review-image">
-							<?php the_post_thumbnail( 'medium', array( 'class' => 'fswwp-review-avatar' ) ); ?>
+						<div class="fsweb-review-image">
+							<?php the_post_thumbnail( 'medium', array( 'class' => 'fsweb-review-avatar' ) ); ?>
 						</div>
 					<?php endif; ?>
 
-					<div class="fswwp-review-body">
+					<div class="fsweb-review-body">
 						<?php if ( get_the_title() ) : ?>
-							<h4 class="fswwp-review-name"><?php the_title(); ?></h4>
+							<h4 class="fsweb-review-name"><?php the_title(); ?></h4>
 						<?php endif; ?>
 
-						<div class="fswwp-review-content">
+						<div class="fsweb-review-content">
 							<?php the_content(); ?>
 						</div>
 					</div>
@@ -38,8 +38,8 @@ if ( ! defined( 'WPINC' ) ) {
 		<?php endwhile; ?>
 	</div>
 
-	<button type="button" class="fswwp-slider-prev" aria-label="<?php esc_attr_e( 'Previous', 'fswwp-comments-core' ); ?>">&#10094;</button>
-	<button type="button" class="fswwp-slider-next" aria-label="<?php esc_attr_e( 'Next', 'fswwp-comments-core' ); ?>">&#10095;</button>
+	<button type="button" class="fsweb-slider-prev" aria-label="<?php esc_attr_e( 'Previous', 'fsweb-comments-core' ); ?>">&#10094;</button>
+	<button type="button" class="fsweb-slider-next" aria-label="<?php esc_attr_e( 'Next', 'fsweb-comments-core' ); ?>">&#10095;</button>
 
-	<div class="fswwp-slider-dots"></div>
+	<div class="fsweb-slider-dots"></div>
 </div>

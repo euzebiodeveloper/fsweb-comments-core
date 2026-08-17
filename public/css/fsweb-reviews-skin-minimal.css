@@ -1,0 +1,73 @@
+/**
+ * FSWEB Reviews — Skin: Minimal
+ *
+ * Clean, minimal theme — no shadows, light borders, subtle typography.
+ * Loaded AFTER base styles so these rules take precedence.
+ *
+ * @package    Fsweb_Comments_Core
+ * @subpackage Fsweb_Comments_Core/public/css
+ * @since      1.0.0
+ */
+
+/* Card */
+.fsweb-review-card {
+	background: #fafafa;
+	border: 1px solid #e8e8e8;
+	border-radius: 4px;
+	padding: 20px;
+	box-shadow: none;
+}
+
+.fsweb-review-card:hover {
+	box-shadow: none;
+	transform: none;
+	border-color: #ccc;
+}
+
+/* Avatar */
+.fsweb-review-avatar {
+	border: 2px solid #e8e8e8;
+	border-radius: 4px;
+}
+
+/* Name */
+.fsweb-review-name {
+	font-size: 15px;
+	font-weight: 500;
+	color: #333;
+}
+
+/* Content */
+.fsweb-review-content {
+	font-size: 13px;
+	color: #666;
+}
+
+/* Stars */
+.fsweb-star {
+	color: #ddd;
+	font-size: 16px;
+}
+
+.fsweb-star--filled {
+	color: #555;
+}
+
+/* Date */
+.fsweb-review-date {
+	font-size: 11px;
+	color: #aaa;
+}
+
+/* Category tag */
+.fsweb-review-category {
+	background: #f0f0f0;
+	border-radius: 2px;
+	color: #777;
+	font-weight: 500;
+	text-transform: none;
+}
+
+.fsweb-review-row + .fsweb-review-row {
+	margin-top: 12px;
+}

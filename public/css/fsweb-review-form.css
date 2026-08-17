@@ -1,0 +1,324 @@
+/**
+ * FSWEB Comments Core — Review Form Styles
+ */
+
+.fsweb-review-form-wrap {
+	width: 100%;
+	margin: 20px 0;
+}
+
+.fsweb-review-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	padding: 24px;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+}
+
+.fsweb-review-step-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.fsweb-review-form-field {
+	display: flex;
+	flex-direction: column;
+}
+
+.fsweb-review-form-label {
+	font-weight: 600;
+	font-size: 14px;
+	margin-bottom: 6px;
+	color: #1d2327;
+}
+
+.fsweb-review-form-required {
+	color: #d63638;
+	margin-left: 2px;
+}
+
+.fsweb-review-form-field input[type="text"],
+.fsweb-review-form-field input[type="email"],
+.fsweb-review-form-field input[type="url"],
+.fsweb-review-form-field textarea,
+.fsweb-review-form-field select {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	font-size: 14px;
+	line-height: 1.5;
+	transition: border-color 0.2s;
+	box-sizing: border-box;
+}
+
+.fsweb-review-form-field input:focus,
+.fsweb-review-form-field textarea:focus,
+.fsweb-review-form-field select:focus {
+	border-color: #2271b1;
+	outline: none;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Star rating — WC-style outlined stars */
+.fsweb-review-stars {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	gap: 3px;
+	position: relative;
+}
+
+.fsweb-review-stars input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.fsweb-review-stars label {
+	display: inline-block;
+	font-size: 24px;
+	line-height: 1;
+	color: transparent;
+	-webkit-text-stroke: 1.5px #c3c4c7;
+	text-stroke: 1.5px #c3c4c7;
+	cursor: pointer;
+	transition: color 0.15s, -webkit-text-stroke 0.15s, text-stroke 0.15s, transform 0.15s;
+}
+
+.fsweb-review-stars label:hover {
+	transform: scale(1.2);
+	-webkit-text-stroke: 1.5px #f0c040;
+	text-stroke: 1.5px #f0c040;
+}
+
+.fsweb-review-stars label:hover ~ label {
+	-webkit-text-stroke: 1.5px #f0c040;
+	text-stroke: 1.5px #f0c040;
+}
+
+/* Filled — selected + all previous stars */
+.fsweb-review-stars input:checked ~ label {
+	color: #f0c040;
+	-webkit-text-stroke: 0;
+	text-stroke: 0;
+	transform: scale(1.05);
+}
+
+/* Keep hover fill even when selected */
+.fsweb-review-stars input:checked + label:hover,
+.fsweb-review-stars input:checked + label:hover ~ label {
+	color: #f0c040;
+	-webkit-text-stroke: 0;
+	text-stroke: 0;
+}
+
+/* Submit */
+.fsweb-review-form-submit {
+	display: inline-flex;
+	align-items: center;
+	padding: 12px 28px;
+	background: #2271b1;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.fsweb-review-form-submit:hover {
+	background: #135e96;
+}
+
+.fsweb-review-form-submit:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.fsweb-review-form-spinner {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border: 2px solid #dcdcde;
+	border-top-color: #2271b1;
+	border-radius: 50%;
+	animation: fsweb-spin 0.6s linear infinite;
+	margin-left: 10px;
+	vertical-align: middle;
+}
+
+@keyframes fsweb-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* Image upload */
+.fsweb-review-image-upload {
+	position: relative;
+	width: 160px;
+	height: 160px;
+	cursor: pointer;
+}
+
+.fsweb-review-image-input {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	cursor: pointer;
+	z-index: 2;
+}
+
+.fsweb-review-image-placeholder {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	border: 2px dashed #8c8f94;
+	border-radius: 4px;
+	background: #f9f9f9;
+	transition: border-color 0.2s, background 0.2s;
+}
+
+.fsweb-review-image-upload:hover .fsweb-review-image-placeholder {
+	border-color: #2271b1;
+	background: #f0f6fc;
+}
+
+.fsweb-review-image-plus {
+	font-size: 32px;
+	font-weight: 300;
+	color: #8c8f94;
+	line-height: 1;
+	transition: color 0.2s;
+}
+
+.fsweb-review-image-upload:hover .fsweb-review-image-plus {
+	color: #2271b1;
+}
+
+.fsweb-review-image-text {
+	font-size: 11px;
+	color: #8c8f94;
+}
+
+.fsweb-review-image-preview {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 4px;
+	z-index: 1;
+}
+
+.fsweb-review-image-upload--has-image .fsweb-review-image-placeholder {
+	display: none;
+}
+
+/* Field validation errors */
+.fsweb-review-form-field--error input,
+.fsweb-review-form-field--error textarea,
+.fsweb-review-form-field--error select {
+	border-color: #d63638;
+	box-shadow: 0 0 0 1px #d63638;
+}
+
+.fsweb-review-form-field--error input:focus,
+.fsweb-review-form-field--error textarea:focus,
+.fsweb-review-form-field--error select:focus {
+	border-color: #d63638;
+	box-shadow: 0 0 0 1px #d63638;
+}
+
+.fsweb-review-form-error {
+	font-size: 12px;
+	color: #d63638;
+	margin-top: 4px;
+	line-height: 1.4;
+	min-height: 0;
+}
+
+/* Success overlay — covers the entire form on submit */
+.fsweb-review-form-success {
+	position: absolute;
+	inset: 0;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	z-index: 10;
+	border-radius: 4px;
+	text-align: center;
+	padding: 32px 24px;
+	box-sizing: border-box;
+}
+
+.fsweb-review-form-success-icon {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: #00a32a;
+	color: #fff;
+	font-size: 28px;
+	line-height: 56px;
+	flex-shrink: 0;
+}
+
+.fsweb-review-form-success-message {
+	font-size: 15px;
+	color: #1d2327;
+	margin: 0;
+	line-height: 1.5;
+}
+
+.fsweb-review-form-success-btn {
+	display: inline-flex;
+	align-items: center;
+	padding: 10px 24px;
+	background: #2271b1;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+	margin-top: 4px;
+}
+
+.fsweb-review-form-success-btn:hover {
+	background: #135e96;
+}
+
+/* Messages */
+.fsweb-review-form-message {
+	padding: 12px 16px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.fsweb-review-form-message--success {
+	background: #ecf7ed;
+	border-left: 4px solid #00a32a;
+	color: #1e6e1e;
+}
+
+.fsweb-review-form-message--error {
+	background: #fbeaea;
+	border-left: 4px solid #d63638;
+	color: #8b0000;
+}

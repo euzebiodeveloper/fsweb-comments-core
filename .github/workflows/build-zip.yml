@@ -18,14 +18,14 @@ jobs:
 
       - name: Create plugin ZIP
         run: |
-          PLUGIN_SLUG="fswwp-comments-core"
+          PLUGIN_SLUG="fsweb-comments-core"
           ZIP_NAME="${PLUGIN_SLUG}.zip"
           BUILD_DIR="/tmp/build/${PLUGIN_SLUG}"
 
           # Cria a estrutura de diretórios que o WordPress espera:
-          #   fswwp-comments-core.zip
-          #   └── fswwp-comments-core/
-          #       ├── fswwp-comments-core.php
+          #   fsweb-comments-core.zip
+          #   └── fsweb-comments-core/
+          #       ├── fsweb-comments-core.php
           #       ├── readme.txt
           #       └── ...
           mkdir -p "${BUILD_DIR}"
@@ -60,14 +60,14 @@ jobs:
       - name: Upload ZIP as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fswwp-comments-core
-          path: fswwp-comments-core.zip
+          name: fsweb-comments-core
+          path: fsweb-comments-core.zip
           retention-days: 30
 
       - name: Extract plugin version
         id: version
         run: |
-          VERSION=$(grep -oP 'Version:\s*\K[0-9]+\.[0-9]+\.[0-9]+' fswwp-comments-core.php)
+          VERSION=$(grep -oP 'Version:\s*\K[0-9]+\.[0-9]+\.[0-9]+' fsweb-comments-core.php)
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "Versão detectada: ${VERSION}"
 
@@ -122,6 +122,6 @@ jobs:
             Build gerado automaticamente a partir do PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
             **Branch:** ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}
             **Commit:** ${{ github.event.pull_request.merge_commit_sha }}
-          files: fswwp-comments-core.zip
+          files: fsweb-comments-core.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

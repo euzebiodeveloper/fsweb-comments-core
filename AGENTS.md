@@ -1,11 +1,11 @@
-# AGENTS.md — fswwp-comments-core
+# AGENTS.md — fsweb-comments-core
 
 > WordPress plugin: Comments Core — lightweight comment & feedback management.  
 > Stack: PHP 7.0+, WordPress 5.0+, no build step, no Composer.
 
 ## Project
 WordPress plugin following the WP Plugin Boilerplate structure.  
-Entry point: `fswwp-comments-core.php`. No autoloader — all deps loaded with `require_once`.
+Entry point: `fsweb-comments-core.php`. No autoloader — all deps loaded with `require_once`.
 
 ## Commands
 No build/test/lint tooling configured. PHP lint: `php -l <file>`.
@@ -14,13 +14,13 @@ No build/test/lint tooling configured. PHP lint: `php -l <file>`.
 
 | Dir | Role |
 |---|---|
-| `fswwp-comments-core.php` | Bootstrap: defines version constant, hooks activation/deactivation, loads core class, instantiates Update Checker, calls `run()` |
-| `includes/` | Core business logic: `Loader` (hook registry), `i18n`, `Activator`, `Deactivator`, main `Fswwp_Comments_Core` orchestrator |
-| `admin/` | Admin-facing hooks, CSS, JS, partials. Class: `Fswwp_Comments_Core_Admin` |
-| `public/` | Public-facing hooks, CSS, JS, partials. Class: `Fswwp_Comments_Core_Public` |
-| `fswwp-update-checker/` | Self-contained update-checker library (SOLID). `FSWWP_Update_Checker_1_0` facade, internal classes in `includes/` |
+| `fsweb-comments-core.php` | Bootstrap: defines version constant, hooks activation/deactivation, loads core class, instantiates Update Checker, calls `run()` |
+| `includes/` | Core business logic: `Loader` (hook registry), `i18n`, `Activator`, `Deactivator`, main `Fsweb_Comments_Core` orchestrator |
+| `admin/` | Admin-facing hooks, CSS, JS, partials. Class: `Fsweb_Comments_Core_Admin` |
+| `public/` | Public-facing hooks, CSS, JS, partials. Class: `Fsweb_Comments_Core_Public` |
+| `fsweb-update-checker/` | Self-contained update-checker library (SOLID). `FSWEB_Update_Checker_1_0` facade, internal classes in `includes/` |
 | `languages/` | `.pot` translation template |
-| `.github/workflows/` | CI: `build-zip.yml` — on PR merge, generates `fswwp-comments-core.zip` artifact |
+| `.github/workflows/` | CI: `build-zip.yml` — on PR merge, generates `fsweb-comments-core.zip` artifact |
 
 ## Conventions
 
@@ -49,15 +49,15 @@ No build/test/lint tooling configured. PHP lint: `php -l <file>`.
 - **NEVER** use `wp_head` / `wp_footer` hooks to echo raw `<script>` tags.
 
 ### PHP Style
-- **Classes**: `Pascal_Snake_Case` — `Fswwp_Comments_Core_Admin`
-- **Functions**: `snake_case` — `run_fswwp_comments_core()`
-- **Constants**: `UPPER_SNAKE_CASE` — `FSWWP_COMMENTS_CORE_VERSION`
+- **Classes**: `Pascal_Snake_Case` — `Fsweb_Comments_Core_Admin`
+- **Functions**: `snake_case` — `run_fsweb_comments_core()`
+- **Constants**: `UPPER_SNAKE_CASE` — `FSWEB_COMMENTS_CORE_VERSION`
 - **Visibility**: always explicit (`public`, `protected`, `private`)
 - **Docblocks**: every class, method, and property gets a PHPDoc with `@since`, `@param`, `@return`, `@var`
 - **File header**: every `.php` file gets the boilerplate block with `@package`, `@subpackage`, `@since`
 
 ### Internationalization
-- Text domain: `fswwp-comments-core`
+- Text domain: `fsweb-comments-core`
 - `__()`, `_e()`, `esc_html__()`, `esc_attr__()` with the text domain as 2nd argument.
 - No hardcoded English strings in UI output.
 
@@ -67,4 +67,4 @@ No build/test/lint tooling configured. PHP lint: `php -l <file>`.
 - CSS/JS in `*/css/` and `*/js/` respectively.
 
 ## Notes
-- Update Checker library (`fswwp-update-checker/`) is versioned by class name (`FSWWP_Update_Checker_1_0`) to avoid conflicts when multiple plugins bundle it.
+- Update Checker library (`fsweb-update-checker/`) is versioned by class name (`FSWEB_Update_Checker_1_0`) to avoid conflicts when multiple plugins bundle it.

@@ -27,17 +27,17 @@ Key features:
 
 == Installation ==
 
-1. Upload the `fswwp-comments-core` folder to the `/wp-content/plugins/` directory.
+1. Upload the `fsweb-comments-core` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Go to **Comments Core → Forms** to create your first review form.
 4. Go to **Comments Core → Views** to design how reviews display.
-5. Use the `[fswwp_review_form id="your-form-id"]` shortcode to embed forms on any page.
+5. Use the `[fsweb_review_form id="your-form-id"]` shortcode to embed forms on any page.
 
 == Frequently Asked Questions ==
 
 = How do I display reviews on my site? =
 
-Create a View under **Comments Core → Views**, then embed it with the `[fswwp_review_view id="your-view-id"]` shortcode.
+Create a View under **Comments Core → Views**, then embed it with the `[fsweb_review_view id="your-view-id"]` shortcode.
 
 = Can I customize the appearance of reviews? =
 

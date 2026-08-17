@@ -6,4 +6,4 @@
   * Views Builder with grid, slider, and list layouts, skins, and custom CSS.
   * Review moderation queue (submissions are held as pending).
   * License activation and automatic updates.
-  * Shortcodes: [fswwp_reviews] and [fswwp_review_form].
+  * Shortcodes: [fsweb_reviews] and [fsweb_review_form].

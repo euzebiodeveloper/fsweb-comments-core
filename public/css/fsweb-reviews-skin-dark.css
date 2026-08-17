@@ -1,0 +1,67 @@
+/**
+ * FSWEB Reviews — Skin: Dark
+ *
+ * Dark theme override for review cards.
+ * Loaded AFTER base styles so these rules take precedence.
+ *
+ * @package    Fsweb_Comments_Core
+ * @subpackage Fsweb_Comments_Core/public/css
+ * @since      1.0.0
+ */
+
+/* Card */
+.fsweb-review-card {
+	background: #1e1e2e;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fsweb-review-card:hover {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+	transform: translateY(-2px);
+}
+
+/* Avatar */
+.fsweb-review-avatar {
+	border-color: #3a3a5c;
+}
+
+/* Name */
+.fsweb-review-name {
+	color: #e0e0f0;
+}
+
+/* Content */
+.fsweb-review-content {
+	color: #b0b0c8;
+}
+
+/* Stars */
+.fsweb-star {
+	color: #3a3a5c;
+}
+
+.fsweb-star--filled {
+	color: #f5c542;
+}
+
+/* Date */
+.fsweb-review-date {
+	color: #6a6a8a;
+}
+
+/* Category tag */
+.fsweb-review-category {
+	background: #2a2a40;
+	color: #b0b0c8;
+}
+
+/* Links */
+.fsweb-review-email,
+.fsweb-review-url {
+	color: #7eb8f4;
+}
+
+.fsweb-review-email:hover,
+.fsweb-review-url:hover {
+	color: #b0d4fc;
+}

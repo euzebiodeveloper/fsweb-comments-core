@@ -1,0 +1,218 @@
+/**
+ * FSWEB Reviews — Base Styles
+ *
+ * Shared styles for all review layouts.
+ */
+
+/* ------------------------------------------------------------------ */
+/*  Card
+/* ------------------------------------------------------------------ */
+.fsweb-review-card {
+	background: #fff;
+	border-radius: 8px;
+	padding: 24px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+	transition: box-shadow 0.2s, transform 0.2s;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.fsweb-review-card:hover {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Image / Avatar
+/* ------------------------------------------------------------------ */
+.fsweb-review-image {
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.fsweb-review-avatar {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid #f0f0f1;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Body
+/* ------------------------------------------------------------------ */
+.fsweb-review-name {
+	margin: 0 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2327;
+	text-align: center;
+}
+
+.fsweb-review-content {
+	font-size: 14px;
+	line-height: 1.7;
+	color: #50575e;
+}
+
+.fsweb-review-content p {
+	margin: 0 0 12px;
+}
+
+.fsweb-review-content p:last-child {
+	margin-bottom: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dynamic view components
+/* ------------------------------------------------------------------ */
+.fsweb-review-row + .fsweb-review-row {
+	margin-top: 16px;
+}
+
+.fsweb-review-col > * + * {
+	margin-top: 8px;
+}
+
+.fsweb-review-stars-display {
+	font-size: 20px;
+	letter-spacing: 2px;
+	line-height: 1;
+}
+
+.fsweb-star {
+	color: #dcdcde;
+	font-size: 20px;
+}
+
+.fsweb-star--filled {
+	color: #f0c040;
+	font-size: 20px;
+}
+
+.fsweb-review-date {
+	font-size: 12px;
+	color: #8c8f94;
+}
+
+.fsweb-review-category {
+	display: inline-block;
+	font-size: 11px;
+	background: #f0f0f1;
+	padding: 2px 10px;
+	border-radius: 3px;
+	color: #50575e;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+/* ======================================================================
+   Multi-step Form
+   ====================================================================== */
+
+/* Step indicator bar */
+.fsweb-review-steps-indicator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 28px;
+	padding: 0 20px;
+	flex-wrap: wrap;
+}
+
+.fsweb-review-step-dot {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	position: relative;
+}
+
+.fsweb-review-step-num {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 700;
+	color: #8c8f94;
+	background: #f0f0f1;
+	border: 2px solid #dcdcde;
+	transition: all 0.2s;
+}
+
+.fsweb-review-step-dot.active .fsweb-review-step-num {
+	color: #fff;
+	background: #2271b1;
+	border-color: #2271b1;
+}
+
+.fsweb-review-step-label {
+	font-size: 12px;
+	color: #8c8f94;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.fsweb-review-step-dot.active .fsweb-review-step-label {
+	color: #1d2327;
+	font-weight: 600;
+}
+
+.fsweb-review-step-line {
+	flex: 1;
+	height: 2px;
+	background: #dcdcde;
+	margin: 0 8px;
+	margin-bottom: 18px;
+	min-width: 30px;
+}
+
+/* Step panel */
+.fsweb-review-step-panel {
+	animation: fswebStepFadeIn 0.3s ease;
+}
+
+@keyframes fswebStepFadeIn {
+	from { opacity: 0; transform: translateX(20px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+
+.fsweb-review-step-title {
+	margin: 0 0 16px;
+	font-size: 18px;
+	font-weight: 600;
+	color: #1d2327;
+	text-align: center;
+}
+
+/* Navigation buttons */
+.fsweb-review-steps-nav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 24px;
+}
+
+.fsweb-review-step-prev,
+.fsweb-review-step-next {
+	padding: 10px 24px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+	border-radius: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #1d2327;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.fsweb-review-step-prev:hover,
+.fsweb-review-step-next:hover {
+	border-color: #2271b1;
+	color: #2271b1;
+	background: rgba(34, 113, 177, 0.04);
+}

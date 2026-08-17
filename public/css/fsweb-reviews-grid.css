@@ -1,0 +1,12 @@
+/**
+ * FSWEB Reviews — Grid Layout
+ *
+ * Auto-responsive: cards shrink/grow to fill the container.
+ * No fixed columns — CSS grid does the math.
+ */
+
+.fsweb-reviews--grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
+	gap: 24px;
+}

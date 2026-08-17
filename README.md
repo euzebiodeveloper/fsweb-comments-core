@@ -44,7 +44,7 @@ Perfect for product reviews, testimonials, business feedback, or any site that w
 
 ### 📋 Display Reviews
 ```
-[fswwp_reviews]
+[fsweb_reviews]
 ```
 
 **Available Parameters:**
@@ -57,12 +57,12 @@ Perfect for product reviews, testimonials, business feedback, or any site that w
 
 **Example:**
 ```
-[fswwp_reviews id="default" layout="grid" count="9" category="testimonials"]
+[fsweb_reviews id="default" layout="grid" count="9" category="testimonials"]
 ```
 
 ### 📝 Review Submission Form
 ```
-[fswwp_review_form]
+[fsweb_review_form]
 ```
 
 **Available Parameters:**
@@ -70,7 +70,7 @@ Perfect for product reviews, testimonials, business feedback, or any site that w
 
 **Example:**
 ```
-[fswwp_review_form id="default"]
+[fsweb_review_form id="default"]
 ```
 
 ### 🚀 Quick Setup
@@ -84,7 +84,7 @@ Perfect for product reviews, testimonials, business feedback, or any site that w
 
 ## 📦 Installation
 
-1. Upload the `fswwp-comments-core` folder to the `/wp-content/plugins/` directory (or install the ZIP via **Plugins → Add New → Upload Plugin**).
+1. Upload the `fsweb-comments-core` folder to the `/wp-content/plugins/` directory (or install the ZIP via **Plugins → Add New → Upload Plugin**).
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Go to **Reviews → License** and activate your license key.
 4. Build your form and view, then embed the shortcodes — done!
@@ -115,7 +115,7 @@ Perfect for product reviews, testimonials, business feedback, or any site that w
 Comments Core ships with **no third-party front-end dependencies**:
 
 - **jQuery UI** — the drag-and-drop builders use the jQuery UI library bundled with WordPress core.
-- **FSWWP Update Checker** — a self-contained, versioned library bundled inside the plugin that powers license-based automatic updates from your own server.
+- **FSWEB Update Checker** — a self-contained, versioned library bundled inside the plugin that powers license-based automatic updates from your own server.
 
 ---
 

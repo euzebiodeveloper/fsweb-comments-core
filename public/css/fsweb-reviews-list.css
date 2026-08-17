@@ -1,0 +1,49 @@
+/**
+ * FSWEB Reviews — List Layout
+ */
+
+.fsweb-reviews--list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.fsweb-review-list-item {
+	display: flex;
+	gap: 20px;
+	background: #fff;
+	border-radius: 8px;
+	padding: 20px 24px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+	align-items: flex-start;
+	transition: box-shadow 0.2s;
+}
+
+.fsweb-review-list-item:hover {
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+}
+
+.fsweb-review-list-item .fsweb-review-image {
+	margin-bottom: 0;
+	flex-shrink: 0;
+}
+
+.fsweb-review-list-item .fsweb-review-avatar {
+	width: 56px;
+	height: 56px;
+}
+
+.fsweb-review-list-item .fsweb-review-name {
+	text-align: left;
+}
+
+@media (max-width: 480px) {
+	.fsweb-review-list-item {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.fsweb-review-list-item .fsweb-review-name {
+		text-align: center;
+	}
+}

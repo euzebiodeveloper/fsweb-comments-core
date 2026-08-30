@@ -4,9 +4,10 @@
  *
  * Drop this entire folder into your plugin and require this file.
  *
- * Each library version has its own class name (FSWEB_Update_Checker_1_0,
- * FSWEB_Update_Checker_2_0, etc.), so different versions can coexist
- * when different plugins ship different versions.
+ * Each plugin that bundles this library gets its own class name and
+ * namespace derived from the plugin (FSWEB_Update_Checker_CommentsCore_1_0
+ * and FSWEB\UpdateChecker\CommentsCore\V1), so multiple plugins can be
+ * active at the same time without sharing class definitions.
  *
  * @version 1.0.0
  * @link    https://flowsyncweb.com
@@ -18,11 +19,20 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // ------------------------------------------------------------------//
-//  Autoloader — maps FSWEB\UpdateChecker\V1 namespace to includes/
+//  Same-plugin dedup — if this plugin's update-checker class already
+//  exists (e.g. a duplicate require), we must not redeclare the
+//  internal namespaced classes (would cause a fatal).
+// ------------------------------------------------------------------//
+if ( class_exists( 'FSWEB_Update_Checker_CommentsCore_1_0', false ) ) {
+	return;
+}
+
+// ------------------------------------------------------------------//
+//  Autoloader — maps FSWEB\UpdateChecker\CommentsCore\V1 namespace to includes/
 // ------------------------------------------------------------------//
 require_once __DIR__ . '/includes/class-auto-loader.php';
 
-$fsweb_autoloader = new \FSWEB\UpdateChecker\V1\Autoloader( __DIR__ . '/includes' );
+$fsweb_autoloader = new \FSWEB\UpdateChecker\CommentsCore\V1\Autoloader( __DIR__ . '/includes' );
 $fsweb_autoloader->register();
 
 // ------------------------------------------------------------------//

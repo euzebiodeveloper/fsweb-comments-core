@@ -54,6 +54,9 @@ class Fsweb_Comments_Core_Form_Shortcode {
 		$multi_step = ! empty( $form['multi_step'] );
 		$steps      = $multi_step && isset( $form['steps'] ) ? $form['steps'] : array();
 
+		$redirect_url   = isset( $form['redirect_url'] ) ? $form['redirect_url'] : '';
+		$redirect_delay = isset( $form['redirect_delay'] ) ? max( 0, (int) $form['redirect_delay'] ) : 3;
+
 		$nonce = wp_create_nonce( 'fsweb_review_submit' );
 
 		// Enqueue form assets.
@@ -73,7 +76,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 		ob_start();
 		?>
 		<div class="fsweb-review-form-wrap">
-			<form class="fsweb-review-form" method="post" data-fsweb-form data-fsweb-multi="<?php echo $multi_step ? '1' : '0'; ?>">
+			<form class="fsweb-review-form" method="post" data-fsweb-form data-fsweb-multi="<?php echo $multi_step ? '1' : '0'; ?>" data-fsweb-redirect="<?php echo esc_url( $redirect_url ); ?>" data-fsweb-redirect-delay="<?php echo (int) $redirect_delay; ?>">
 				<input type="hidden" name="fsweb_nonce" value="<?php echo esc_attr( $nonce ); ?>">
 
 				<?php if ( $multi_step && ! empty( $steps ) ) : ?>
@@ -149,6 +152,9 @@ class Fsweb_Comments_Core_Form_Shortcode {
 					<div class="fsweb-review-form-success-icon">&#10003;</div>
 					<p class="fsweb-review-form-success-message"></p>
 					<button type="button" class="fsweb-review-form-success-btn"><?php esc_html_e( 'Submit Another Review', 'fsweb-comments-core' ); ?></button>
+				</div>
+				<div class="fsweb-review-form-redirect" style="display:none;">
+					<p class="fsweb-review-form-redirect-message"></p>
 				</div>
 			</form>
 		</div>
@@ -298,6 +304,32 @@ class Fsweb_Comments_Core_Form_Shortcode {
 					if ( r.success ) {
 						successMsg.textContent = r.data.message;
 						successOverlay.style.display = '';
+
+						var redirectUrl = form.getAttribute( 'data-fsweb-redirect' );
+						if ( redirectUrl ) {
+							var redirectDelay = parseInt( form.getAttribute( 'data-fsweb-redirect-delay' ), 10 );
+							if ( isNaN( redirectDelay ) || redirectDelay < 0 ) { redirectDelay = 3; }
+
+							if ( 0 === redirectDelay ) {
+								window.location.href = redirectUrl;
+							} else {
+								var redirectBox = form.querySelector( '.fsweb-review-form-redirect' );
+								var redirectMsgEl = form.querySelector( '.fsweb-review-form-redirect-message' );
+								var redirectFmt = '<?php echo esc_js( __( 'Redirecting in %d seconds…', 'fsweb-comments-core' ) ); ?>';
+								var remaining = redirectDelay;
+								if ( redirectBox ) { redirectBox.style.display = 'block'; }
+								if ( redirectMsgEl ) { redirectMsgEl.textContent = redirectFmt.replace( '%d', remaining ); }
+								var redirectTimer = setInterval( function() {
+									remaining--;
+									if ( remaining <= 0 ) {
+										clearInterval( redirectTimer );
+										window.location.href = redirectUrl;
+									} else if ( redirectMsgEl ) {
+										redirectMsgEl.textContent = redirectFmt.replace( '%d', remaining );
+									}
+								}, 1000 );
+							}
+						}
 					} else {
 						msg.style.display = 'block';
 						msg.className = 'fsweb-review-form-message fsweb-review-form-message--error';
@@ -432,6 +464,32 @@ class Fsweb_Comments_Core_Form_Shortcode {
 					if ( r.success ) {
 						successMsg.textContent = r.data.message;
 						successOverlay.style.display = '';
+
+						var redirectUrl = form.getAttribute( 'data-fsweb-redirect' );
+						if ( redirectUrl ) {
+							var redirectDelay = parseInt( form.getAttribute( 'data-fsweb-redirect-delay' ), 10 );
+							if ( isNaN( redirectDelay ) || redirectDelay < 0 ) { redirectDelay = 3; }
+
+							if ( 0 === redirectDelay ) {
+								window.location.href = redirectUrl;
+							} else {
+								var redirectBox = form.querySelector( '.fsweb-review-form-redirect' );
+								var redirectMsgEl = form.querySelector( '.fsweb-review-form-redirect-message' );
+								var redirectFmt = '<?php echo esc_js( __( 'Redirecting in %d seconds…', 'fsweb-comments-core' ) ); ?>';
+								var remaining = redirectDelay;
+								if ( redirectBox ) { redirectBox.style.display = 'block'; }
+								if ( redirectMsgEl ) { redirectMsgEl.textContent = redirectFmt.replace( '%d', remaining ); }
+								var redirectTimer = setInterval( function() {
+									remaining--;
+									if ( remaining <= 0 ) {
+										clearInterval( redirectTimer );
+										window.location.href = redirectUrl;
+									} else if ( redirectMsgEl ) {
+										redirectMsgEl.textContent = redirectFmt.replace( '%d', remaining );
+									}
+								}, 1000 );
+							}
+						}
 					} else {
 						msg.style.display = 'block';
 						msg.className = 'fsweb-review-form-message fsweb-review-form-message--error';

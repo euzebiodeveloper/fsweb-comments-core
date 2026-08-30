@@ -1,6 +1,52 @@
 /**
  * FSWEB Comments Core — Admin Styles
+ *
+ * Visual language shared with the other FSWEB plugins: a purple gradient hero
+ * header, white cards with soft shadows and rounded corners.
  */
+
+/* ------------------------------------------------------------------ */
+/*  Design tokens (scoped to the plugin pages)
+/* ------------------------------------------------------------------ */
+.fsweb-cc-wrap {
+	--fsweb-cc-brand: #7b61ff;
+	--fsweb-cc-brand-dark: #5b3fd4;
+	--fsweb-cc-heading: #23282d;
+	--fsweb-cc-body: #3c434a;
+	--fsweb-cc-radius: 5px;
+	max-width: 1350px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hero header
+/* ------------------------------------------------------------------ */
+.fsweb-cc-hero {
+	position: relative;
+	overflow: hidden;
+	margin: 16px 0 20px;
+	padding: 30px 36px;
+	border-radius: var(--fsweb-cc-radius);
+	background: linear-gradient(120deg, var(--fsweb-cc-brand) 0%, var(--fsweb-cc-brand-dark) 100%);
+	color: #fff;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.fsweb-cc-hero h1 {
+	margin: 0 0 8px;
+	padding: 0;
+	color: #fff;
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.fsweb-cc-hero p {
+	margin: 0;
+	max-width: 760px;
+	color: rgba(255, 255, 255, 0.92);
+	font-size: 14.5px;
+	line-height: 1.6;
+}
 
 /* ------------------------------------------------------------------ */
 /*  License status badges
@@ -93,10 +139,6 @@
 /* ------------------------------------------------------------------ */
 /*  Dashboard
 /* ------------------------------------------------------------------ */
-.fsweb-cc-dashboard h1 {
-	margin-bottom: 20px;
-}
-
 /* Stats cards row */
 .fsweb-cc-stats {
 	display: grid;
@@ -288,7 +330,7 @@
 
 .fsweb-cc-palette-item:hover {
 	background: #f0f0f1;
-	border-color: #2271b1;
+	border-color: #7b61ff;
 }
 
 .fsweb-cc-palette-item .dashicons {
@@ -424,7 +466,7 @@
 /* Sortable placeholder */
 .fsweb-cc-field-placeholder {
 	background: #f0f6fc;
-	border: 2px dashed #2271b1;
+	border: 2px dashed #7b61ff;
 	border-radius: 6px;
 	height: 48px;
 }
@@ -512,14 +554,14 @@
 }
 
 .fsweb-cc-col-btn:hover {
-	border-color: #2271b1;
-	color: #2271b1;
+	border-color: #7b61ff;
+	color: #7b61ff;
 }
 
 .fsweb-cc-col-btn.active {
-	background: #2271b1;
+	background: #7b61ff;
 	color: #fff;
-	border-color: #2271b1;
+	border-color: #7b61ff;
 }
 
 .fsweb-cc-delete-row {
@@ -591,12 +633,12 @@
 
 /* Highlight intensifies during drag */
 .fsweb-cc-col-inner.fsweb-cc-col-droppable:empty {
-	border-color: #2271b1;
+	border-color: #7b61ff;
 	background: #f0f6fc;
 }
 
 .fsweb-cc-col-inner.fsweb-cc-col-droppable:empty::after {
-	color: #2271b1;
+	color: #7b61ff;
 }
 
 /* Component — now uses .fsweb-cc-field-card styles */
@@ -645,8 +687,8 @@
 	padding: 2px 10px;
 	font-size: 12px;
 	font-weight: 600;
-	color: #2271b1;
-	background: rgba(34, 113, 177, 0.08);
+	color: #7b61ff;
+	background: rgba(123, 97, 255, 0.08);
 	border-radius: 4px;
 	margin-bottom: 12px;
 }
@@ -654,7 +696,7 @@
 /* Sortable placeholders */
 .fsweb-cc-row-placeholder {
 	background: #f0f6fc;
-	border: 2px dashed #2271b1;
+	border: 2px dashed #7b61ff;
 	border-radius: 6px;
 	height: 52px;
 	margin-bottom: 12px;
@@ -685,10 +727,10 @@
 
 /* Empty slot lights up when a component is dragged over it */
 .fsweb-cc-view-comp--empty.fsweb-cc-empty--hover {
-	border-color: #2271b1 !important;
+	border-color: #7b61ff !important;
 	background: #f0f6fc !important;
-	color: #2271b1 !important;
-	box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.2);
+	color: #7b61ff !important;
+	box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.2);
 }
 
 /* Extra slot that appears during drag — same look as normal empty slot. */
@@ -698,7 +740,7 @@
 
 /* Row highlight during drag */
 .fsweb-cc-row--dragging {
-	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.25);
+	box-shadow: 0 0 0 2px rgba(123, 97, 255, 0.25);
 }
 
 .fsweb-cc-row--dragging .fsweb-cc-view-row-toolbar {
@@ -1137,10 +1179,10 @@
 }
 
 .fsweb-cc-step-label:focus {
-	border-color: #2271b1;
+	border-color: #7b61ff;
 	background: #fff;
 	outline: none;
-	box-shadow: 0 0 0 1px #2271b1;
+	box-shadow: 0 0 0 1px #7b61ff;
 }
 
 .fsweb-cc-step-badge {
@@ -1153,7 +1195,7 @@
 	font-size: 12px;
 	font-weight: 700;
 	color: #fff;
-	background: #2271b1;
+	background: #7b61ff;
 	border-radius: 11px;
 }
 
@@ -1194,10 +1236,10 @@
 }
 
 .fsweb-cc-step-placeholder {
-	border: 2px dashed #2271b1 !important;
+	border: 2px dashed #7b61ff !important;
 	border-radius: 8px;
 	min-height: 80px;
-	background: rgba(34, 113, 177, 0.04);
+	background: rgba(123, 97, 255, 0.04);
 }
 
 #fsweb-cc-add-step {
@@ -1214,9 +1256,9 @@
 }
 
 #fsweb-cc-add-step:hover {
-	border-color: #2271b1;
-	color: #2271b1;
-	background: rgba(34, 113, 177, 0.04);
+	border-color: #7b61ff;
+	color: #7b61ff;
+	background: rgba(123, 97, 255, 0.04);
 }
 
 /* Multi-step toggle label */
@@ -1233,8 +1275,8 @@
 	padding: 1px 8px;
 	font-size: 11px;
 	font-weight: 600;
-	color: #2271b1;
-	background: rgba(34, 113, 177, 0.1);
+	color: #7b61ff;
+	background: rgba(123, 97, 255, 0.1);
 	border-radius: 4px;
 	vertical-align: middle;
 }
@@ -1357,8 +1399,8 @@
 }
 
 .fsweb-cc-code-editor:focus {
-	border-color: #2271b1;
-	box-shadow: 0 0 0 1px #2271b1;
+	border-color: #7b61ff;
+	box-shadow: 0 0 0 1px #7b61ff;
 	outline: none;
 }
 

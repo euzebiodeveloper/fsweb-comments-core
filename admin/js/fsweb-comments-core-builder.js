@@ -377,7 +377,9 @@
 			nonce:      $sortable.data( 'nonce' ),
 			form_name:  name,
 			form_id:    $formId.val(),
-			multi_step: multi ? '1' : '0'
+			multi_step: multi ? '1' : '0',
+			redirect_url:   $( '#fsweb-cc-redirect-url' ).val().trim(),
+			redirect_delay: $( '#fsweb-cc-redirect-delay' ).val()
 		};
 
 		if ( multi ) {

@@ -18,7 +18,7 @@ No build/test/lint tooling configured. PHP lint: `php -l <file>`.
 | `includes/` | Core business logic: `Loader` (hook registry), `i18n`, `Activator`, `Deactivator`, main `Fsweb_Comments_Core` orchestrator |
 | `admin/` | Admin-facing hooks, CSS, JS, partials. Class: `Fsweb_Comments_Core_Admin` |
 | `public/` | Public-facing hooks, CSS, JS, partials. Class: `Fsweb_Comments_Core_Public` |
-| `fsweb-update-checker/` | Self-contained update-checker library (SOLID). `FSWEB_Update_Checker_1_0` facade, internal classes in `includes/` |
+| `fsweb-update-checker/` | Self-contained update-checker library (SOLID). `FSWEB_Update_Checker_CommentsCore_1_0` facade, internal classes in `includes/` |
 | `languages/` | `.pot` translation template |
 | `.github/workflows/` | CI: `build-zip.yml` — on PR merge, generates `fsweb-comments-core.zip` artifact |
 
@@ -67,4 +67,4 @@ No build/test/lint tooling configured. PHP lint: `php -l <file>`.
 - CSS/JS in `*/css/` and `*/js/` respectively.
 
 ## Notes
-- Update Checker library (`fsweb-update-checker/`) is versioned by class name (`FSWEB_Update_Checker_1_0`) to avoid conflicts when multiple plugins bundle it.
+- Update Checker library (`fsweb-update-checker/`) is namespaced per plugin (`FSWEB_Update_Checker_CommentsCore_1_0` / `FSWEB\UpdateChecker\CommentsCore\V1`) so multiple plugins can bundle it without sharing class definitions.

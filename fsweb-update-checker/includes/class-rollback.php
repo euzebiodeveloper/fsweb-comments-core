@@ -13,7 +13,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -131,14 +131,14 @@ class Rollback {
 
 		if ( ! current_user_can( 'update_plugins' ) ) {
 			wp_send_json_error( array(
-				'message' => __( 'You do not have permission to install plugins.', 'fsweb-update-checker' ),
+				'message' => __( 'You do not have permission to install plugins.', 'fsweb-comments-core' ),
 			) );
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified above.
 		if ( empty( $_POST['download_url'] ) ) {
 			wp_send_json_error( array(
-				'message' => __( 'No download URL provided.', 'fsweb-update-checker' ),
+				'message' => __( 'No download URL provided.', 'fsweb-comments-core' ),
 			) );
 		}
 
@@ -182,7 +182,7 @@ class Rollback {
 
 		if ( ! $result ) {
 			wp_send_json_error( array(
-				'message' => __( 'Installation failed. Check filesystem permissions.', 'fsweb-update-checker' ),
+				'message' => __( 'Installation failed. Check filesystem permissions.', 'fsweb-comments-core' ),
 			) );
 		}
 
@@ -193,7 +193,7 @@ class Rollback {
 				wp_send_json_error( array(
 					'message' => sprintf(
 						/* translators: %s: error message */
-						__( 'Version installed but could not re-activate: %s', 'fsweb-update-checker' ),
+						__( 'Version installed but could not re-activate: %s', 'fsweb-comments-core' ),
 						$activated->get_error_message()
 					),
 				) );
@@ -201,7 +201,7 @@ class Rollback {
 		}
 
 		wp_send_json_success( array(
-			'message' => __( 'Version installed successfully!', 'fsweb-update-checker' ),
+			'message' => __( 'Version installed successfully!', 'fsweb-comments-core' ),
 			'version' => $version,
 		) );
 	}
@@ -221,7 +221,7 @@ class Rollback {
 		// Block manual check if no license key is set or license is invalid/expired.
 		if ( ! $this->metadata->has_license() ) {
 			wp_send_json_error( array(
-				'message' => __( 'A valid license key is required to check for updates.', 'fsweb-update-checker' ),
+				'message' => __( 'A valid license key is required to check for updates.', 'fsweb-comments-core' ),
 			) );
 		}
 
@@ -255,11 +255,11 @@ class Rollback {
 
 				// Translate known error codes to human-readable messages.
 				if ( 'invalid_key' === $error_message || 'forbidden' === $error_message ) {
-					$error_message = __( 'A valid license key is required to check for updates.', 'fsweb-update-checker' );
+					$error_message = __( 'A valid license key is required to check for updates.', 'fsweb-comments-core' );
 				}
 
 				wp_send_json_error( array(
-					'message' => $error_message ?: __( 'Could not fetch update information.', 'fsweb-update-checker' ),
+					'message' => $error_message ?: __( 'Could not fetch update information.', 'fsweb-comments-core' ),
 				) );
 			}
 		}
@@ -339,10 +339,10 @@ class Rollback {
 			'message'         => $has_update
 				? sprintf(
 					/* translators: %s: latest version number */
-					__( 'Update available: version %s', 'fsweb-update-checker' ),
+					__( 'Update available: version %s', 'fsweb-comments-core' ),
 					$meta->version
 				)
-				: __( 'You are running the latest version.', 'fsweb-update-checker' ),
+				: __( 'You are running the latest version.', 'fsweb-comments-core' ),
 		) );
 
 		wp_die();

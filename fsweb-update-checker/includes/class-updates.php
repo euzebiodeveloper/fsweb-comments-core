@@ -11,7 +11,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;

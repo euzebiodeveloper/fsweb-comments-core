@@ -222,8 +222,11 @@ class Fsweb_Comments_Core_Admin {
 		$license_status = get_option( 'fsweb_license_status', 'inactive' );
 		$license_url    = admin_url( 'admin.php?page=fsweb-comments-core-license&post_type=fsweb_review' );
 		?>
-		<div class="wrap fsweb-cc-dashboard">
-			<h1><?php esc_html_e( 'Dashboard', 'fsweb-comments-core' ); ?></h1>
+		<div class="wrap fsweb-cc-wrap fsweb-cc-dashboard">
+			<div class="fsweb-cc-hero">
+				<h1><?php esc_html_e( 'Dashboard', 'fsweb-comments-core' ); ?></h1>
+				<p><?php esc_html_e( 'Overview of your reviews, categories and license status.', 'fsweb-comments-core' ); ?></p>
+			</div>
 
 			<!-- Stats cards -->
 			<div class="fsweb-cc-stats">
@@ -358,8 +361,11 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		?>
-		<div class="wrap fsweb-cc-license-wrap">
-			<h1><?php esc_html_e( 'Comments Core — License', 'fsweb-comments-core' ); ?></h1>
+		<div class="wrap fsweb-cc-wrap fsweb-cc-license-wrap">
+			<div class="fsweb-cc-hero">
+				<h1><?php esc_html_e( 'Comments Core — License', 'fsweb-comments-core' ); ?></h1>
+				<p><?php esc_html_e( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
+			</div>
 
 			<div class="fsweb-cc-license-card">
 				<p class="description">
@@ -704,8 +710,11 @@ class Fsweb_Comments_Core_Admin {
 
 		$new_url = add_query_arg( array( 'new' => '1' ), remove_query_arg( 'form_id' ) );
 		?>
-		<div class="wrap fsweb-cc-builder-wrap">
-			<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
+		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<div class="fsweb-cc-hero">
+				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
+				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
+			</div>
 
 			<div class="fsweb-cc-list-toolbar">
 				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
@@ -799,9 +808,15 @@ class Fsweb_Comments_Core_Admin {
 
 		$nonce    = wp_create_nonce( 'fsweb_builder_save' );
 		$list_url = remove_query_arg( array( 'form_id', 'new' ) );
+
+		$redirect_url   = $current && ! empty( $current['redirect_url'] ) ? $current['redirect_url'] : '';
+		$redirect_delay = $current && isset( $current['redirect_delay'] ) ? max( 0, (int) $current['redirect_delay'] ) : 3;
 		?>
-		<div class="wrap fsweb-cc-builder-wrap">
-			<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
+		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<div class="fsweb-cc-hero">
+				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
+				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
+			</div>
 
 			<!-- Back to list -->
 			<p>
@@ -813,7 +828,7 @@ class Fsweb_Comments_Core_Admin {
 
 			<!-- Toolbar -->
 			<div class="fsweb-cc-builder-toolbar" style="margin-bottom:16px;">
-				<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+				<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%;">
 					<input type="text" id="fsweb-cc-form-name" class="regular-text"
 						value="<?php echo esc_attr( $current ? $current['name'] : '' ); ?>"
 						placeholder="<?php esc_attr_e( 'Form name', 'fsweb-comments-core' ); ?>">
@@ -828,6 +843,19 @@ class Fsweb_Comments_Core_Admin {
 						<?php esc_html_e( 'Save Form', 'fsweb-comments-core' ); ?>
 					</button>
 					<input type="hidden" id="fsweb-cc-form-id" value="<?php echo esc_attr( $edit_id ); ?>">
+				</div>
+			</div>
+
+			<!-- Redirect after submission -->
+			<div class="fsweb-cc-redirect-settings" style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;margin-bottom:20px;background:#fff;border:1px solid #dcdcde;border-radius:6px;padding:16px 20px;">
+				<div style="flex:1;min-width:260px;">
+					<label for="fsweb-cc-redirect-url" style="display:block;font-weight:600;margin-bottom:4px;"><?php esc_html_e( 'Redirect URL', 'fsweb-comments-core' ); ?></label>
+					<input type="url" id="fsweb-cc-redirect-url" class="regular-text" value="<?php echo esc_attr( $redirect_url ); ?>" placeholder="https://…" style="width:100%;">
+					<p class="description" style="margin-top:4px;"><?php esc_html_e( 'Leave empty to disable redirection after submission.', 'fsweb-comments-core' ); ?></p>
+				</div>
+				<div>
+					<label for="fsweb-cc-redirect-delay" style="display:block;font-weight:600;margin-bottom:4px;"><?php esc_html_e( 'Redirect delay (seconds)', 'fsweb-comments-core' ); ?></label>
+					<input type="number" id="fsweb-cc-redirect-delay" min="0" step="1" value="<?php echo esc_attr( $redirect_delay ); ?>" style="width:110px;">
 				</div>
 			</div>
 
@@ -1116,6 +1144,8 @@ class Fsweb_Comments_Core_Admin {
 		$form_id  = isset( $_POST['form_id'] ) ? sanitize_key( wp_unslash( $_POST['form_id'] ) ) : '';
 		$multi    = isset( $_POST['multi_step'] ) && '1' === $_POST['multi_step'];
 		$raw_steps = isset( $_POST['steps'] ) ? wp_unslash( $_POST['steps'] ) : '[]';
+		$redirect_url   = isset( $_POST['redirect_url'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_url'] ) ) : '';
+		$redirect_delay = isset( $_POST['redirect_delay'] ) ? absint( $_POST['redirect_delay'] ) : 3;
 		// phpcs:enable
 
 		if ( '' === $name ) {
@@ -1144,8 +1174,10 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		$form_data = array(
-			'name'       => $name,
-			'multi_step' => $multi,
+			'name'           => $name,
+			'multi_step'     => $multi,
+			'redirect_url'   => $redirect_url,
+			'redirect_delay' => max( 0, $redirect_delay ),
 		);
 
 		if ( $multi ) {
@@ -1258,8 +1290,11 @@ class Fsweb_Comments_Core_Admin {
 
 		$new_url = add_query_arg( array( 'new' => '1' ), remove_query_arg( 'view_id' ) );
 		?>
-		<div class="wrap fsweb-cc-builder-wrap">
-			<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
+		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<div class="fsweb-cc-hero">
+				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
+				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
+			</div>
 
 			<div class="fsweb-cc-list-toolbar">
 				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
@@ -1362,8 +1397,11 @@ class Fsweb_Comments_Core_Admin {
 		$nonce    = wp_create_nonce( 'fsweb_views_save' );
 		$list_url = remove_query_arg( array( 'view_id', 'new' ) );
 		?>
-		<div class="wrap fsweb-cc-builder-wrap">
-			<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
+		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<div class="fsweb-cc-hero">
+				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
+				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
+			</div>
 
 			<!-- Back to list -->
 			<p>

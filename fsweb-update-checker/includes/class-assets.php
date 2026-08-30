@@ -11,7 +11,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -117,13 +117,13 @@ class Assets {
 				'checkNonce'     => wp_create_nonce( 'fsweb_check_updates_' . $this->slug ),
 				'pluginBasename' => $this->plugin_basename,
 				'i18n'           => array(
-					'installBtn'    => __( 'Install Selected Version', 'fsweb-update-checker' ),
-					'installing'    => __( 'Installing…', 'fsweb-update-checker' ),
-					'downloading'   => __( 'Downloading and installing version', 'fsweb-update-checker' ),
-					'networkError'  => __( 'Network error. Please try again.', 'fsweb-update-checker' ),
-					'checking'      => __( 'Checking for updates…', 'fsweb-update-checker' ),
-					'noLicense'     => __( 'A valid license key is required to check for updates.', 'fsweb-update-checker' ),
-					'latestVersion' => __( 'You are running the latest version.', 'fsweb-update-checker' ),
+					'installBtn'    => __( 'Install Selected Version', 'fsweb-comments-core' ),
+					'installing'    => __( 'Installing…', 'fsweb-comments-core' ),
+					'downloading'   => __( 'Downloading and installing version', 'fsweb-comments-core' ),
+					'networkError'  => __( 'Network error. Please try again.', 'fsweb-comments-core' ),
+					'checking'      => __( 'Checking for updates…', 'fsweb-comments-core' ),
+					'noLicense'     => __( 'A valid license key is required to check for updates.', 'fsweb-comments-core' ),
+					'latestVersion' => __( 'You are running the latest version.', 'fsweb-comments-core' ),
 				),
 			)
 		);

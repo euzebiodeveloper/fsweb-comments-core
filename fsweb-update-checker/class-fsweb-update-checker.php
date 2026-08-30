@@ -9,30 +9,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Thin facade that wires dependencies and registers WordPress hooks.
  * All logic is delegated to focused classes following SOLID principles.
  *
- * Designed to be copied into any plugin — each version has a unique
- * class name so that different plugin versions can ship different
- * library versions safely.
+ * Designed to be copied into any plugin — each plugin gets a unique
+ * class name and namespace (derived from the plugin) so multiple
+ * plugins can coexist without sharing class definitions.
  *
  * @version 1.0.0
  * @link    https://flowsyncweb.com
  * @license GPL-2.0+
  */
 
-// Only guard is for the SAME version — prevents fatal if two plugins ship the same version.
-if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
+// Guard is for this plugin's own class — prevents a fatal on a duplicate require.
+if ( ! class_exists( 'FSWEB_Update_Checker_CommentsCore_1_0', false ) ) {
 
 	/**
-	 * FSWEB_Update_Checker_1_0 — plugin update checker for custom update servers.
+	 * FSWEB_Update_Checker_CommentsCore_1_0 — plugin update checker for custom update servers.
 	 *
-	 * Version 1.0 of the library. When releasing breaking changes, create a new
-	 * class like FSWEB_Update_Checker_2_0 — both will coexist in memory and each
-	 * plugin instantiates the version it bundled.
+	 * This plugin's own fork of the update-checker library (library version 1.0).
+	 * To fork the library for another plugin, use a different class name and
+	 * namespace (e.g. FSWEB_Update_Checker_OtherPlugin_1_0 and
+	 * FSWEB\UpdateChecker\OtherPlugin\V1).
 	 *
 	 * Usage:
 	 *   require_once plugin_dir_path( __FILE__ ) . 'fsweb-update-checker/index.php';
-	 *   new FSWEB_Update_Checker_1_0( 'https://api.example.com/updates/plugin-slug.json', __FILE__ );
+	 *   new FSWEB_Update_Checker_CommentsCore_1_0( 'https://api.example.com/updates/plugin-slug.json', __FILE__ );
 	 */
-	class FSWEB_Update_Checker_1_0 {
+	class FSWEB_Update_Checker_CommentsCore_1_0 {
 
 		/**
 		 * Plugin basename (e.g. 'my-plugin/my-plugin.php').
@@ -58,42 +59,42 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 		/**
 		 * Metadata repository.
 		 *
-		 * @var \FSWEB\UpdateChecker\V1\Metadata
+		 * @var \FSWEB\UpdateChecker\CommentsCore\V1\Metadata
 		 */
 		private $metadata;
 
 		/**
 		 * Update manager.
 		 *
-		 * @var \FSWEB\UpdateChecker\V1\Updates
+		 * @var \FSWEB\UpdateChecker\CommentsCore\V1\Updates
 		 */
 		private $updates;
 
 		/**
 		 * Cron manager.
 		 *
-		 * @var \FSWEB\UpdateChecker\V1\Cron
+		 * @var \FSWEB\UpdateChecker\CommentsCore\V1\Cron
 		 */
 		private $cron;
 
 		/**
 		 * Admin UI.
 		 *
-		 * @var \FSWEB\UpdateChecker\V1\AdminUi
+		 * @var \FSWEB\UpdateChecker\CommentsCore\V1\AdminUi
 		 */
 		private $admin_ui;
 
 		/**
 		 * Rollback handler.
 		 *
-		 * @var \FSWEB\UpdateChecker\V1\Rollback
+		 * @var \FSWEB\UpdateChecker\CommentsCore\V1\Rollback
 		 */
 		private $rollback;
 
 		/**
 		 * Assets manager.
 		 *
-		 * @var \FSWEB\UpdateChecker\V1\Assets
+		 * @var \FSWEB\UpdateChecker\CommentsCore\V1\Assets
 		 */
 		private $assets;
 
@@ -135,20 +136,20 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 			// ------------------------------------------------------------------//
 			//  Wire dependencies
 			// ------------------------------------------------------------------//
-			$this->metadata = new \FSWEB\UpdateChecker\V1\Metadata(
+			$this->metadata = new \FSWEB\UpdateChecker\CommentsCore\V1\Metadata(
 				$metadata_url,
 				$this->slug,
 				$this->option_name
 			);
 
-			$this->updates = new \FSWEB\UpdateChecker\V1\Updates(
+			$this->updates = new \FSWEB\UpdateChecker\CommentsCore\V1\Updates(
 				$this->plugin_basename,
 				$this->slug,
 				$plugin_file,
 				$this->metadata
 			);
 
-			$this->cron = new \FSWEB\UpdateChecker\V1\Cron(
+			$this->cron = new \FSWEB\UpdateChecker\CommentsCore\V1\Cron(
 				$check_period,
 				$this->hook_suffix,
 				array( $this, 'cron_check' )
@@ -156,7 +157,7 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 
 			$plugin_name = $this->updates->get_plugin_name();
 
-			$this->admin_ui = new \FSWEB\UpdateChecker\V1\AdminUi(
+			$this->admin_ui = new \FSWEB\UpdateChecker\CommentsCore\V1\AdminUi(
 				$this->slug,
 				$this->plugin_basename,
 				$plugin_name,
@@ -166,7 +167,7 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 				'1.0.0'
 			);
 
-			$this->rollback = new \FSWEB\UpdateChecker\V1\Rollback(
+			$this->rollback = new \FSWEB\UpdateChecker\CommentsCore\V1\Rollback(
 				$this->slug,
 				$this->plugin_basename,
 				$this->metadata,
@@ -176,7 +177,7 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 
 			$nonce_action = $this->rollback->get_nonce_action();
 
-			$this->assets = new \FSWEB\UpdateChecker\V1\Assets(
+			$this->assets = new \FSWEB\UpdateChecker\CommentsCore\V1\Assets(
 				$this->slug,
 				$this->plugin_basename,
 				$nonce_action,
@@ -193,13 +194,13 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 			if ( $slug_used_by ) {
 				$message = sprintf(
 					/* translators: %1$s is the slug, %2$s is the path of the plugin that already uses it. */
-					__( 'Plugin slug "%1$s" is already in use by %2$s. Each plugin must have a unique slug.', 'fsweb-update-checker' ),
+					__( 'Plugin slug "%1$s" is already in use by %2$s. Each plugin must have a unique slug.', 'fsweb-comments-core' ),
 					$this->slug,
 					$slug_used_by
 				);
 				wp_die(
 					esc_html( $message ),
-					esc_html__( 'Update Checker Conflict', 'fsweb-update-checker' ),
+					esc_html__( 'Update Checker Conflict', 'fsweb-comments-core' ),
 					array( 'response' => 500 )
 				);
 			}
@@ -484,7 +485,7 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 						// is misleading when the user clicked "View version X.Y.Z").
 						return new \WP_Error(
 							'fsweb_readme_unavailable',
-							__( 'Update information is temporarily unavailable. Please try again in a few moments.', 'fsweb-update-checker' )
+							__( 'Update information is temporarily unavailable. Please try again in a few moments.', 'fsweb-comments-core' )
 						);
 					}
 				}
@@ -585,7 +586,7 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 					/* translators: 1: plugin name, 2: license page URL */
 					__(
 						'%1$s is not activated. %2$sPlease activate your license%3$s to receive automatic updates.',
-						'fsweb-update-checker'
+						'fsweb-comments-core'
 					),
 					'<strong>' . esc_html( $plugin_name ) . '</strong>',
 					$this->license_url ? '<a href="' . esc_url( $this->license_url ) . '">' : '',
@@ -596,7 +597,7 @@ if ( ! class_exists( 'FSWEB_Update_Checker_1_0', false ) ) {
 					/* translators: 1: plugin name, 2: license page URL */
 					__(
 						'%1$s: Automatic updates are disabled — your license may be expired or assigned to a different domain. %2$sCheck your license status%3$s to resume updates.',
-						'fsweb-update-checker'
+						'fsweb-comments-core'
 					),
 					'<strong>' . esc_html( $plugin_name ) . '</strong>',
 					$this->license_url ? '<a href="' . esc_url( $this->license_url ) . '">' : '',

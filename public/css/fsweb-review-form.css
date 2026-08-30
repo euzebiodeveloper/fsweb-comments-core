@@ -137,7 +137,8 @@
 }
 
 .fsweb-review-form-submit:hover {
-	background: #135e96;
+	background: #4193d6;
+	color: #fff;
 }
 
 .fsweb-review-form-submit:disabled {
@@ -321,4 +322,17 @@
 	background: #fbeaea;
 	border-left: 4px solid #d63638;
 	color: #8b0000;
+}
+
+/* Redirect after submission */
+.fsweb-review-form-redirect {
+	margin-top: 12px;
+	text-align: center;
+}
+
+.fsweb-review-form-redirect-message {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: #7b61ff;
 }

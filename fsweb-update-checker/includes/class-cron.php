@@ -11,7 +11,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -111,7 +111,7 @@ class Cron {
 		if ( ! isset( $schedules[ $key ] ) ) {
 			/* translators: %d: number of hours */
 			$display_label = sprintf(
-				__( 'Every %d hours', 'fsweb-update-checker' ),
+				__( 'Every %d hours', 'fsweb-comments-core' ),
 				$this->check_period
 			);
 			$schedules[ $key ] = array(

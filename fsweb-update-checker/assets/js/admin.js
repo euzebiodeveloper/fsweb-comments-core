@@ -100,20 +100,25 @@
 	 * fresh, avoiding an HTTP request on every page load. Manual
 	 * clicks (force=true) always fetch from the remote API.
 	 *
-	 * @param {jQuery}  $row   The plugin <tr> element.
-	 * @param {jQuery}  $link  The "Check for Updates" <a> element (or null for auto-check).
-	 * @param {boolean} force  Whether to bypass the cache and force a fresh fetch.
+	 * @param {jQuery}  $row    The plugin <tr> element.
+	 * @param {jQuery}  $link   The "Check for Updates" <a> element (carries data-action/data-nonce).
+	 * @param {boolean} force   Whether to bypass the cache and force a fresh fetch.
+	 * @param {boolean} silent  Suppress the "checking" text and inline notices (auto-check).
 	 */
-	function doUpdateCheck( $row, $link, force ) {
-		var origText = $link ? $link.text() : '';
+	function doUpdateCheck( $row, $link, force, silent ) {
+		// Read action/nonce from the link itself so each plugin's
+		// update-checker never relies on a shared global object.
+		var action   = $link.data( 'action' );
+		var nonce    = $link.data( 'nonce' );
+		var origText = silent ? '' : $link.text();
 
-		if ( $link ) {
+		if ( ! silent ) {
 			$link.text( data.i18n.checking || 'Checking\u2026' );
 		}
 
 		$.post( window.ajaxurl, {
-			action:      data.checkAction,
-			_ajax_nonce: data.checkNonce,
+			action:      action,
+			_ajax_nonce: nonce,
 			force:       force ? '1' : '0'
 		}, function( response ) {
 			if ( response.success ) {
@@ -121,23 +126,23 @@
 					// Update available — inject the native-looking
 					// update row directly (no page reload).
 					injectUpdateRow( $row, response.data );
-				} else if ( $link ) {
+				} else if ( ! silent ) {
 					// Manual click — show the "latest version" confirmation.
 					// Auto-check stays silent so the plugins page stays clean.
 					showInlineNotice( $row, response.data.message, 'success' );
 				}
-			} else if ( $link ) {
+			} else if ( ! silent ) {
 				// Manual click — show the error inline.
 				// Auto-check stays silent: PHP admin_notices already handles
 				// license/server errors globally, no need to clutter each row.
 				showInlineNotice( $row, response.data.message || 'Check failed.', 'warning' );
 			}
 		}, 'json' ).fail( function() {
-			if ( $link ) {
+			if ( ! silent ) {
 				showInlineNotice( $row, data.i18n.networkError || 'Network error.', 'error' );
 			}
 		} ).always( function() {
-			if ( $link ) {
+			if ( ! silent ) {
 				$link.text( origText );
 			}
 		} );
@@ -282,7 +287,7 @@
 		var $link = $( this );
 		var $row  = findPluginRow( $link );
 
-		doUpdateCheck( $row, $link, true );
+		doUpdateCheck( $row, $link, true, false );
 	} );
 
 	// ------------------------------------------------------------------//
@@ -303,7 +308,7 @@
 			// active update row injected by WordPress core.
 			// force=false => serve from cache when fresh (no HTTP).
 			if ( ! $row.hasClass( 'update' ) ) {
-				doUpdateCheck( $row, null, false );
+				doUpdateCheck( $row, $link, false, true );
 			}
 		} );
 	} );

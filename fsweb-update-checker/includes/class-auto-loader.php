@@ -2,7 +2,7 @@
 /**
  * FSWEB Update Checker — PSR-4-like Autoloader
  *
- * Maps the FSWEB\UpdateChecker\V1 namespace to the includes/ directory.
+ * Maps the FSWEB\UpdateChecker\CommentsCore\V1 namespace to the includes/ directory.
  *
  * @package   FSWEB_Update_Checker
  * @version   1.0.0
@@ -10,7 +10,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -62,7 +62,7 @@ final class Autoloader {
 	 * @return void
 	 */
 	public function load_class( $fqcn ) {
-		$prefix = 'FSWEB\\UpdateChecker\\V1\\';
+		$prefix = 'FSWEB\\UpdateChecker\\CommentsCore\\V1\\';
 		if ( 0 !== strpos( $fqcn, $prefix ) ) {
 			return;
 		}

@@ -12,9 +12,9 @@ Drop-in library that enables automatic plugin updates from your own update
 server. Designed to be bundled inside each plugin. Multiple plugins can include
 this same library without conflicts.
 
-Each library version uses a unique class name (e.g. FSWEB_Update_Checker_1_0).
-Different plugins can ship different library versions — they coexist because
-the class names are different.
+Each plugin that bundles this library uses its own class name and namespace
+derived from the plugin name (e.g. FSWEB_Update_Checker_CommentsCore_1_0 and
+FSWEB\UpdateChecker\CommentsCore\V1). Plugins never share class definitions.
 
 == How to use ==
 
@@ -23,14 +23,14 @@ the class names are different.
 2. In your main plugin file, add:
 
     require_once plugin_dir_path( __FILE__ ) . 'fsweb-update-checker/index.php';
-    new FSWEB_Update_Checker_1_0(
+    new FSWEB_Update_Checker_CommentsCore_1_0(
         'https://your-server.com/api/updates/{slug}.json',
         __FILE__
     );
 
    Optionally you can pass a custom slug and check period:
 
-    new FSWEB_Update_Checker_1_0(
+    new FSWEB_Update_Checker_CommentsCore_1_0(
         'https://your-server.com/api/updates/my-plugin.json',
         __FILE__,
         'my-custom-slug',
@@ -90,24 +90,22 @@ thickbox modal. The user can select any older version and install it.
 
 == Conflict Prevention ==
 
-If a user has two plugins that both include this library:
+This plugin's copy of the library uses its own class name and namespace
+(`FSWEB_Update_Checker_CommentsCore_1_0` / `FSWEB\UpdateChecker\CommentsCore\V1`).
+Each plugin that bundles the library gets its own identifiers, so multiple
+plugins can be active at the same time without sharing class definitions.
 
-1. **Same version → safe.** The `class_exists()` guard prevents class
-   redefinition. Both plugins share the class but create separate objects
-   with independent slugs, hooks, and cron schedules.
+1. **Per-plugin classes → safe.** Each plugin's facade class and namespace are
+   unique, so editing one plugin's copy never affects another.
 
-2. **Different versions → safe.** Each version has its own class name
-   (`FSWEB_Update_Checker_1_0`, `FSWEB_Update_Checker_2_0`, etc.). Both
-   classes coexist in memory. Each plugin instantiates the version it bundled.
-
-4. **Each instance is independent** — `new FSWEB_Update_Checker_1_0(...)`
+2. **Each instance is independent** — `new FSWEB_Update_Checker_CommentsCore_1_0(...)`
    creates a separate object with its own slug, hooks, cache option, and
    cron schedule.
 
-5. **Slug uniqueness is enforced** — if two plugins accidentally use the same
+3. **Slug uniqueness is enforced** — if two plugins accidentally use the same
    slug, a clear error is shown immediately.
 
-6. **Hook names include the slug** — filters like `fsweb_slug_in_use_{slug}`
+4. **Hook names include the slug** — filters like `fsweb_slug_in_use_{slug}`
    and cron hooks like `fsweb_check_updates_{slug}` are namespaced per slug,
    preventing collisions.
 

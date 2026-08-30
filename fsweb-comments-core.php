@@ -89,7 +89,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-fsweb-comments-core.php';
  * @see https://github.com/flowsyncweb/fsweb-update-checker
  */
 require plugin_dir_path( __FILE__ ) . 'fsweb-update-checker/index.php';
-$fsweb_update_checker = new FSWEB_Update_Checker_1_0(
+$fsweb_update_checker = new FSWEB_Update_Checker_CommentsCore_1_0(
 	'https://api.flowsyncweb.com/api/releases/fsweb-comments-core',
 	__FILE__
 );

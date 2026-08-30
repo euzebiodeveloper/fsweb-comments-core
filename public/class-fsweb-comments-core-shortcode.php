@@ -258,13 +258,22 @@ class Fsweb_Comments_Core_Shortcode {
 			}
 		}
 
-		// Custom CSS — injected inline with highest priority.
-		// Uses a dummy handle registered after everything else so it comes last.
-		if ( 'custom' === $skin && ! empty( $custom_css ) ) {
-			$custom_handle = 'fsweb-reviews-custom';
-			wp_register_style( $custom_handle, false, array( 'fsweb-reviews-base' ), $version );
-			wp_enqueue_style( $custom_handle );
-			wp_add_inline_style( $custom_handle, $custom_css );
+		// Custom skin — the card comes unstyled so the user's CSS has full control.
+		if ( 'custom' === $skin ) {
+			$reset_handle = 'fsweb-reviews-custom-reset';
+			wp_register_style( $reset_handle, false, array( 'fsweb-reviews-base' ), $version );
+			wp_enqueue_style( $reset_handle );
+			wp_add_inline_style(
+				$reset_handle,
+				'.fsweb-review-card { border: none; border-radius: 0; padding: 0; box-shadow: none; background: transparent; }'
+			);
+
+			if ( ! empty( $custom_css ) ) {
+				$custom_handle = 'fsweb-reviews-custom';
+				wp_register_style( $custom_handle, false, array( $reset_handle ), $version );
+				wp_enqueue_style( $custom_handle );
+				wp_add_inline_style( $custom_handle, $custom_css );
+			}
 		}
 
 		// Slider JS (Swiper-like minimal, only for slider layout).

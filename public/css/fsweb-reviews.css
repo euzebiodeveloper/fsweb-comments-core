@@ -9,6 +9,7 @@
 /* ------------------------------------------------------------------ */
 .fsweb-review-card {
 	background: #fff;
+	border: 1px solid #e2e4e7;
 	border-radius: 8px;
 	padding: 24px;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -215,4 +216,18 @@
 	border-color: #2271b1;
 	color: #2271b1;
 	background: rgba(34, 113, 177, 0.04);
+}
+
+/* Mobile: stack the multi-step navigation buttons vertically */
+@media (max-width: 480px) {
+	.fsweb-review-steps-nav {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.fsweb-review-step-prev,
+	.fsweb-review-step-next,
+	.fsweb-review-steps-nav .fsweb-review-form-submit {
+		width: 100%;
+	}
 }

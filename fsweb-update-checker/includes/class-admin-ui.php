@@ -12,7 +12,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -120,8 +120,8 @@ class AdminUi {
 			'<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s">%s</a>',
 			esc_url( $view_url ),
 			/* translators: %s: plugin name */
-			esc_attr( sprintf( __( 'View details for %s', 'fsweb-update-checker' ), $this->plugin_name ) ),
-			esc_html__( 'View Details', 'fsweb-update-checker' )
+			esc_attr( sprintf( __( 'View details for %s', 'fsweb-comments-core' ), $this->plugin_name ) ),
+			esc_html__( 'View Details', 'fsweb-comments-core' )
 		);
 
 		// Replace any existing "View Details" link.
@@ -142,7 +142,7 @@ class AdminUi {
 			'<a href="#" class="fsweb-check-updates" data-action="%s" data-nonce="%s">%s</a>',
 			esc_attr( 'fsweb_check_updates_' . $this->slug ),
 			esc_attr( wp_create_nonce( 'fsweb_check_updates_' . $this->slug ) ),
-			esc_html__( 'Check for Updates', 'fsweb-update-checker' )
+			esc_html__( 'Check for Updates', 'fsweb-comments-core' )
 		);
 
 		// "Previous Versions" — thickbox modal.
@@ -161,11 +161,11 @@ class AdminUi {
 			esc_attr(
 				sprintf(
 					/* translators: %s: plugin name */
-					__( '%s — Previous Versions', 'fsweb-update-checker' ),
+					__( '%s — Previous Versions', 'fsweb-comments-core' ),
 					$this->plugin_name
 				)
 			),
-			esc_html__( 'Previous Versions', 'fsweb-update-checker' )
+			esc_html__( 'Previous Versions', 'fsweb-comments-core' )
 		);
 
 		return $links;
@@ -185,7 +185,7 @@ class AdminUi {
 			<title>
 				<?php echo esc_html( $this->plugin_name ); ?>
 				&mdash;
-				<?php esc_html_e( 'Previous Versions', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'Previous Versions', 'fsweb-comments-core' ); ?>
 			</title>
 			<?php wp_admin_css( 'common' ); ?>
 			<?php wp_admin_css( 'forms' ); ?>
@@ -196,21 +196,21 @@ class AdminUi {
 			<h2>
 				<?php echo esc_html( $this->plugin_name ); ?>
 				&mdash;
-				<?php esc_html_e( 'Previous Versions', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'Previous Versions', 'fsweb-comments-core' ); ?>
 			</h2>
 			<p>
-				<?php esc_html_e( 'Select a version to install. The current version is highlighted in green.', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'Select a version to install. The current version is highlighted in green.', 'fsweb-comments-core' ); ?>
 			</p>
 
 			<?php if ( empty( $versions ) ) : ?>
-				<p><?php esc_html_e( 'No version history available.', 'fsweb-update-checker' ); ?></p>
+				<p><?php esc_html_e( 'No version history available.', 'fsweb-comments-core' ); ?></p>
 			<?php else : ?>
 				<table class="wp-list-table widefat striped rollback-table">
 					<thead>
 						<tr>
-							<th width="50"><?php esc_html_e( 'Select', 'fsweb-update-checker' ); ?></th>
-							<th><?php esc_html_e( 'Version', 'fsweb-update-checker' ); ?></th>
-							<th><?php esc_html_e( 'Date', 'fsweb-update-checker' ); ?></th>
+							<th width="50"><?php esc_html_e( 'Select', 'fsweb-comments-core' ); ?></th>
+							<th><?php esc_html_e( 'Version', 'fsweb-comments-core' ); ?></th>
+							<th><?php esc_html_e( 'Date', 'fsweb-comments-core' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -233,7 +233,7 @@ class AdminUi {
 									<strong><?php echo esc_html( $ver_obj->version ); ?></strong>
 									<?php if ( $is_current ) : ?>
 										<span class="current-label">
-											&mdash; <?php esc_html_e( 'installed', 'fsweb-update-checker' ); ?>
+											&mdash; <?php esc_html_e( 'installed', 'fsweb-comments-core' ); ?>
 										</span>
 									<?php endif; ?>
 								</td>
@@ -246,12 +246,12 @@ class AdminUi {
 				<div class="rollback-footer">
 					<div>
 						<button class="button button-primary" id="fsweb-install-version" disabled>
-							<?php esc_html_e( 'Install Selected Version', 'fsweb-update-checker' ); ?>
+							<?php esc_html_e( 'Install Selected Version', 'fsweb-comments-core' ); ?>
 						</button>
 					</div>
 					<div>
 						<button class="button" onclick="self.parent.tb_remove();">
-							<?php esc_html_e( 'Close', 'fsweb-update-checker' ); ?>
+							<?php esc_html_e( 'Close', 'fsweb-comments-core' ); ?>
 						</button>
 					</div>
 				</div>
@@ -277,7 +277,7 @@ class AdminUi {
 			<title>
 				<?php echo esc_html( $this->plugin_name ); ?>
 				&mdash;
-				<?php esc_html_e( 'License Required', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'License Required', 'fsweb-comments-core' ); ?>
 			</title>
 			<?php wp_admin_css( 'common' ); ?>
 			<?php wp_admin_css( 'forms' ); ?>
@@ -288,17 +288,17 @@ class AdminUi {
 			<h2>
 				<?php echo esc_html( $this->plugin_name ); ?>
 				&mdash;
-				<?php esc_html_e( 'License Required', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'License Required', 'fsweb-comments-core' ); ?>
 			</h2>
 			<p>
-				<?php esc_html_e( 'A valid license key is required to access previous versions.', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'A valid license key is required to access previous versions.', 'fsweb-comments-core' ); ?>
 			</p>
 			<p>
-				<?php esc_html_e( 'Please activate your license on the plugin settings page to unlock this feature.', 'fsweb-update-checker' ); ?>
+				<?php esc_html_e( 'Please activate your license on the plugin settings page to unlock this feature.', 'fsweb-comments-core' ); ?>
 			</p>
 			<div class="rollback-footer">
 				<button class="button" onclick="self.parent.tb_remove();">
-					<?php esc_html_e( 'Close', 'fsweb-update-checker' ); ?>
+					<?php esc_html_e( 'Close', 'fsweb-comments-core' ); ?>
 				</button>
 			</div>
 		</body></html>
@@ -343,13 +343,13 @@ class AdminUi {
 				'checkNonce'     => wp_create_nonce( 'fsweb_check_updates_' . $this->slug ),
 				'pluginBasename' => $this->plugin_basename,
 				'i18n'           => array(
-					'installBtn'    => __( 'Install Selected Version', 'fsweb-update-checker' ),
-					'installing'    => __( 'Installing…', 'fsweb-update-checker' ),
-					'downloading'   => __( 'Downloading and installing version', 'fsweb-update-checker' ),
-					'networkError'  => __( 'Network error. Please try again.', 'fsweb-update-checker' ),
-					'checking'      => __( 'Checking for updates…', 'fsweb-update-checker' ),
-					'noLicense'     => __( 'A valid license key is required to check for updates.', 'fsweb-update-checker' ),
-					'latestVersion' => __( 'You are running the latest version.', 'fsweb-update-checker' ),
+					'installBtn'    => __( 'Install Selected Version', 'fsweb-comments-core' ),
+					'installing'    => __( 'Installing…', 'fsweb-comments-core' ),
+					'downloading'   => __( 'Downloading and installing version', 'fsweb-comments-core' ),
+					'networkError'  => __( 'Network error. Please try again.', 'fsweb-comments-core' ),
+					'checking'      => __( 'Checking for updates…', 'fsweb-comments-core' ),
+					'noLicense'     => __( 'A valid license key is required to check for updates.', 'fsweb-comments-core' ),
+					'latestVersion' => __( 'You are running the latest version.', 'fsweb-comments-core' ),
 				),
 			)
 		);
@@ -378,7 +378,7 @@ class AdminUi {
 		return esc_html(
 			wp_date(
 				/* translators: date format for version release date */
-				__( 'F j, Y', 'fsweb-update-checker' ),
+				__( 'F j, Y', 'fsweb-comments-core' ),
 				$timestamp
 			)
 		);

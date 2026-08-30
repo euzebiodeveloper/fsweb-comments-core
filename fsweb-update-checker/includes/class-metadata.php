@@ -11,7 +11,7 @@
  * @license   GPL-2.0+
  */
 
-namespace FSWEB\UpdateChecker\V1;
+namespace FSWEB\UpdateChecker\CommentsCore\V1;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -188,7 +188,7 @@ class Metadata {
 			$this->log( 'fetch_error', $response->get_error_message() );
 			update_option(
 				$this->option_name . '_server_error',
-				__( 'Update server is temporarily unreachable. Please try again later.', 'fsweb-update-checker' )
+				__( 'Update server is temporarily unreachable. Please try again later.', 'fsweb-comments-core' )
 			);
 			return null;
 		}
@@ -215,7 +215,7 @@ class Metadata {
 			$this->log( 'http_' . $code, 'Metadata endpoint returned HTTP ' . $code );
 			update_option(
 				$this->option_name . '_server_error',
-				__( 'Update server returned an error. Please try again later.', 'fsweb-update-checker' )
+				__( 'Update server returned an error. Please try again later.', 'fsweb-comments-core' )
 			);
 			return null;
 		}
@@ -237,7 +237,7 @@ class Metadata {
 
 			update_option(
 				$this->option_name . '_server_error',
-				$server_message ?: __( 'Update server returned an invalid response. Please try again later.', 'fsweb-update-checker' )
+				$server_message ?: __( 'Update server returned an invalid response. Please try again later.', 'fsweb-comments-core' )
 			);
 			return null;
 		}
@@ -472,7 +472,16 @@ class Metadata {
 			$this->slug
 		);
 
-		return wp_remote_request( $url, $args );
+		$response = wp_remote_request( $url, $args );
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Temporary debug logging.
+		if ( is_wp_error( $response ) ) {
+			error_log( '[FSWEB UC] ' . $url . ' => WP_Error: ' . $response->get_error_message() );
+		} else {
+			error_log( '[FSWEB UC] ' . $url . ' => HTTP ' . wp_remote_retrieve_response_code( $response ) . ' | ' . wp_remote_retrieve_body( $response ) );
+		}
+
+		return $response;
 	}
 
 	/**
@@ -489,7 +498,7 @@ class Metadata {
 				esc_html(
 					sprintf(
 						/* translators: 1: error code, 2: error message */
-						__( '[FSWEB Update Checker - %1$s] %2$s', 'fsweb-update-checker' ),
+						__( '[FSWEB Update Checker - %1$s] %2$s', 'fsweb-comments-core' ),
 						$code,
 						$message
 					)

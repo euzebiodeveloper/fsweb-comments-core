@@ -219,10 +219,11 @@ class Fsweb_Comments_Core_Admin {
 			'no_found_rows'  => true,
 		) );
 
-		$license_status = get_option( 'fsweb_license_status', 'inactive' );
+		$license_status = get_option( 'fsweb_comments_core_license_status', 'inactive' );
 		$license_url    = admin_url( 'admin.php?page=fsweb-comments-core-license&post_type=fsweb_review' );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-dashboard">
+			<hr class="wp-header-end">
 			<div class="fsweb-cc-hero">
 				<h1><?php esc_html_e( 'Dashboard', 'fsweb-comments-core' ); ?></h1>
 				<p><?php esc_html_e( 'Overview of your reviews, categories and license status.', 'fsweb-comments-core' ); ?></p>
@@ -345,9 +346,9 @@ class Fsweb_Comments_Core_Admin {
 	 * @since    1.0.0
 	 */
 	public function render_license_page() {
-		$license_key     = get_option( 'fsweb_license_key', '' );
-		$license_status  = get_option( 'fsweb_license_status', 'inactive' );
-		$license_expires = get_option( 'fsweb_license_expires', '' );
+		$license_key     = get_option( 'fsweb_comments_core_license_key', '' );
+		$license_status  = get_option( 'fsweb_comments_core_license_status', 'inactive' );
+		$license_expires = get_option( 'fsweb_comments_core_license_expires', '' );
 
 		// Always sync with the license server on page load so the status
 		// reflects reality — another site may have activated/deactivated
@@ -362,6 +363,7 @@ class Fsweb_Comments_Core_Admin {
 
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-license-wrap">
+			<hr class="wp-header-end">
 			<div class="fsweb-cc-hero">
 				<h1><?php esc_html_e( 'Comments Core — License', 'fsweb-comments-core' ); ?></h1>
 				<p><?php esc_html_e( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
@@ -378,7 +380,7 @@ class Fsweb_Comments_Core_Admin {
 							<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
 						</th>
 						<td>
-							<input type="text" id="fsweb-cc-license-key" name="fsweb_license_key" class="regular-text"
+							<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
 								value="<?php echo esc_attr( $license_key ); ?>"
 								placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
 								<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
@@ -442,13 +444,13 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		// If this exact key is already active locally, don't bother the server.
-		$local_status = get_option( 'fsweb_license_status', '' );
-		$local_key    = get_option( 'fsweb_license_key', '' );
+		$local_status = get_option( 'fsweb_comments_core_license_status', '' );
+		$local_key    = get_option( 'fsweb_comments_core_license_key', '' );
 		if ( 'active' === $local_status && $local_key === $license_key ) {
 			wp_send_json_success( array(
 				'message' => __( 'License is already active.', 'fsweb-comments-core' ),
 				'status'  => 'active',
-				'expires' => get_option( 'fsweb_license_expires', '' ),
+				'expires' => get_option( 'fsweb_comments_core_license_expires', '' ),
 			) );
 		}
 
@@ -466,9 +468,9 @@ class Fsweb_Comments_Core_Admin {
 		) );
 
 		if ( is_wp_error( $response ) ) {
-			update_option( 'fsweb_license_key', $license_key );
-			update_option( 'fsweb_license_status', 'pending' );
-			update_option( 'fsweb_license_expires', '' );
+			update_option( 'fsweb_comments_core_license_key', $license_key );
+			update_option( 'fsweb_comments_core_license_status', 'pending' );
+			update_option( 'fsweb_comments_core_license_expires', '' );
 			wp_send_json_error( array(
 				'message' => __( 'Could not reach the license server. Your key has been saved and is pending validation.', 'fsweb-comments-core' ),
 				'status'  => 'pending',
@@ -479,9 +481,9 @@ class Fsweb_Comments_Core_Admin {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( 200 === $code && isset( $body['success'] ) && $body['success'] ) {
-			update_option( 'fsweb_license_key', $license_key );
-			update_option( 'fsweb_license_status', 'active' );
-			update_option( 'fsweb_license_expires', isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '' );
+			update_option( 'fsweb_comments_core_license_key', $license_key );
+			update_option( 'fsweb_comments_core_license_status', 'active' );
+			update_option( 'fsweb_comments_core_license_expires', isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '' );
 
 			wp_send_json_success( array(
 				'message' => __( 'License activated successfully!', 'fsweb-comments-core' ),
@@ -491,9 +493,9 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		// Activation failed.
-		update_option( 'fsweb_license_key', $license_key );
-		update_option( 'fsweb_license_status', 'invalid' );
-		update_option( 'fsweb_license_expires', '' );
+		update_option( 'fsweb_comments_core_license_key', $license_key );
+		update_option( 'fsweb_comments_core_license_status', 'invalid' );
+		update_option( 'fsweb_comments_core_license_expires', '' );
 		$error_msg = isset( $body['message'] ) ? sanitize_text_field( $body['message'] ) : __( 'Invalid license key.', 'fsweb-comments-core' );
 		wp_send_json_error( array(
 			'message' => $error_msg,
@@ -533,8 +535,8 @@ class Fsweb_Comments_Core_Admin {
 		) );
 
 		// Always deactivate locally, even if the API call fails.
-		update_option( 'fsweb_license_status', 'pending' );
-		update_option( 'fsweb_license_expires', '' );
+		update_option( 'fsweb_comments_core_license_status', 'pending' );
+		update_option( 'fsweb_comments_core_license_expires', '' );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_success( array(
@@ -569,7 +571,7 @@ class Fsweb_Comments_Core_Admin {
 		// phpcs:enable
 
 		// Use the key from the input field if provided, otherwise fall back to the saved key.
-		$license_key = ! empty( $input_key ) ? $input_key : get_option( 'fsweb_license_key', '' );
+		$license_key = ! empty( $input_key ) ? $input_key : get_option( 'fsweb_comments_core_license_key', '' );
 
 		if ( empty( $license_key ) ) {
 			wp_send_json_error( array( 'message' => __( 'No license key saved. Please enter a key first.', 'fsweb-comments-core' ) ) );
@@ -601,8 +603,8 @@ class Fsweb_Comments_Core_Admin {
 		$remote_expires = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
 
 		// Sync local options with remote truth.
-		update_option( 'fsweb_license_status', $remote_status );
-		update_option( 'fsweb_license_expires', $remote_expires );
+		update_option( 'fsweb_comments_core_license_status', $remote_status );
+		update_option( 'fsweb_comments_core_license_expires', $remote_expires );
 
 		wp_send_json_success( array(
 			'message' => $this->status_message( $remote_status, $remote_expires ),
@@ -671,8 +673,8 @@ class Fsweb_Comments_Core_Admin {
 		$remote_status   = sanitize_text_field( $body['status'] );
 		$remote_expires  = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
 
-		update_option( 'fsweb_license_status', $remote_status );
-		update_option( 'fsweb_license_expires', $remote_expires );
+		update_option( 'fsweb_comments_core_license_status', $remote_status );
+		update_option( 'fsweb_comments_core_license_expires', $remote_expires );
 
 		return array(
 			'status'  => $remote_status,
@@ -711,6 +713,7 @@ class Fsweb_Comments_Core_Admin {
 		$new_url = add_query_arg( array( 'new' => '1' ), remove_query_arg( 'form_id' ) );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<hr class="wp-header-end">
 			<div class="fsweb-cc-hero">
 				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
 				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
@@ -813,6 +816,7 @@ class Fsweb_Comments_Core_Admin {
 		$redirect_delay = $current && isset( $current['redirect_delay'] ) ? max( 0, (int) $current['redirect_delay'] ) : 3;
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<hr class="wp-header-end">
 			<div class="fsweb-cc-hero">
 				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
 				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
@@ -1291,6 +1295,7 @@ class Fsweb_Comments_Core_Admin {
 		$new_url = add_query_arg( array( 'new' => '1' ), remove_query_arg( 'view_id' ) );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<hr class="wp-header-end">
 			<div class="fsweb-cc-hero">
 				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
 				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
@@ -1398,6 +1403,7 @@ class Fsweb_Comments_Core_Admin {
 		$list_url = remove_query_arg( array( 'view_id', 'new' ) );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
+			<hr class="wp-header-end">
 			<div class="fsweb-cc-hero">
 				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
 				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>

@@ -99,9 +99,43 @@ $fsweb_update_checker->set_license_url(
 	admin_url( 'edit.php?post_type=fsweb_review&page=fsweb-comments-core-license' )
 );
 
+/**
+ * Migrate a legacy shared license option to this plugin's namespaced option.
+ *
+ * Early releases of the FSWEB plugins stored every plugin's license in the
+ * same `fsweb_license_*` wp_options, so Comments Core and Mercadopago
+ * overwrote each other's keys. This one-time migration preserves the
+ * Comments Core license (the plugin that originally owned the shared option)
+ * and removes the shared option so the collision cannot happen again.
+ *
+ * @since 1.1.0
+ */
+function fsweb_comments_core_migrate_license() {
+	if ( 'yes' === get_option( 'fsweb_comments_core_license_migrated', 'no' ) ) {
+		return;
+	}
+
+	$legacy_key = get_option( 'fsweb_license_key', '' );
+	$current    = get_option( 'fsweb_comments_core_license_key', '' );
+
+	if ( '' === $current && '' !== $legacy_key ) {
+		update_option( 'fsweb_comments_core_license_key', $legacy_key );
+		update_option( 'fsweb_comments_core_license_status', get_option( 'fsweb_license_status', 'inactive' ) );
+		update_option( 'fsweb_comments_core_license_expires', get_option( 'fsweb_license_expires', '' ) );
+	}
+
+	// Delete the shared options — they are what caused the collision.
+	delete_option( 'fsweb_license_key' );
+	delete_option( 'fsweb_license_status' );
+	delete_option( 'fsweb_license_expires' );
+
+	update_option( 'fsweb_comments_core_license_migrated', 'yes' );
+}
+
 // Inject license key so the update-checker sends it with every request.
 // Without a valid key the API returns 401 and updates are blocked.
-$fsweb_license_key = get_option( 'fsweb_license_key', '' );
+fsweb_comments_core_migrate_license();
+$fsweb_license_key = get_option( 'fsweb_comments_core_license_key', '' );
 if ( ! empty( $fsweb_license_key ) ) {
 	$fsweb_update_checker->set_license( $fsweb_license_key );
 }

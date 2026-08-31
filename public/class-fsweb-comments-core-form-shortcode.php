@@ -651,7 +651,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	 * @return bool
 	 */
 	private function is_license_active() {
-		return 'active' === get_option( 'fsweb_license_status', '' );
+		return 'active' === get_option( 'fsweb_comments_core_license_status', '' );
 	}
 
 	// ------------------------------------------------------------------//

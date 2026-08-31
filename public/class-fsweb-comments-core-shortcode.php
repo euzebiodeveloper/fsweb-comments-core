@@ -63,7 +63,7 @@ class Fsweb_Comments_Core_Shortcode {
 		), $atts, 'fsweb_reviews' );
 
 		// Block output if license is not active.
-		if ( 'active' !== get_option( 'fsweb_license_status', 'inactive' ) ) {
+		if ( 'active' !== get_option( 'fsweb_comments_core_license_status', 'inactive' ) ) {
 			return '';
 		}
 

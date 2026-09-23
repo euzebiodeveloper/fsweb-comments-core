@@ -485,6 +485,13 @@ class Fsweb_Comments_Core_Admin {
 			update_option( 'fsweb_comments_core_license_status', 'active' );
 			update_option( 'fsweb_comments_core_license_expires', isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '' );
 
+			// A (re)activation means the previous key is no longer valid — drop
+			// every update-checker cache so stale license/server errors recorded
+			// under the old key are not served again.
+			if ( function_exists( 'fsweb_comments_core_reset_update_checker_cache' ) ) {
+				fsweb_comments_core_reset_update_checker_cache();
+			}
+
 			wp_send_json_success( array(
 				'message' => __( 'License activated successfully!', 'fsweb-comments-core' ),
 				'status'  => 'active',

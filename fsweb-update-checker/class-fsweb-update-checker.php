@@ -317,6 +317,25 @@ if ( ! class_exists( 'FSWEB_Update_Checker_CommentsCore_1_0', false ) ) {
 		}
 
 		/**
+		 * Reset every cache this update checker maintains.
+		 *
+		 * Deletes cached metadata, details, the last-check timestamp, the
+		 * license/server error flags, the README transient and the WordPress
+		 * update_plugins transient. Called when the license is activated so
+		 * stale errors recorded under a previous (invalid/expired) key never
+		 * keep blocking updates or the "Previous Versions" feature.
+		 *
+		 * @since 1.2.0
+		 * @return void
+		 */
+		public function reset_cache() {
+			$this->metadata->clear_cache();
+			$this->metadata->clear_readme_cache();
+			delete_site_transient( 'update_plugins' );
+			wp_clean_plugins_cache();
+		}
+
+		/**
 		 * Get the plugin basename (used by the slug uniqueness filter).
 		 *
 		 * @return string

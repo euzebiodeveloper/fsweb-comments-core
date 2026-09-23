@@ -16,7 +16,7 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.0' );
+define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.1' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -138,6 +138,27 @@ fsweb_comments_core_migrate_license();
 $fsweb_license_key = get_option( 'fsweb_comments_core_license_key', '' );
 if ( ! empty( $fsweb_license_key ) ) {
 	$fsweb_update_checker->set_license( $fsweb_license_key );
+}
+
+/**
+ * Reset the update checker caches after the license is activated.
+ *
+ * The update checker persists its metadata and error flags (license/server)
+ * in wp_options. When a license is (re)activated, stale errors recorded under
+ * the previous key must be wiped so they don't keep showing admin notices or
+ * blocking the "Previous Versions" feature until the next successful fetch.
+ *
+ * @since 1.2.0
+ * @return void
+ */
+function fsweb_comments_core_reset_update_checker_cache() {
+	global $fsweb_update_checker;
+
+	if ( isset( $fsweb_update_checker )
+		&& is_object( $fsweb_update_checker )
+		&& method_exists( $fsweb_update_checker, 'reset_cache' ) ) {
+		$fsweb_update_checker->reset_cache();
+	}
 }
 
 /**

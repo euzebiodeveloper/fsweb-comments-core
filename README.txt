@@ -4,7 +4,7 @@ Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,11 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+
+= 1.0.1 =
+* Fix: Readme parser accepts readme.txt (lowercase) as well as README.txt, so the View details popup shows every section again.
+* New: Update-checker cache cleared when a license is activated, so stale license or server errors stop blocking automatic updates.
+
 = 1.0.0 =
 * Initial release.
 * Custom form builder with 8 field types.
@@ -64,6 +69,10 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+
+= 1.0.1 =
+Maintenance release: the plugin details popup shows all sections again and the licence activation now clears stale update errors.
 
 = 1.0.0 =
 Initial release.

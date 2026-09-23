@@ -2,7 +2,7 @@
 
 [![WordPress](https://img.shields.io/badge/wordpress-6.0%2B-blue?style=flat-square)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/php-7.0%2B-purple?style=flat-square)](https://www.php.net/)
-[![Version](https://img.shields.io/badge/version-1.0.0-orange?style=flat-square)](https://flowsyncweb.com/)
+[![Version](https://img.shields.io/badge/version-1.0.1-orange?style=flat-square)](https://flowsyncweb.com/)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg?style=flat-square)](https://opensource.org/licenses/GPL-2.0)
 
 **Contributors:** [flowsyncweb](https://github.com/flowsyncweb)  
@@ -10,7 +10,7 @@
 **Tags:** comments, feedback, reviews, spam, testimonials  
 **Requires at least:** 6.0  
 **Tested up to:** 7.0  
-**Stable version:** 1.0.0  
+**Stable version:** 1.0.1  
 **License:** GPLv2 or later
 
 A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.

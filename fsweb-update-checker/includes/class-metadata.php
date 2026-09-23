@@ -303,6 +303,16 @@ class Metadata {
 	}
 
 	/**
+	 * Delete the cached README transient.
+	 *
+	 * @since 1.2.0
+	 * @return void
+	 */
+	public function clear_readme_cache() {
+		delete_transient( $this->option_name . '_readme' );
+	}
+
+	/**
 	 * Fetch details from the /details endpoint (sections, banners, icons).
 	 *
 	 * @deprecated 1.1.0 No longer used internally — "View Details" now uses

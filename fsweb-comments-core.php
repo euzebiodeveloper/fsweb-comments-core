@@ -141,6 +141,27 @@ if ( ! empty( $fsweb_license_key ) ) {
 }
 
 /**
+ * Reset the update checker caches after the license is activated.
+ *
+ * The update checker persists its metadata and error flags (license/server)
+ * in wp_options. When a license is (re)activated, stale errors recorded under
+ * the previous key must be wiped so they don't keep showing admin notices or
+ * blocking the "Previous Versions" feature until the next successful fetch.
+ *
+ * @since 1.2.0
+ * @return void
+ */
+function fsweb_comments_core_reset_update_checker_cache() {
+	global $fsweb_update_checker;
+
+	if ( isset( $fsweb_update_checker )
+		&& is_object( $fsweb_update_checker )
+		&& method_exists( $fsweb_update_checker, 'reset_cache' ) ) {
+		$fsweb_update_checker->reset_cache();
+	}
+}
+
+/**
  * Begins execution of the plugin.
  *
  * Since everything within the plugin is registered via hooks,

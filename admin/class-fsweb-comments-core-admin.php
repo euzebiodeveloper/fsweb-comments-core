@@ -724,6 +724,13 @@ class Fsweb_Comments_Core_Admin {
 		update_option( 'fsweb_comments_core_license_status', 'pending' );
 		update_option( 'fsweb_comments_core_license_expires', '' );
 
+		// Drop every cached licence/update state as well: without this a stale
+		// "active" metadata (update checker metadata, README transient,
+		// update_plugins transient) survives the release.
+		if ( function_exists( 'fsweb_comments_core_reset_update_checker_cache' ) ) {
+			fsweb_comments_core_reset_update_checker_cache();
+		}
+
 		$message = ( empty( $body['success'] ) && ! empty( $body['message'] ) )
 			? sanitize_text_field( $body['message'] )
 			: __( 'License deactivated successfully!', 'fsweb-comments-core' );
@@ -773,11 +780,27 @@ class Fsweb_Comments_Core_Admin {
 		$remote_status  = $this->normalize_license_status( isset( $body['status'] ) ? $body['status'] : '', 'invalid' );
 		$remote_expires = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
 
-		update_option( 'fsweb_comments_core_license_status', $remote_status );
+		/*
+		 * `status` describes the licence, not this installation: a key that was
+		 * released on this domain still answers `active`, so trusting it would
+		 * resurrect the "Active" pill on the very next page load. Only
+		 * `domain_authorized` says whether THIS site may keep using the key.
+		 *
+		 * A genuinely expired/invalid licence keeps its own status; otherwise
+		 * the domain authorization decides between `active` and `pending`.
+		 */
+		if ( in_array( $remote_status, array( 'expired', 'invalid' ), true ) ) {
+			$local_status = $remote_status;
+		} else {
+			$domain_authorized = ! empty( $body['domain_authorized'] );
+			$local_status      = $domain_authorized ? 'active' : 'pending';
+		}
+
+		update_option( 'fsweb_comments_core_license_status', $local_status );
 		update_option( 'fsweb_comments_core_license_expires', $remote_expires );
 
 		return array(
-			'status'  => $remote_status,
+			'status'  => $local_status,
 			'expires' => $remote_expires,
 		);
 	}

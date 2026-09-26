@@ -229,6 +229,30 @@ msgstr "Desativar"
 msgid "Verify License"
 msgstr "Verificar Licença"
 
+#: admin/class-fsweb-comments-core-admin.php:446
+msgid "How it works"
+msgstr "Como funciona"
+
+#: admin/class-fsweb-comments-core-admin.php:453
+msgid "Activate: paste the key and we validate it on the FSWEB license server."
+msgstr "Ativar: cole a chave e validamos no servidor de licenças da FSWEB."
+
+#: admin/class-fsweb-comments-core-admin.php:457
+msgid "Active: automatic updates and premium support are unlocked for this site."
+msgstr "Ativa: atualizações automáticas e suporte premium liberados para este site."
+
+#: admin/class-fsweb-comments-core-admin.php:461
+msgid "Verify: re-checks the key with the server — use it after moving or restoring the site."
+msgstr "Verificar: reconfere a chave com o servidor — use após mover ou restaurar o site."
+
+#: admin/class-fsweb-comments-core-admin.php:465
+msgid "Deactivate: releases the key so you can use it on another site."
+msgstr "Desativar: libera a chave para você usá-la em outro site."
+
+#: admin/class-fsweb-comments-core-admin.php:470
+msgid "The key is stored in this site's options and validated with the FSWEB license server every time you open this page."
+msgstr "A chave fica salva nas opções deste site e é validada no servidor de licenças da FSWEB sempre que você abre esta página."
+
 #: admin/class-fsweb-comments-core-admin.php:433
 #: admin/class-fsweb-comments-core-admin.php:515
 #: admin/class-fsweb-comments-core-admin.php:564

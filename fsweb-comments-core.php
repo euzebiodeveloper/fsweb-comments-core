@@ -16,7 +16,7 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.1' );
+define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.2' );
 
 /**
  * Plugin directory path and URL (with trailing slash).

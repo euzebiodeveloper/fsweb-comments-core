@@ -1,3 +1,11 @@
+# 1.0.2 - 26/09/2026
+  * New: Hero with quick-action shortcuts on every admin screen — dashboard, form builder, views builder and license.
+  * New: License screen rebuilt in the family's visual language, full width, with shortcut cards.
+  * New: Status pills, stat cards and buttons aligned with the FSWEB family design vocabulary.
+  * New: New admin interface strings translated to pt_BR; the .pot, .po and .mo catalogs were regenerated.
+  * New: License management simplified — the key is only activated or deactivated; the manual verification button and endpoint are gone.
+  * Fix: Hero shortcuts that returned "Cannot load ..." on the review screens now use the correct menu URL.
+
 # 1.0.1 - 22/09/2026
   * Fix: Readme parser now accepts `readme.txt` (lowercase) as well as `README.txt`, so the "View details" popup shows every section again.
   * New: The update-checker cache is cleared when a license is activated, so stale license or server errors stop blocking automatic updates.

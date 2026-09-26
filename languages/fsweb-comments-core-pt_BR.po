@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the FSWEB Comments Core plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: FSWEB Comments Core 1.1.0\n"
+"Project-Id-Version: FSWEB Comments Core 1.0.3\n"
 "Report-Msgid-Bugs-To: https://flowsyncweb.com/\n"
 "Last-Translator: Flow Sync Web <euzebio.batista@flowsyncweb.com>\n"
 "Language-Team: Portuguese (Brazil) <euzebio.batista@flowsyncweb.com>\n"

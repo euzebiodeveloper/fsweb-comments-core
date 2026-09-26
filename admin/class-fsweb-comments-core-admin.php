@@ -782,7 +782,7 @@ class Fsweb_Comments_Core_Admin {
 	 * Only the statuses the admin UI knows about are accepted; anything else
 	 * falls back to the given default so the UI never renders an unknown pill.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.3
 	 * @param  mixed  $status   Raw status value (usually from the API body).
 	 * @param  string $fallback Status to use when the value is not recognised.
 	 * @return string           A safe status slug.

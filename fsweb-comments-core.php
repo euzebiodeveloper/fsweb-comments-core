@@ -16,7 +16,7 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.1.0
+ * Version:           1.0.3
  * Requires at least: 6.0
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWEB_COMMENTS_CORE_VERSION', '1.1.0' );
+define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.3' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -112,7 +112,7 @@ $fsweb_update_checker->set_license_url(
  * Comments Core license (the plugin that originally owned the shared option)
  * and removes the shared option so the collision cannot happen again.
  *
- * @since 1.1.0
+ * @since 1.0.3
  */
 function fsweb_comments_core_migrate_license() {
 	if ( 'yes' === get_option( 'fsweb_comments_core_license_migrated', 'no' ) ) {

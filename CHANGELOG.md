@@ -1,4 +1,4 @@
-# 1.1.0 - 26/09/2026
+# 1.0.3 - 26/09/2026
   * Fix: License activation and deactivation now call the FSWEB license API (api.flowsyncweb.com/api/license) instead of the retired License Manager for WooCommerce bridge, which answered "License Manager for WooCommerce is not active."
   * Fix: The API response body is now the source of truth for license outcomes; transport failures (unreachable server or 5xx) keep the current license state and show a neutral notice instead of an alarming error.
 

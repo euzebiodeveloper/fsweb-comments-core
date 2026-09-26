@@ -514,7 +514,7 @@ class Fsweb_Comments_Core_Admin {
 								<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
 								<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
 									value="<?php echo esc_attr( $license_key ); ?>"
-									placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
+									placeholder="<?php esc_attr_e( 'e.g. A7B9C2D4-E6F8G3H5-J7K9M2N4-P6Q8R3S5', 'fsweb-comments-core' ); ?>"
 									<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
 								<p class="description"><?php esc_html_e( 'Enter your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
 							</div>

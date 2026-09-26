@@ -183,6 +183,76 @@ class Fsweb_Comments_Core_Admin {
 	}
 
 	/**
+	 * URL of a plugin screen.
+	 *
+	 * Screens are registered under the CPT menu (edit.php?post_type=fsweb_review),
+	 * so building the address as admin.php?page=... makes WordPress answer
+	 * "Cannot load ...". menu_page_url() returns the correct address.
+	 *
+	 * @since    1.0.0
+	 * @param    string    $slug    Screen slug.
+	 * @return   string
+	 */
+	private function page_url( $slug ) {
+		$url = menu_page_url( $slug, false );
+
+		if ( '' === $url ) {
+			$url = admin_url( 'edit.php?post_type=fsweb_review&page=' . $slug );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Render the shared hero header with quick navigation to the sibling screens.
+	 *
+	 * Every plugin screen opens with the same hero: title, description and a row
+	 * of icon buttons that jump to the other screens. The current screen is
+	 * marked with aria-current instead of linking back to itself.
+	 *
+	 * @since    1.0.0
+	 * @param    string    $title          Hero title.
+	 * @param    string    $description    Hero description.
+	 * @param    string    $current_page   Slug of the screen being rendered.
+	 */
+	private function render_hero( $title, $description, $current_page = '' ) {
+		$screens = array(
+			'fsweb-comments-core'         => array(
+				'label' => __( 'Dashboard', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-dashboard',
+			),
+			'fsweb-comments-core-builder' => array(
+				'label' => __( 'Form Builder', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-feedback',
+			),
+			'fsweb-comments-core-views'   => array(
+				'label' => __( 'Views Builder', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-layout',
+			),
+			'fsweb-comments-core-license' => array(
+				'label' => __( 'License', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-awards',
+			),
+		);
+		?>
+		<div class="fsweb-cc-hero fsweb-cc-hero--split">
+			<div class="fsweb-cc-hero__text">
+				<h1><?php echo esc_html( $title ); ?></h1>
+				<p><?php echo esc_html( $description ); ?></p>
+			</div>
+			<nav class="fsweb-cc-hero__actions" aria-label="<?php esc_attr_e( 'Quick Actions', 'fsweb-comments-core' ); ?>">
+				<?php foreach ( $screens as $slug => $screen ) : ?>
+					<a class="button" href="<?php echo esc_url( $this->page_url( $slug ) ) ; ?>"<?php echo $slug === $current_page ? ' aria-current="page"' : ''; ?>>
+						<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
+						<?php echo esc_html( $screen['label'] ); ?>
+					</a>
+				<?php endforeach; ?>
+			</nav>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render the Dashboard page.
 	 *
 	 * @since    1.0.0
@@ -220,116 +290,145 @@ class Fsweb_Comments_Core_Admin {
 		) );
 
 		$license_status = get_option( 'fsweb_comments_core_license_status', 'inactive' );
-		$license_url    = admin_url( 'admin.php?page=fsweb-comments-core-license&post_type=fsweb_review' );
+		$license_url    = $this->page_url( 'fsweb-comments-core-license' );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-dashboard">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Dashboard', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Overview of your reviews, categories and license status.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Dashboard', 'fsweb-comments-core' ),
+				__( 'Overview of your reviews, categories and license status.', 'fsweb-comments-core' ),
+				'fsweb-comments-core'
+			);
+			?>
 
 			<!-- Stats cards -->
 			<div class="fsweb-cc-stats">
-				<div class="fsweb-cc-stat-card">
-					<span class="fsweb-cc-stat-number"><?php echo esc_html( $total ); ?></span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'Total Reviews', 'fsweb-comments-core' ); ?></span>
-				</div>
-				<div class="fsweb-cc-stat-card">
-					<span class="fsweb-cc-stat-number"><?php echo esc_html( $month_count ); ?></span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'This Month', 'fsweb-comments-core' ); ?></span>
-				</div>
-				<div class="fsweb-cc-stat-card">
-					<span class="fsweb-cc-stat-number"><?php echo esc_html( $categories ); ?></span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'Categories', 'fsweb-comments-core' ); ?></span>
-				</div>
-				<div class="fsweb-cc-stat-card fsweb-cc-stat-card--<?php echo esc_attr( $license_status ); ?>">
-					<span class="fsweb-cc-stat-number">
-						<?php echo 'active' === $license_status
-							? esc_html__( 'Active', 'fsweb-comments-core' )
-							: esc_html__( 'Inactive', 'fsweb-comments-core' ); ?>
+				<div class="fsweb-cc-stat">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-star-filled" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value"><?php echo esc_html( $total ); ?></span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'Total Reviews', 'fsweb-comments-core' ); ?></span>
 					</span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'License', 'fsweb-comments-core' ); ?></span>
+				</div>
+				<div class="fsweb-cc-stat">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value"><?php echo esc_html( $month_count ); ?></span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'This Month', 'fsweb-comments-core' ); ?></span>
+					</span>
+				</div>
+				<div class="fsweb-cc-stat">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-category" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value"><?php echo esc_html( $categories ); ?></span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'Categories', 'fsweb-comments-core' ); ?></span>
+					</span>
+				</div>
+				<div class="fsweb-cc-stat fsweb-cc-stat--<?php echo esc_attr( $license_status ); ?>">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-shield" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value">
+							<?php echo 'active' === $license_status
+								? esc_html__( 'Active', 'fsweb-comments-core' )
+								: esc_html__( 'Inactive', 'fsweb-comments-core' ); ?>
+						</span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'License', 'fsweb-comments-core' ); ?></span>
+					</span>
 				</div>
 			</div>
 
 			<div class="fsweb-cc-dash-grid">
 				<!-- Recent reviews -->
-				<div class="fsweb-cc-dash-panel">
-					<div class="fsweb-cc-dash-panel-header">
-						<h2><?php esc_html_e( 'Recent Reviews', 'fsweb-comments-core' ); ?></h2>
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+							<?php esc_html_e( 'Recent Reviews', 'fsweb-comments-core' ); ?>
+						</h2>
 						<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=fsweb_review' ) ); ?>" class="button button-small">
+							<span class="dashicons dashicons-external" aria-hidden="true"></span>
 							<?php esc_html_e( 'View All', 'fsweb-comments-core' ); ?>
 						</a>
 					</div>
-
-					<?php if ( $recent->have_posts() ) : ?>
-						<table class="wp-list-table widefat fixed striped fsweb-cc-recent-table">
-							<thead>
-								<tr>
-									<th><?php esc_html_e( 'Review', 'fsweb-comments-core' ); ?></th>
-									<th><?php esc_html_e( 'Date', 'fsweb-comments-core' ); ?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php while ( $recent->have_posts() ) : $recent->the_post(); ?>
+					<div class="fsweb-cc-card__body fsweb-cc-card__body--flush">
+						<?php if ( $recent->have_posts() ) : ?>
+							<table class="wp-list-table widefat fixed striped fsweb-cc-recent-table">
+								<thead>
 									<tr>
-										<td>
-											<strong>
-												<a href="<?php echo esc_url( get_edit_post_link() ); ?>">
-													<?php the_title(); ?>
-												</a>
-											</strong>
-											<?php if ( has_post_thumbnail() ) : ?>
-												<span class="fsweb-cc-has-thumb" title="<?php esc_attr_e( 'Has photo', 'fsweb-comments-core' ); ?>">📷</span>
-											<?php endif; ?>
-										</td>
-										<td><?php echo esc_html( get_the_date() ); ?></td>
+										<th><?php esc_html_e( 'Review', 'fsweb-comments-core' ); ?></th>
+										<th><?php esc_html_e( 'Date', 'fsweb-comments-core' ); ?></th>
 									</tr>
-								<?php endwhile; ?>
-								<?php wp_reset_postdata(); ?>
-							</tbody>
-						</table>
-					<?php else : ?>
-						<p class="fsweb-cc-empty">
-							<?php esc_html_e( 'No reviews yet. Create your first review to get started!', 'fsweb-comments-core' ); ?>
-						</p>
-					<?php endif; ?>
+								</thead>
+								<tbody>
+									<?php while ( $recent->have_posts() ) : $recent->the_post(); ?>
+										<tr>
+											<td>
+												<strong>
+													<a href="<?php echo esc_url( get_edit_post_link() ); ?>">
+														<?php echo esc_html( get_the_title() ); ?>
+													</a>
+												</strong>
+												<?php if ( has_post_thumbnail() ) : ?>
+													<span class="fsweb-cc-has-thumb" title="<?php esc_attr_e( 'Has photo', 'fsweb-comments-core' ); ?>">📷</span>
+												<?php endif; ?>
+											</td>
+											<td><?php echo esc_html( get_the_date() ); ?></td>
+										</tr>
+									<?php endwhile; ?>
+									<?php wp_reset_postdata(); ?>
+								</tbody>
+							</table>
+						<?php else : ?>
+							<div class="fsweb-cc-empty">
+								<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+								<p><?php esc_html_e( 'No reviews yet. Create your first review to get started!', 'fsweb-comments-core' ); ?></p>
+							</div>
+						<?php endif; ?>
+					</div>
 				</div>
 
 				<!-- Quick actions -->
-				<div class="fsweb-cc-dash-panel">
-					<div class="fsweb-cc-dash-panel-header">
-						<h2><?php esc_html_e( 'Quick Actions', 'fsweb-comments-core' ); ?></h2>
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-plus-alt" aria-hidden="true"></span>
+							<?php esc_html_e( 'Quick Actions', 'fsweb-comments-core' ); ?>
+						</h2>
 					</div>
-					<div class="fsweb-cc-quick-actions">
-						<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=fsweb_review' ) ); ?>" class="button button-primary button-large">
-							<?php esc_html_e( 'Add New Review', 'fsweb-comments-core' ); ?>
-						</a>
-						<a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=fsweb_review_category&post_type=fsweb_review' ) ); ?>" class="button button-large">
-							<?php esc_html_e( 'Manage Categories', 'fsweb-comments-core' ); ?>
-						</a>
-						<a href="<?php echo esc_url( $license_url ); ?>" class="button button-large">
-							<?php echo 'active' === $license_status
-								? esc_html__( 'License Settings', 'fsweb-comments-core' )
-								: esc_html__( 'Activate License', 'fsweb-comments-core' ); ?>
-						</a>
-					</div>
+					<div class="fsweb-cc-card__body">
+						<div class="fsweb-cc-quick-actions">
+							<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=fsweb_review' ) ); ?>" class="button button-primary button-large">
+								<span class="dashicons dashicons-plus-alt" aria-hidden="true"></span>
+								<?php esc_html_e( 'Add New Review', 'fsweb-comments-core' ); ?>
+							</a>
+							<a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=fsweb_review_category&post_type=fsweb_review' ) ); ?>" class="button button-large">
+								<span class="dashicons dashicons-category" aria-hidden="true"></span>
+								<?php esc_html_e( 'Manage Categories', 'fsweb-comments-core' ); ?>
+							</a>
+							<a href="<?php echo esc_url( $license_url ); ?>" class="button button-large">
+								<span class="dashicons dashicons-awards" aria-hidden="true"></span>
+								<?php echo 'active' === $license_status
+									? esc_html__( 'License Settings', 'fsweb-comments-core' )
+									: esc_html__( 'Activate License', 'fsweb-comments-core' ); ?>
+							</a>
+						</div>
 
-					<div class="fsweb-cc-shortcode-help">
-						<h3><?php esc_html_e( 'Shortcodes', 'fsweb-comments-core' ); ?></h3>
-						<p><?php esc_html_e( 'Use these shortcodes on any page or post:', 'fsweb-comments-core' ); ?></p>
-						<p>
-							<strong><?php esc_html_e( 'Display reviews:', 'fsweb-comments-core' ); ?></strong>
-							<code>[fsweb_reviews id="view-id"]</code>
-						</p>
-						<p>
-							<strong><?php esc_html_e( 'Review form:', 'fsweb-comments-core' ); ?></strong>
-							<code>[fsweb_review_form id="form-id"]</code>
-						</p>
-						<p class="description">
-							<?php esc_html_e( 'Create views and forms in Views Builder and Form Builder. Each gets a unique shortcode — just copy and paste.', 'fsweb-comments-core' ); ?>
-						</p>
+						<div class="fsweb-cc-shortcode-help">
+							<h3><?php esc_html_e( 'Shortcodes', 'fsweb-comments-core' ); ?></h3>
+							<p><?php esc_html_e( 'Use these shortcodes on any page or post:', 'fsweb-comments-core' ); ?></p>
+							<p>
+								<strong><?php esc_html_e( 'Display reviews:', 'fsweb-comments-core' ); ?></strong>
+								<code>[fsweb_reviews id="view-id"]</code>
+							</p>
+							<p>
+								<strong><?php esc_html_e( 'Review form:', 'fsweb-comments-core' ); ?></strong>
+								<code>[fsweb_review_form id="form-id"]</code>
+							</p>
+							<p class="description">
+								<?php esc_html_e( 'Create views and forms in Views Builder and Form Builder. Each gets a unique shortcode — just copy and paste.', 'fsweb-comments-core' ); ?>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -361,61 +460,112 @@ class Fsweb_Comments_Core_Admin {
 			}
 		}
 
+		// Human readable label for the current status (scripts update it live).
+		switch ( $license_status ) {
+			case 'active':
+				$status_label = __( 'Active', 'fsweb-comments-core' );
+				break;
+			case 'expired':
+				$status_label = __( 'Expired', 'fsweb-comments-core' );
+				break;
+			case 'invalid':
+				$status_label = __( 'Invalid', 'fsweb-comments-core' );
+				break;
+			case 'pending':
+				$status_label = __( 'Pending', 'fsweb-comments-core' );
+				break;
+			default:
+				$status_label = __( 'Inactive', 'fsweb-comments-core' );
+				break;
+		}
+
+		$has_expiry  = ( 'active' === $license_status && ! empty( $license_expires ) );
+		$expires_on  = ! empty( $license_expires )
+			? mysql2date( get_option( 'date_format' ), $license_expires )
+			: __( 'Lifetime', 'fsweb-comments-core' );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-license-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Comments Core — License', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Comments Core — License', 'fsweb-comments-core' ),
+				__( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-license'
+			);
+			?>
 
-			<div class="fsweb-cc-license-card">
-				<p class="description">
-					<?php esc_html_e( 'Enter your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?>
-				</p>
+			<div class="fsweb-cc-license-grid">
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-awards" aria-hidden="true"></span>
+							<?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?>
+						</h2>
+					</div>
+					<div class="fsweb-cc-card__body">
+						<div class="fsweb-cc-grid">
+							<div class="fsweb-cc-field fsweb-cc-field--full">
+								<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
+								<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
+									value="<?php echo esc_attr( $license_key ); ?>"
+									placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
+									<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
+								<p class="description"><?php esc_html_e( 'Enter your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
+							</div>
+							<div class="fsweb-cc-field">
+								<span class="fsweb-cc-field-label"><?php esc_html_e( 'Status', 'fsweb-comments-core' ); ?></span>
+								<span id="fsweb-cc-license-status" class="fsweb-cc-status fsweb-cc-status--<?php echo esc_attr( sanitize_html_class( $license_status ) ); ?>"><?php echo esc_html( $status_label ); ?></span>
+							</div>
+							<div class="fsweb-cc-field" id="fsweb-cc-expires-row" style="<?php echo $has_expiry ? '' : 'display:none;'; ?>">
+								<span class="fsweb-cc-field-label"><?php esc_html_e( 'Expires', 'fsweb-comments-core' ); ?></span>
+								<span id="fsweb-cc-license-expires"><?php echo esc_html( $expires_on ); ?></span>
+							</div>
+						</div>
 
-				<table class="form-table" role="presentation">
-					<tr>
-						<th scope="row">
-							<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
-						</th>
-						<td>
-							<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
-								value="<?php echo esc_attr( $license_key ); ?>"
-								placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
-								<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Status', 'fsweb-comments-core' ); ?></th>
-						<td>
-							<span id="fsweb-cc-license-status" class="fsweb-cc-status fsweb-cc-status--<?php echo esc_attr( $license_status ); ?>">
-								<?php
-								switch ( $license_status ) {
-									case 'active':      esc_html_e( 'Active', 'fsweb-comments-core' );      break;
-									case 'expired':     esc_html_e( 'Expired', 'fsweb-comments-core' );     break;
-									case 'invalid':     esc_html_e( 'Invalid', 'fsweb-comments-core' );     break;
-									case 'pending':     esc_html_e( 'Pending', 'fsweb-comments-core' );     break;
-									default:            esc_html_e( 'Inactive', 'fsweb-comments-core' );     break;
-								}
-								?>
-							</span>
-						</td>
-					</tr>
-					<tr id="fsweb-cc-expires-row" style="<?php echo 'active' === $license_status && ! empty( $license_expires ) ? '' : 'display:none;'; ?>">
-						<th scope="row"><?php esc_html_e( 'Expires', 'fsweb-comments-core' ); ?></th>
-						<td><span id="fsweb-cc-license-expires"><?php echo ! empty( $license_expires ) ? esc_html( mysql2date( get_option( 'date_format' ), $license_expires ) ) : esc_html__( 'Lifetime', 'fsweb-comments-core' ); ?></span></td>
-					</tr>
-				</table>
+						<div class="submit fsweb-cc-license-actions">
+							<?php
+							/*
+							 * The action buttons carry their Dashicons through CSS
+							 * pseudo-elements: the license script replaces the button
+							 * text while a request is in flight, which would wipe out a
+							 * nested <span class="dashicons">.
+							 */
+							?>
+							<button type="button" id="fsweb-cc-activate-license" class="button button-primary" style="<?php echo 'active' === $license_status ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fsweb-comments-core' ); ?></button>
+							<button type="button" id="fsweb-cc-deactivate-license" class="button button-secondary" style="<?php echo 'active' === $license_status ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Deactivate', 'fsweb-comments-core' ); ?></button>
+						</div>
+						<div id="fsweb-cc-license-message" class="notice" style="display:none;"></div>
+					</div>
+				</div>
 
-				<p class="submit">
-					<button type="button" id="fsweb-cc-activate-license" class="button button-primary" style="<?php echo in_array( $license_status, array( 'active' ), true ) ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fsweb-comments-core' ); ?></button>
-					<button type="button" id="fsweb-cc-deactivate-license" class="button button-secondary" style="<?php echo 'active' === $license_status ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Deactivate', 'fsweb-comments-core' ); ?></button>
-					<?php $show_verify = in_array( $license_status, array( 'expired', 'pending', 'invalid' ), true ); ?>
-					<button type="button" id="fsweb-cc-validate-license" class="button button-secondary" style="<?php echo $show_verify ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Verify License', 'fsweb-comments-core' ); ?></button>
-					<span id="fsweb-cc-validate-spinner" class="spinner" style="display:none; float:none; margin-top:0;"></span>
-				</p>
-				<div id="fsweb-cc-license-message" class="notice" style="display:none;"></div>
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-editor-help" aria-hidden="true"></span>
+							<?php esc_html_e( 'How it works', 'fsweb-comments-core' ); ?>
+						</h2>
+					</div>
+					<div class="fsweb-cc-card__body">
+						<ul class="fsweb-cc-help-list">
+							<li>
+								<span class="dashicons dashicons-yes" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Activate: paste the key and we validate it on the FSWEB license server.', 'fsweb-comments-core' ); ?></span>
+							</li>
+							<li>
+								<span class="dashicons dashicons-lock" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Active: automatic updates and premium support are unlocked for this site.', 'fsweb-comments-core' ); ?></span>
+							</li>
+							<li>
+								<span class="dashicons dashicons-no" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Deactivate: releases the key so you can use it on another site.', 'fsweb-comments-core' ); ?></span>
+							</li>
+						</ul>
+						<p class="fsweb-cc-hint">
+							<span class="dashicons dashicons-shield" aria-hidden="true"></span>
+							<span><?php esc_html_e( 'The key is stored in this site\'s options and validated with the FSWEB license server every time you open this page.', 'fsweb-comments-core' ); ?></span>
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -559,92 +709,6 @@ class Fsweb_Comments_Core_Admin {
 	}
 
 	/**
-	 * AJAX handler — validate/sync license status with the remote server.
-	 *
-	 * Does NOT activate or deactivate — only fetches the real status
-	 * from the license-checker and updates local wp_options to match.
-	 *
-	 * @since    1.1.0
-	 */
-	public function ajax_validate_license() {
-		check_ajax_referer( 'fsweb_license_action', 'nonce' );
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'fsweb-comments-core' ) ) );
-		}
-
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$input_key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
-		// phpcs:enable
-
-		// Use the key from the input field if provided, otherwise fall back to the saved key.
-		$license_key = ! empty( $input_key ) ? $input_key : get_option( 'fsweb_comments_core_license_key', '' );
-
-		if ( empty( $license_key ) ) {
-			wp_send_json_error( array( 'message' => __( 'No license key saved. Please enter a key first.', 'fsweb-comments-core' ) ) );
-		}
-
-		$api_url = FSWEB_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fsweb-comments-core&domain=' . urlencode( home_url() );
-
-		$response = wp_remote_get( $api_url, array(
-			'timeout'   => 15,
-			'sslverify' => false,
-		) );
-
-		if ( is_wp_error( $response ) ) {
-			wp_send_json_error( array(
-				'message' => __( 'Could not reach the license server.', 'fsweb-comments-core' ),
-			) );
-		}
-
-		$code = wp_remote_retrieve_response_code( $response );
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( ! $body || ! isset( $body['status'] ) ) {
-			wp_send_json_error( array(
-				'message' => __( 'Invalid response from license server.', 'fsweb-comments-core' ),
-			) );
-		}
-
-		$remote_status  = sanitize_text_field( $body['status'] );
-		$remote_expires = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
-
-		// Sync local options with remote truth.
-		update_option( 'fsweb_comments_core_license_status', $remote_status );
-		update_option( 'fsweb_comments_core_license_expires', $remote_expires );
-
-		wp_send_json_success( array(
-			'message' => $this->status_message( $remote_status, $remote_expires ),
-			'status'  => $remote_status,
-			'expires' => $remote_expires,
-		) );
-	}
-
-	/**
-	 * Human-readable message for a given license status.
-	 *
-	 * @since  1.1.0
-	 * @param  string $status  License status.
-	 * @param  string $expires Expiration date (optional).
-	 * @return string
-	 */
-	private function status_message( $status, $expires = '' ) {
-		switch ( $status ) {
-			case 'active':
-				return __( 'License is active and valid.', 'fsweb-comments-core' );
-			case 'expired':
-				return __( 'License has expired. Please renew to continue receiving updates.', 'fsweb-comments-core' );
-			case 'invalid':
-				return __( 'License key is invalid.', 'fsweb-comments-core' );
-			case 'pending':
-				return __( 'License is pending activation.', 'fsweb-comments-core' );
-				return __( 'License was deactivated. Activate it again to resume updates.', 'fsweb-comments-core' );
-			default:
-				return __( 'License is not active.', 'fsweb-comments-core' );
-		}
-	}
-
-	/**
 	 * Sync local license status with the remote server.
 	 *
 	 * Called on page load so the UI always reflects reality — another site
@@ -721,14 +785,17 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Form Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize your review forms.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-builder'
+			);
+			?>
 
 			<div class="fsweb-cc-list-toolbar">
 				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
-					<span class="dashicons dashicons-plus-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'New Form', 'fsweb-comments-core' ); ?>
 				</a>
 			</div>
@@ -824,15 +891,18 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Form Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize your review forms.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-builder'
+			);
+			?>
 
 			<!-- Back to list -->
 			<p>
 				<a href="<?php echo esc_url( $list_url ); ?>" class="button">
-					<span class="dashicons dashicons-arrow-left-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-arrow-left-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'Back to list', 'fsweb-comments-core' ); ?>
 				</a>
 			</p>
@@ -848,6 +918,7 @@ class Fsweb_Comments_Core_Admin {
 						<?php esc_html_e( 'Multi-step', 'fsweb-comments-core' ); ?>
 					</label>
 					<button type="button" id="fsweb-cc-new-form" class="button">
+						<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 						<?php esc_html_e( 'Clear & New', 'fsweb-comments-core' ); ?>
 					</button>
 					<button type="button" id="fsweb-cc-save-form" class="button button-primary">
@@ -1303,14 +1374,17 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Views Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-views'
+			);
+			?>
 
 			<div class="fsweb-cc-list-toolbar">
 				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
-					<span class="dashicons dashicons-plus-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'New View', 'fsweb-comments-core' ); ?>
 				</a>
 			</div>
@@ -1411,15 +1485,18 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Views Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-views'
+			);
+			?>
 
 			<!-- Back to list -->
 			<p>
 				<a href="<?php echo esc_url( $list_url ); ?>" class="button">
-					<span class="dashicons dashicons-arrow-left-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-arrow-left-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'Back to list', 'fsweb-comments-core' ); ?>
 				</a>
 			</p>
@@ -1453,7 +1530,10 @@ class Fsweb_Comments_Core_Admin {
 					<option value="random" <?php selected( $current ? $current['order'] : '', 'random' ); ?>>Random</option>
 					<option value="menu_order" <?php selected( $current ? $current['order'] : '', 'menu_order' ); ?>>Menu order</option>
 				</select>
-				<button type="button" id="fsweb-cc-new-view" class="button"><?php esc_html_e( 'Clear & New', 'fsweb-comments-core' ); ?></button>
+				<button type="button" id="fsweb-cc-new-view" class="button">
+					<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
+					<?php esc_html_e( 'Clear & New', 'fsweb-comments-core' ); ?>
+				</button>
 				<button type="button" id="fsweb-cc-save-view" class="button button-primary"><?php esc_html_e( 'Save View', 'fsweb-comments-core' ); ?></button>
 				<input type="hidden" id="fsweb-cc-view-id" value="<?php echo esc_attr( $edit_id ); ?>">
 			</div>

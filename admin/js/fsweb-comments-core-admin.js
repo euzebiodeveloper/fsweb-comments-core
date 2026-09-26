@@ -1,9 +1,8 @@
 /**
  * FSWEB Comments Core — Admin Scripts
  *
- * License activation/deactivation UI. AJAX calls are routed to
- * fsweb-license-checker (the license backend), which handles the
- * actual LMFWC communication.
+ * License activation/deactivation UI. The manual "verify" action was removed:
+ * the status is synced with the license server when the page loads.
  */
 ( function( $, data ) {
 	'use strict';
@@ -15,8 +14,6 @@
 	var $keyInput  = $( '#fsweb-cc-license-key' );
 	var $btnActivate   = $( '#fsweb-cc-activate-license' );
 	var $btnDeactivate = $( '#fsweb-cc-deactivate-license' );
-	var $btnValidate   = $( '#fsweb-cc-validate-license' );
-	var $spinner       = $( '#fsweb-cc-validate-spinner' );
 
 	function showMessage( text, type ) {
 		$message
@@ -52,24 +49,12 @@
 			$keyInput.prop( 'readonly', true );
 			$btnActivate.hide();
 			$btnDeactivate.show();
-			$btnValidate.hide();
-		} else if ( 'pending' === status ) {
-			// Key not yet confirmed — allow editing so the user can fix it.
-			$keyInput.prop( 'readonly', false );
-			$btnDeactivate.hide();
-			$btnActivate.show();
-			$btnValidate.show();
-		} else if ( 'inactive' === status ) {
-			$keyInput.prop( 'readonly', false );
-			$btnDeactivate.hide();
-			$btnActivate.hide();
-			$btnValidate.show();
 		} else {
-			// expired, invalid — show Verify, hide Activate/Deactivate.
+			// Inactive, pending, expired or invalid — the key stays editable
+			// so the user can fix it and activate again.
 			$keyInput.prop( 'readonly', false );
-			$btnActivate.hide();
+			$btnActivate.show();
 			$btnDeactivate.hide();
-			$btnValidate.show();
 		}
 	}
 
@@ -115,33 +100,6 @@
 			return;
 		}
 		doAjax( 'deactivate', $keyInput.val().trim() );
-	} );
-
-	// Verify / sync license status with the remote server.
-	$( document ).on( 'click', '#fsweb-cc-validate-license', function() {
-		hideMessage();
-		$btnValidate.prop( 'disabled', true );
-		$spinner.show();
-
-		$.post( data.ajax_url, {
-			action:      'fsweb_validate_license',
-			nonce:       data.nonce,
-			license_key: $keyInput.val().trim()
-		}, function( response ) {
-			$btnValidate.prop( 'disabled', false );
-			$spinner.hide();
-
-			if ( response.success ) {
-				updateUI( response.data.status, response.data.expires || '' );
-				showMessage( response.data.message, 'success' );
-			} else {
-				showMessage( response.data.message, 'error' );
-			}
-		}, 'json' ).fail( function() {
-			$btnValidate.prop( 'disabled', false );
-			$spinner.hide();
-			showMessage( 'Network error. Please try again.', 'error' );
-		} );
 	} );
 
 	// Rating stars in Review Details meta box — update (4/5) badge on change.

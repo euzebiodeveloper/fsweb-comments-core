@@ -200,7 +200,6 @@ class Fsweb_Comments_Core {
 		// AJAX — license activation / deactivation.
 		$this->loader->add_action( 'wp_ajax_fsweb_activate_license', $plugin_admin, 'ajax_activate_license' );
 		$this->loader->add_action( 'wp_ajax_fsweb_deactivate_license', $plugin_admin, 'ajax_deactivate_license' );
-		$this->loader->add_action( 'wp_ajax_fsweb_validate_license', $plugin_admin, 'ajax_validate_license' );
 
 		// Review Editor — meta box + custom columns (self-registers via constructor).
 		new Fsweb_Comments_Core_Review_Editor();

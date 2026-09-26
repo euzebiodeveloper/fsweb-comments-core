@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the FSWEB Comments Core plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: FSWEB Comments Core 1.0.0\n"
+"Project-Id-Version: FSWEB Comments Core 1.0.2\n"
 "Report-Msgid-Bugs-To: https://flowsyncweb.com/\n"
-"POT-Creation-Date: 2026-08-29 17:27-0300\n"
-"PO-Revision-Date: 2026-08-29 17:44-0300\n"
+"POT-Creation-Date: 2026-09-26T19:26:51+00:00\n"
+"PO-Revision-Date: 2026-09-26 16:30-0300\n"
 "Last-Translator: Flow Sync Web <euzebio.batista@flowsyncweb.com>\n"
 "Language-Team: Portuguese (Brazil) <euzebio.batista@flowsyncweb.com>\n"
 "Language: pt_BR\n"
@@ -23,6 +23,33 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: node_modules\n"
 "X-Poedit-SearchPathExcluded-1: build\n"
 
+#. Plugin Name of the plugin
+#: fsweb-comments-core.php
+msgid "Comments Core"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: fsweb-comments-core.php
+msgid "https://flowsyncweb.com"
+msgstr ""
+
+#. Description of the plugin
+#: fsweb-comments-core.php
+msgid "A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization."
+msgstr ""
+"Um sistema leve e de alta performance para gestão de comentários e feedback, "
+"criado para integração simples e personalização amigável ao desenvolvedor."
+
+#. Author of the plugin
+#: fsweb-comments-core.php
+msgid "Flow Sync Web"
+msgstr ""
+
+#. Author URI of the plugin
+#: fsweb-comments-core.php
+msgid "https://flowsyncweb.com/"
+msgstr ""
+
 #: admin/class-fsweb-comments-core-admin.php:97
 msgid "Are you sure you want to deactivate this license?"
 msgstr "Tem certeza de que deseja desativar esta licença?"
@@ -36,689 +63,661 @@ msgid "Deactivating…"
 msgstr "Desativando…"
 
 #: admin/class-fsweb-comments-core-admin.php:100
-#: admin/class-fsweb-comments-core-admin.php:441
+#: admin/class-fsweb-comments-core-admin.php:593
 msgid "Please enter a license key."
 msgstr "Por favor, informe uma chave de licença."
 
 #: admin/class-fsweb-comments-core-admin.php:147
 #: admin/class-fsweb-comments-core-admin.php:148
-#: admin/class-fsweb-comments-core-admin.php:227
+#: admin/class-fsweb-comments-core-admin.php:221
+#: admin/class-fsweb-comments-core-admin.php:299
 msgid "Dashboard"
 msgstr "Painel"
 
 #: admin/class-fsweb-comments-core-admin.php:157
 #: admin/class-fsweb-comments-core-admin.php:158
-#: admin/class-fsweb-comments-core-admin.php:715
-#: admin/class-fsweb-comments-core-admin.php:817
+#: admin/class-fsweb-comments-core-admin.php:225
+#: admin/class-fsweb-comments-core-admin.php:790
+#: admin/class-fsweb-comments-core-admin.php:896
 msgid "Form Builder"
 msgstr "Construtor de Formulário"
 
 #: admin/class-fsweb-comments-core-admin.php:167
 #: admin/class-fsweb-comments-core-admin.php:168
-#: admin/class-fsweb-comments-core-admin.php:1295
-#: admin/class-fsweb-comments-core-admin.php:1402
+#: admin/class-fsweb-comments-core-admin.php:229
+#: admin/class-fsweb-comments-core-admin.php:1379
+#: admin/class-fsweb-comments-core-admin.php:1490
 msgid "Views Builder"
 msgstr "Construtor de Exibição"
 
 #: admin/class-fsweb-comments-core-admin.php:177
 #: admin/class-fsweb-comments-core-admin.php:178
-#: admin/class-fsweb-comments-core-admin.php:251
+#: admin/class-fsweb-comments-core-admin.php:233
+#: admin/class-fsweb-comments-core-admin.php:336
 msgid "License"
 msgstr "Licença"
 
-#: admin/class-fsweb-comments-core-admin.php:228
+#: admin/class-fsweb-comments-core-admin.php:243
+#: admin/class-fsweb-comments-core-admin.php:396
+msgid "Quick Actions"
+msgstr "Ações Rápidas"
+
+#: admin/class-fsweb-comments-core-admin.php:300
 msgid "Overview of your reviews, categories and license status."
 msgstr "Visão geral das suas avaliações, categorias e status da licença."
 
-#: admin/class-fsweb-comments-core-admin.php:235
+#: admin/class-fsweb-comments-core-admin.php:311
 msgid "Total Reviews"
 msgstr "Total de Avaliações"
 
-#: admin/class-fsweb-comments-core-admin.php:239
+#: admin/class-fsweb-comments-core-admin.php:318
 msgid "This Month"
 msgstr "Este Mês"
 
-#: admin/class-fsweb-comments-core-admin.php:243
+#: admin/class-fsweb-comments-core-admin.php:325
 #: includes/class-fsweb-comments-core-post-types.php:91
 msgid "Categories"
 msgstr "Categorias"
 
-#: admin/class-fsweb-comments-core-admin.php:248
-#: admin/class-fsweb-comments-core-admin.php:393
+#: admin/class-fsweb-comments-core-admin.php:333
+#: admin/class-fsweb-comments-core-admin.php:466
 msgid "Active"
 msgstr "Ativa"
 
-#: admin/class-fsweb-comments-core-admin.php:249
-#: admin/class-fsweb-comments-core-admin.php:397
+#: admin/class-fsweb-comments-core-admin.php:334
+#: admin/class-fsweb-comments-core-admin.php:478
 msgid "Inactive"
 msgstr "Inativa"
 
-#: admin/class-fsweb-comments-core-admin.php:259
+#: admin/class-fsweb-comments-core-admin.php:347
 msgid "Recent Reviews"
 msgstr "Avaliações Recentes"
 
-#: admin/class-fsweb-comments-core-admin.php:261
+#: admin/class-fsweb-comments-core-admin.php:351
 msgid "View All"
 msgstr "Ver Todas"
 
-#: admin/class-fsweb-comments-core-admin.php:269
+#: admin/class-fsweb-comments-core-admin.php:359
 msgid "Review"
 msgstr "Avaliação"
 
-#: admin/class-fsweb-comments-core-admin.php:270
-#: admin/class-fsweb-comments-core-admin.php:889
-#: admin/class-fsweb-comments-core-admin.php:972
-#: admin/class-fsweb-comments-core-admin.php:1065
-#: admin/class-fsweb-comments-core-admin.php:1578
+#: admin/class-fsweb-comments-core-admin.php:360
+#: admin/class-fsweb-comments-core-admin.php:971
+#: admin/class-fsweb-comments-core-admin.php:1054
+#: admin/class-fsweb-comments-core-admin.php:1147
+#: admin/class-fsweb-comments-core-admin.php:1671
 #: fsweb-update-checker/includes/class-admin-ui.php:213
 msgid "Date"
 msgstr "Data"
 
-#: admin/class-fsweb-comments-core-admin.php:283
+#: admin/class-fsweb-comments-core-admin.php:373
 msgid "Has photo"
 msgstr "Tem foto"
 
-#: admin/class-fsweb-comments-core-admin.php:294
+#: admin/class-fsweb-comments-core-admin.php:385
 msgid "No reviews yet. Create your first review to get started!"
 msgstr "Ainda não há avaliações. Crie sua primeira avaliação para começar!"
 
-#: admin/class-fsweb-comments-core-admin.php:302
-msgid "Quick Actions"
-msgstr "Ações Rápidas"
-
-#: admin/class-fsweb-comments-core-admin.php:306
+#: admin/class-fsweb-comments-core-admin.php:403
 #: includes/class-fsweb-comments-core-post-types.php:32
 msgid "Add New Review"
 msgstr "Adicionar Nova Avaliação"
 
-#: admin/class-fsweb-comments-core-admin.php:309
+#: admin/class-fsweb-comments-core-admin.php:407
 msgid "Manage Categories"
 msgstr "Gerenciar Categorias"
 
-#: admin/class-fsweb-comments-core-admin.php:313
+#: admin/class-fsweb-comments-core-admin.php:412
 msgid "License Settings"
 msgstr "Configurações da Licença"
 
-#: admin/class-fsweb-comments-core-admin.php:314
+#: admin/class-fsweb-comments-core-admin.php:413
 msgid "Activate License"
 msgstr "Ativar Licença"
 
-#: admin/class-fsweb-comments-core-admin.php:319
+#: admin/class-fsweb-comments-core-admin.php:418
 msgid "Shortcodes"
 msgstr "Shortcodes"
 
-#: admin/class-fsweb-comments-core-admin.php:320
+#: admin/class-fsweb-comments-core-admin.php:419
 msgid "Use these shortcodes on any page or post:"
 msgstr "Use estes shortcodes em qualquer página ou post:"
 
-#: admin/class-fsweb-comments-core-admin.php:322
+#: admin/class-fsweb-comments-core-admin.php:421
 msgid "Display reviews:"
 msgstr "Exibir avaliações:"
 
-#: admin/class-fsweb-comments-core-admin.php:326
+#: admin/class-fsweb-comments-core-admin.php:425
 msgid "Review form:"
 msgstr "Formulário de avaliação:"
 
-#: admin/class-fsweb-comments-core-admin.php:330
-msgid ""
-"Create views and forms in Views Builder and Form Builder. Each gets a unique "
-"shortcode — just copy and paste."
+#: admin/class-fsweb-comments-core-admin.php:429
+msgid "Create views and forms in Views Builder and Form Builder. Each gets a unique shortcode — just copy and paste."
 msgstr ""
 "Crie exibições e formulários no Construtor de Exibição e no Construtor de "
 "Formulário. Cada um recebe um shortcode único — basta copiar e colar."
 
-#: admin/class-fsweb-comments-core-admin.php:366
+#: admin/class-fsweb-comments-core-admin.php:469
+msgid "Expired"
+msgstr "Expirada"
+
+#: admin/class-fsweb-comments-core-admin.php:472
+msgid "Invalid"
+msgstr "Inválida"
+
+#: admin/class-fsweb-comments-core-admin.php:475
+msgid "Pending"
+msgstr "Pendente"
+
+#: admin/class-fsweb-comments-core-admin.php:485
+msgid "Lifetime"
+msgstr "Vitalícia"
+
+#: admin/class-fsweb-comments-core-admin.php:491
 msgid "Comments Core — License"
 msgstr "Comments Core — Licença"
 
-#: admin/class-fsweb-comments-core-admin.php:367
-msgid ""
-"Manage your license key to receive automatic updates and premium support."
+#: admin/class-fsweb-comments-core-admin.php:492
+msgid "Manage your license key to receive automatic updates and premium support."
 msgstr ""
 "Gerencie sua chave de licença para receber atualizações automáticas e "
 "suporte premium."
 
-#: admin/class-fsweb-comments-core-admin.php:372
-msgid ""
-"Enter your license key to receive automatic updates and premium support."
+#: admin/class-fsweb-comments-core-admin.php:502
+#: admin/class-fsweb-comments-core-admin.php:508
+msgid "License Key"
+msgstr "Chave de Licença"
+
+#: admin/class-fsweb-comments-core-admin.php:511
+msgid "e.g. FSWEB-XXXX-XXXX-XXXX"
+msgstr "ex.: FSWEB-XXXX-XXXX-XXXX"
+
+#: admin/class-fsweb-comments-core-admin.php:513
+msgid "Enter your license key to receive automatic updates and premium support."
 msgstr ""
 "Informe sua chave de licença para receber atualizações automáticas e suporte "
 "premium."
 
-#: admin/class-fsweb-comments-core-admin.php:378
-msgid "License Key"
-msgstr "Chave de Licença"
-
-#: admin/class-fsweb-comments-core-admin.php:383
-msgid "e.g. FSWEB-XXXX-XXXX-XXXX"
-msgstr "ex.: FSWEB-XXXX-XXXX-XXXX"
-
-#: admin/class-fsweb-comments-core-admin.php:388
+#: admin/class-fsweb-comments-core-admin.php:516
 msgid "Status"
 msgstr "Status"
 
-#: admin/class-fsweb-comments-core-admin.php:394
-msgid "Expired"
-msgstr "Expirada"
-
-#: admin/class-fsweb-comments-core-admin.php:395
-msgid "Invalid"
-msgstr "Inválida"
-
-#: admin/class-fsweb-comments-core-admin.php:396
-msgid "Pending"
-msgstr "Pendente"
-
-#: admin/class-fsweb-comments-core-admin.php:404
+#: admin/class-fsweb-comments-core-admin.php:520
 msgid "Expires"
 msgstr "Expira em"
 
-#: admin/class-fsweb-comments-core-admin.php:405
-msgid "Lifetime"
-msgstr "Vitalícia"
-
-#: admin/class-fsweb-comments-core-admin.php:410
+#: admin/class-fsweb-comments-core-admin.php:534
 msgid "Activate"
 msgstr "Ativar"
 
-#: admin/class-fsweb-comments-core-admin.php:411
+#: admin/class-fsweb-comments-core-admin.php:535
 msgid "Deactivate"
 msgstr "Desativar"
 
-#: admin/class-fsweb-comments-core-admin.php:413
-msgid "Verify License"
-msgstr "Verificar Licença"
+#: admin/class-fsweb-comments-core-admin.php:545
+msgid "How it works"
+msgstr "Como funciona"
 
-#: admin/class-fsweb-comments-core-admin.php:433
-#: admin/class-fsweb-comments-core-admin.php:515
-#: admin/class-fsweb-comments-core-admin.php:564
-#: admin/class-fsweb-comments-core-admin.php:1138
-#: admin/class-fsweb-comments-core-admin.php:1245
-#: admin/class-fsweb-comments-core-admin.php:1723
-#: admin/class-fsweb-comments-core-admin.php:1832
-#: admin/class-fsweb-comments-core-admin.php:1855
+#: admin/class-fsweb-comments-core-admin.php:552
+msgid "Activate: paste the key and we validate it on the FSWEB license server."
+msgstr "Ativar: cole a chave e validamos no servidor de licenças da FSWEB."
+
+#: admin/class-fsweb-comments-core-admin.php:556
+msgid "Active: automatic updates and premium support are unlocked for this site."
+msgstr ""
+"Ativa: atualizações automáticas e suporte premium liberados para este site."
+
+#: admin/class-fsweb-comments-core-admin.php:560
+msgid "Deactivate: releases the key so you can use it on another site."
+msgstr "Desativar: libera a chave para você usá-la em outro site."
+
+#: admin/class-fsweb-comments-core-admin.php:565
+msgid "The key is stored in this site's options and validated with the FSWEB license server every time you open this page."
+msgstr ""
+"A chave fica salva nas opções deste site e é validada no servidor de "
+"licenças da FSWEB sempre que você abre esta página."
+
+#: admin/class-fsweb-comments-core-admin.php:585
+#: admin/class-fsweb-comments-core-admin.php:674
+#: admin/class-fsweb-comments-core-admin.php:1220
+#: admin/class-fsweb-comments-core-admin.php:1327
+#: admin/class-fsweb-comments-core-admin.php:1816
+#: admin/class-fsweb-comments-core-admin.php:1925
+#: admin/class-fsweb-comments-core-admin.php:1948
 msgid "Permission denied."
 msgstr "Permissão negada."
 
-#: admin/class-fsweb-comments-core-admin.php:449
+#: admin/class-fsweb-comments-core-admin.php:601
 msgid "License is already active."
 msgstr "A licença já está ativa."
 
-#: admin/class-fsweb-comments-core-admin.php:473
-msgid ""
-"Could not reach the license server. Your key has been saved and is pending "
-"validation."
+#: admin/class-fsweb-comments-core-admin.php:625
+msgid "Could not reach the license server. Your key has been saved and is pending validation."
 msgstr ""
 "Não foi possível acessar o servidor de licenças. Sua chave foi salva e está "
 "pendente de validação."
 
-#: admin/class-fsweb-comments-core-admin.php:487
+#: admin/class-fsweb-comments-core-admin.php:646
 msgid "License activated successfully!"
 msgstr "Licença ativada com sucesso!"
 
-#: admin/class-fsweb-comments-core-admin.php:497
+#: admin/class-fsweb-comments-core-admin.php:656
 msgid "Invalid license key."
 msgstr "Chave de licença inválida."
 
-#: admin/class-fsweb-comments-core-admin.php:541
+#: admin/class-fsweb-comments-core-admin.php:700
 msgid "License deactivated locally. The remote server could not be reached."
 msgstr ""
 "Licença desativada localmente. Não foi possível acessar o servidor remoto."
 
-#: admin/class-fsweb-comments-core-admin.php:547
+#: admin/class-fsweb-comments-core-admin.php:706
 msgid "License deactivated successfully!"
 msgstr "Licença desativada com sucesso!"
 
-#: admin/class-fsweb-comments-core-admin.php:575
-msgid "No license key saved. Please enter a key first."
-msgstr "Nenhuma chave de licença salva. Informe uma chave primeiro."
-
-#: admin/class-fsweb-comments-core-admin.php:587
-msgid "Could not reach the license server."
-msgstr "Não foi possível acessar o servidor de licenças."
-
-#: admin/class-fsweb-comments-core-admin.php:596
-msgid "Invalid response from license server."
-msgstr "Resposta inválida do servidor de licenças."
-
-#: admin/class-fsweb-comments-core-admin.php:625
-msgid "License is active and valid."
-msgstr "A licença está ativa e válida."
-
-#: admin/class-fsweb-comments-core-admin.php:627
-msgid "License has expired. Please renew to continue receiving updates."
-msgstr "A licença expirou. Renove para continuar recebendo atualizações."
-
-#: admin/class-fsweb-comments-core-admin.php:629
-msgid "License key is invalid."
-msgstr "A chave de licença é inválida."
-
-#: admin/class-fsweb-comments-core-admin.php:631
-msgid "License is pending activation."
-msgstr "A licença está pendente de ativação."
-
-#: admin/class-fsweb-comments-core-admin.php:632
-msgid "License was deactivated. Activate it again to resume updates."
-msgstr ""
-"A licença foi desativada. Ative-a novamente para retomar as atualizações."
-
-#: admin/class-fsweb-comments-core-admin.php:634
-#: public/class-fsweb-comments-core-form-shortcode.php:670
-msgid "License is not active."
-msgstr "A licença não está ativa."
-
-#: admin/class-fsweb-comments-core-admin.php:716
-#: admin/class-fsweb-comments-core-admin.php:818
+#: admin/class-fsweb-comments-core-admin.php:791
+#: admin/class-fsweb-comments-core-admin.php:897
 msgid "Create and customize your review forms."
 msgstr "Crie e personalize seus formulários de avaliação."
 
-#: admin/class-fsweb-comments-core-admin.php:722
+#: admin/class-fsweb-comments-core-admin.php:799
 msgid "New Form"
 msgstr "Novo Formulário"
 
-#: admin/class-fsweb-comments-core-admin.php:730
+#: admin/class-fsweb-comments-core-admin.php:807
 msgid "Form Name"
 msgstr "Nome do Formulário"
 
-#: admin/class-fsweb-comments-core-admin.php:731
-#: admin/class-fsweb-comments-core-admin.php:1311
+#: admin/class-fsweb-comments-core-admin.php:808
+#: admin/class-fsweb-comments-core-admin.php:1397
 msgid "Shortcode"
 msgstr "Shortcode"
 
-#: admin/class-fsweb-comments-core-admin.php:732
+#: admin/class-fsweb-comments-core-admin.php:809
 msgid "Fields"
 msgstr "Campos"
 
-#: admin/class-fsweb-comments-core-admin.php:752
-#: admin/class-fsweb-comments-core-admin.php:1324
+#: admin/class-fsweb-comments-core-admin.php:829
+#: admin/class-fsweb-comments-core-admin.php:1410
 msgid "Copy shortcode"
 msgstr "Copiar shortcode"
 
-#: admin/class-fsweb-comments-core-admin.php:760
-#: admin/class-fsweb-comments-core-admin.php:1333
+#: admin/class-fsweb-comments-core-admin.php:837
+#: admin/class-fsweb-comments-core-admin.php:1419
 msgid "Edit"
 msgstr "Editar"
 
-#: admin/class-fsweb-comments-core-admin.php:763
-#: admin/class-fsweb-comments-core-admin.php:1336
+#: admin/class-fsweb-comments-core-admin.php:840
+#: admin/class-fsweb-comments-core-admin.php:1422
 msgid "Delete"
 msgstr "Excluir"
 
-#: admin/class-fsweb-comments-core-admin.php:774
+#: admin/class-fsweb-comments-core-admin.php:851
 msgid "No forms yet. Create your first form to start collecting reviews!"
 msgstr ""
 "Ainda não há formulários. Crie seu primeiro formulário para começar a "
 "coletar avaliações!"
 
-#: admin/class-fsweb-comments-core-admin.php:825
-#: admin/class-fsweb-comments-core-admin.php:1410
+#: admin/class-fsweb-comments-core-admin.php:906
+#: admin/class-fsweb-comments-core-admin.php:1500
 msgid "Back to list"
 msgstr "Voltar para a lista"
 
-#: admin/class-fsweb-comments-core-admin.php:834
+#: admin/class-fsweb-comments-core-admin.php:915
 msgid "Form name"
 msgstr "Nome do formulário"
 
-#: admin/class-fsweb-comments-core-admin.php:837
+#: admin/class-fsweb-comments-core-admin.php:918
 msgid "Multi-step"
 msgstr "Várias etapas"
 
-#: admin/class-fsweb-comments-core-admin.php:840
-#: admin/class-fsweb-comments-core-admin.php:1443
+#: admin/class-fsweb-comments-core-admin.php:922
+#: admin/class-fsweb-comments-core-admin.php:1535
 msgid "Clear & New"
 msgstr "Limpar e Novo"
 
-#: admin/class-fsweb-comments-core-admin.php:843
+#: admin/class-fsweb-comments-core-admin.php:925
 msgid "Save Form"
 msgstr "Salvar Formulário"
 
-#: admin/class-fsweb-comments-core-admin.php:852
+#: admin/class-fsweb-comments-core-admin.php:934
 msgid "Redirect URL"
 msgstr "URL de Redirecionamento"
 
-#: admin/class-fsweb-comments-core-admin.php:854
+#: admin/class-fsweb-comments-core-admin.php:936
 msgid "Leave empty to disable redirection after submission."
 msgstr "Deixe vazio para desativar o redirecionamento após o envio."
 
-#: admin/class-fsweb-comments-core-admin.php:857
+#: admin/class-fsweb-comments-core-admin.php:939
 msgid "Redirect delay (seconds)"
 msgstr "Atraso do redirecionamento (segundos)"
 
-#: admin/class-fsweb-comments-core-admin.php:865
+#: admin/class-fsweb-comments-core-admin.php:947
 msgid "Available Fields"
 msgstr "Campos Disponíveis"
 
-#: admin/class-fsweb-comments-core-admin.php:869
-#: admin/class-fsweb-comments-core-admin.php:967
-#: admin/class-fsweb-comments-core-admin.php:1016
-#: admin/class-fsweb-comments-core-admin.php:1060
-#: admin/class-fsweb-comments-core-admin.php:1574
+#: admin/class-fsweb-comments-core-admin.php:951
+#: admin/class-fsweb-comments-core-admin.php:1049
+#: admin/class-fsweb-comments-core-admin.php:1098
+#: admin/class-fsweb-comments-core-admin.php:1142
+#: admin/class-fsweb-comments-core-admin.php:1667
 #: includes/class-fsweb-comments-core-activator.php:55
 msgid "Image"
 msgstr "Imagem"
 
-#: admin/class-fsweb-comments-core-admin.php:873
-#: admin/class-fsweb-comments-core-admin.php:968
-#: admin/class-fsweb-comments-core-admin.php:1061
+#: admin/class-fsweb-comments-core-admin.php:955
+#: admin/class-fsweb-comments-core-admin.php:1050
+#: admin/class-fsweb-comments-core-admin.php:1143
 msgid "Text"
 msgstr "Texto"
 
-#: admin/class-fsweb-comments-core-admin.php:877
-#: admin/class-fsweb-comments-core-admin.php:969
-#: admin/class-fsweb-comments-core-admin.php:1062
+#: admin/class-fsweb-comments-core-admin.php:959
+#: admin/class-fsweb-comments-core-admin.php:1051
+#: admin/class-fsweb-comments-core-admin.php:1144
 msgid "Textarea"
 msgstr "Área de texto"
 
-#: admin/class-fsweb-comments-core-admin.php:881
-#: admin/class-fsweb-comments-core-admin.php:970
-#: admin/class-fsweb-comments-core-admin.php:1030
-#: admin/class-fsweb-comments-core-admin.php:1063
+#: admin/class-fsweb-comments-core-admin.php:963
+#: admin/class-fsweb-comments-core-admin.php:1052
+#: admin/class-fsweb-comments-core-admin.php:1112
+#: admin/class-fsweb-comments-core-admin.php:1145
 #: admin/class-fsweb-comments-core-review-editor.php:230
 #: admin/class-fsweb-comments-core-review-editor.php:447
 #: includes/class-fsweb-comments-core-activator.php:69
 msgid "Email"
 msgstr "E-mail"
 
-#: admin/class-fsweb-comments-core-admin.php:885
-#: admin/class-fsweb-comments-core-admin.php:971
-#: admin/class-fsweb-comments-core-admin.php:1064
+#: admin/class-fsweb-comments-core-admin.php:967
+#: admin/class-fsweb-comments-core-admin.php:1053
+#: admin/class-fsweb-comments-core-admin.php:1146
 msgid "URL"
 msgstr "URL"
 
-#: admin/class-fsweb-comments-core-admin.php:893
-#: admin/class-fsweb-comments-core-admin.php:973
-#: admin/class-fsweb-comments-core-admin.php:1066
+#: admin/class-fsweb-comments-core-admin.php:975
+#: admin/class-fsweb-comments-core-admin.php:1055
+#: admin/class-fsweb-comments-core-admin.php:1148
 #: fsweb-update-checker/includes/class-admin-ui.php:211
 msgid "Select"
 msgstr "Seleção"
 
-#: admin/class-fsweb-comments-core-admin.php:897
-#: admin/class-fsweb-comments-core-admin.php:974
-#: admin/class-fsweb-comments-core-admin.php:1037
-#: admin/class-fsweb-comments-core-admin.php:1067
-#: admin/class-fsweb-comments-core-admin.php:1577
+#: admin/class-fsweb-comments-core-admin.php:979
+#: admin/class-fsweb-comments-core-admin.php:1056
+#: admin/class-fsweb-comments-core-admin.php:1119
+#: admin/class-fsweb-comments-core-admin.php:1149
+#: admin/class-fsweb-comments-core-admin.php:1670
 #: admin/class-fsweb-comments-core-review-editor.php:236
 #: admin/class-fsweb-comments-core-review-editor.php:446
 #: includes/class-fsweb-comments-core-activator.php:76
 msgid "Rating"
 msgstr "Avaliação"
 
-#: admin/class-fsweb-comments-core-admin.php:917
-#: admin/class-fsweb-comments-core-admin.php:932
+#: admin/class-fsweb-comments-core-admin.php:999
+#: admin/class-fsweb-comments-core-admin.php:1014
 msgid "Step name"
 msgstr "Nome da etapa"
 
-#: admin/class-fsweb-comments-core-admin.php:919
-#: admin/class-fsweb-comments-core-admin.php:934
+#: admin/class-fsweb-comments-core-admin.php:1001
+#: admin/class-fsweb-comments-core-admin.php:1016
 msgid "Delete step"
 msgstr "Excluir etapa"
 
-#: admin/class-fsweb-comments-core-admin.php:932
+#: admin/class-fsweb-comments-core-admin.php:1014
 msgid "Step 1"
 msgstr "Etapa 1"
 
-#: admin/class-fsweb-comments-core-admin.php:943
-msgid ""
-"Drag fields here from the palette on the left. Click a field to edit its "
-"properties."
+#: admin/class-fsweb-comments-core-admin.php:1025
+msgid "Drag fields here from the palette on the left. Click a field to edit its properties."
 msgstr ""
 "Arraste os campos aqui da paleta à esquerda. Clique em um campo para editar "
 "suas propriedades."
 
-#: admin/class-fsweb-comments-core-admin.php:955
+#: admin/class-fsweb-comments-core-admin.php:1037
 msgid "Field Settings"
 msgstr "Configurações do Campo"
 
-#: admin/class-fsweb-comments-core-admin.php:960
+#: admin/class-fsweb-comments-core-admin.php:1042
 msgid "Field ID"
 msgstr "ID do Campo"
 
-#: admin/class-fsweb-comments-core-admin.php:962
+#: admin/class-fsweb-comments-core-admin.php:1044
 msgid "Unique identifier for this field. Used in shortcodes and templates."
 msgstr "Identificador único deste campo. Usado em shortcodes e templates."
 
-#: admin/class-fsweb-comments-core-admin.php:965
-#: admin/class-fsweb-comments-core-admin.php:1096
+#: admin/class-fsweb-comments-core-admin.php:1047
+#: admin/class-fsweb-comments-core-admin.php:1178
 msgid "Type"
 msgstr "Tipo"
 
-#: admin/class-fsweb-comments-core-admin.php:978
-#: admin/class-fsweb-comments-core-admin.php:1106
+#: admin/class-fsweb-comments-core-admin.php:1060
+#: admin/class-fsweb-comments-core-admin.php:1188
 msgid "Label"
 msgstr "Rótulo"
 
-#: admin/class-fsweb-comments-core-admin.php:982
-#: admin/class-fsweb-comments-core-admin.php:1110
+#: admin/class-fsweb-comments-core-admin.php:1064
+#: admin/class-fsweb-comments-core-admin.php:1192
 msgid "Placeholder"
 msgstr "Placeholder"
 
-#: admin/class-fsweb-comments-core-admin.php:986
-#: admin/class-fsweb-comments-core-admin.php:1114
+#: admin/class-fsweb-comments-core-admin.php:1068
+#: admin/class-fsweb-comments-core-admin.php:1196
 msgid "Options"
 msgstr "Opções"
 
-#: admin/class-fsweb-comments-core-admin.php:987
-#: admin/class-fsweb-comments-core-admin.php:1115
+#: admin/class-fsweb-comments-core-admin.php:1069
+#: admin/class-fsweb-comments-core-admin.php:1197
 msgid "One per line"
 msgstr "Uma por linha"
 
-#: admin/class-fsweb-comments-core-admin.php:988
-#: admin/class-fsweb-comments-core-admin.php:1116
+#: admin/class-fsweb-comments-core-admin.php:1070
+#: admin/class-fsweb-comments-core-admin.php:1198
 msgid "One option per line."
 msgstr "Uma opção por linha."
 
-#: admin/class-fsweb-comments-core-admin.php:993
-#: admin/class-fsweb-comments-core-admin.php:1121
+#: admin/class-fsweb-comments-core-admin.php:1075
+#: admin/class-fsweb-comments-core-admin.php:1203
 msgid "Required"
 msgstr "Obrigatório"
 
-#: admin/class-fsweb-comments-core-admin.php:998
-#: admin/class-fsweb-comments-core-admin.php:1530
+#: admin/class-fsweb-comments-core-admin.php:1080
+#: admin/class-fsweb-comments-core-admin.php:1623
 msgid "Apply"
 msgstr "Aplicar"
 
-#: admin/class-fsweb-comments-core-admin.php:999
-#: admin/class-fsweb-comments-core-admin.php:1531
+#: admin/class-fsweb-comments-core-admin.php:1081
+#: admin/class-fsweb-comments-core-admin.php:1624
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: admin/class-fsweb-comments-core-admin.php:1023
-#: admin/class-fsweb-comments-core-admin.php:1575
+#: admin/class-fsweb-comments-core-admin.php:1105
+#: admin/class-fsweb-comments-core-admin.php:1668
 #: admin/class-fsweb-comments-core-review-editor.php:224
 #: includes/class-fsweb-comments-core-activator.php:62
 msgid "Name"
 msgstr "Nome"
 
-#: admin/class-fsweb-comments-core-admin.php:1024
+#: admin/class-fsweb-comments-core-admin.php:1106
 #: includes/class-fsweb-comments-core-activator.php:63
 msgid "Insert your name"
 msgstr "Insira seu nome"
 
-#: admin/class-fsweb-comments-core-admin.php:1031
+#: admin/class-fsweb-comments-core-admin.php:1113
 #: includes/class-fsweb-comments-core-activator.php:70
 msgid "Insert your email"
 msgstr "Insira seu e-mail"
 
-#: admin/class-fsweb-comments-core-admin.php:1044
+#: admin/class-fsweb-comments-core-admin.php:1126
 #: admin/class-fsweb-comments-core-review-editor.php:242
 #: includes/class-fsweb-comments-core-activator.php:83
 msgid "Description"
 msgstr "Descrição"
 
-#: admin/class-fsweb-comments-core-admin.php:1045
+#: admin/class-fsweb-comments-core-admin.php:1127
 #: includes/class-fsweb-comments-core-activator.php:84
 msgid "Insert your review description"
 msgstr "Insira a descrição da sua avaliação"
 
-#: admin/class-fsweb-comments-core-admin.php:1091
+#: admin/class-fsweb-comments-core-admin.php:1173
 msgid "Edit field"
 msgstr "Editar campo"
 
-#: admin/class-fsweb-comments-core-admin.php:1152
+#: admin/class-fsweb-comments-core-admin.php:1234
 msgid "Untitled Form"
 msgstr "Formulário sem título"
 
-#: admin/class-fsweb-comments-core-admin.php:1230
+#: admin/class-fsweb-comments-core-admin.php:1312
 msgid "Form saved successfully!"
 msgstr "Formulário salvo com sucesso!"
 
-#: admin/class-fsweb-comments-core-admin.php:1256
+#: admin/class-fsweb-comments-core-admin.php:1338
 msgid "Form deleted."
 msgstr "Formulário excluído."
 
-#: admin/class-fsweb-comments-core-admin.php:1296
-#: admin/class-fsweb-comments-core-admin.php:1403
+#: admin/class-fsweb-comments-core-admin.php:1380
+#: admin/class-fsweb-comments-core-admin.php:1491
 msgid "Create and customize how reviews are displayed."
 msgstr "Crie e personalize como as avaliações são exibidas."
 
-#: admin/class-fsweb-comments-core-admin.php:1302
+#: admin/class-fsweb-comments-core-admin.php:1388
 msgid "New View"
 msgstr "Nova Exibição"
 
-#: admin/class-fsweb-comments-core-admin.php:1310
+#: admin/class-fsweb-comments-core-admin.php:1396
 msgid "View Name"
 msgstr "Nome da Exibição"
 
-#: admin/class-fsweb-comments-core-admin.php:1312
+#: admin/class-fsweb-comments-core-admin.php:1398
 msgid "Layout"
 msgstr "Layout"
 
-#: admin/class-fsweb-comments-core-admin.php:1313
+#: admin/class-fsweb-comments-core-admin.php:1399
 msgid "Connected Form"
 msgstr "Formulário Conectado"
 
-#: admin/class-fsweb-comments-core-admin.php:1347
+#: admin/class-fsweb-comments-core-admin.php:1433
 msgid "No views yet. Create your first view to display reviews!"
 msgstr ""
 "Ainda não há exibições. Crie sua primeira exibição para mostrar as "
 "avaliações!"
 
-#: admin/class-fsweb-comments-core-admin.php:1418
+#: admin/class-fsweb-comments-core-admin.php:1508
 msgid "View name"
 msgstr "Nome da exibição"
 
-#: admin/class-fsweb-comments-core-admin.php:1420
+#: admin/class-fsweb-comments-core-admin.php:1510
 msgid "Connected Form:"
 msgstr "Formulário Conectado:"
 
-#: admin/class-fsweb-comments-core-admin.php:1422
+#: admin/class-fsweb-comments-core-admin.php:1512
 msgid "— None —"
 msgstr "— Nenhum —"
 
-#: admin/class-fsweb-comments-core-admin.php:1444
+#: admin/class-fsweb-comments-core-admin.php:1537
 msgid "Save View"
 msgstr "Salvar Exibição"
 
-#: admin/class-fsweb-comments-core-admin.php:1451
+#: admin/class-fsweb-comments-core-admin.php:1544
 msgid "Components"
 msgstr "Componentes"
 
-#: admin/class-fsweb-comments-core-admin.php:1455
-msgid ""
-"Components from the connected form are already placed in the default layout. "
-"Drag them between columns or add more rows below."
+#: admin/class-fsweb-comments-core-admin.php:1548
+msgid "Components from the connected form are already placed in the default layout. Drag them between columns or add more rows below."
 msgstr ""
 "Os componentes do formulário conectado já estão posicionados no layout "
 "padrão. Arraste-os entre as colunas ou adicione mais linhas abaixo."
 
-#: admin/class-fsweb-comments-core-admin.php:1471
+#: admin/class-fsweb-comments-core-admin.php:1564
 msgid "Add Row"
 msgstr "Adicionar Linha"
 
-#: admin/class-fsweb-comments-core-admin.php:1480
+#: admin/class-fsweb-comments-core-admin.php:1573
 msgid "Style"
 msgstr "Estilo"
 
-#: admin/class-fsweb-comments-core-admin.php:1482
+#: admin/class-fsweb-comments-core-admin.php:1575
 msgid "Choose a pre-built skin or write your own CSS."
 msgstr "Escolha um tema pronto ou escreva seu próprio CSS."
 
-#: admin/class-fsweb-comments-core-admin.php:1485
+#: admin/class-fsweb-comments-core-admin.php:1578
 msgid "Default"
 msgstr "Padrão"
 
-#: admin/class-fsweb-comments-core-admin.php:1486
+#: admin/class-fsweb-comments-core-admin.php:1579
 msgid "Dark"
 msgstr "Escuro"
 
-#: admin/class-fsweb-comments-core-admin.php:1487
+#: admin/class-fsweb-comments-core-admin.php:1580
 msgid "Minimal"
 msgstr "Mínimo"
 
-#: admin/class-fsweb-comments-core-admin.php:1488
+#: admin/class-fsweb-comments-core-admin.php:1581
 msgid "Colorful"
 msgstr "Colorido"
 
-#: admin/class-fsweb-comments-core-admin.php:1489
+#: admin/class-fsweb-comments-core-admin.php:1582
 msgid "Flat"
 msgstr "Plano"
 
-#: admin/class-fsweb-comments-core-admin.php:1490
+#: admin/class-fsweb-comments-core-admin.php:1583
 msgid "Custom CSS"
 msgstr "CSS Personalizado"
 
-#: admin/class-fsweb-comments-core-admin.php:1495
+#: admin/class-fsweb-comments-core-admin.php:1588
 msgid "/* Write your custom CSS here */"
 msgstr "/* Escreva seu CSS personalizado aqui */"
 
-#: admin/class-fsweb-comments-core-admin.php:1499
-msgid ""
-"Custom CSS has the highest priority and overrides all other styles, "
-"including component settings."
+#: admin/class-fsweb-comments-core-admin.php:1592
+msgid "Custom CSS has the highest priority and overrides all other styles, including component settings."
 msgstr ""
 "O CSS personalizado tem a maior prioridade e sobrescreve todos os outros "
 "estilos, incluindo as configurações dos componentes."
 
-#: admin/class-fsweb-comments-core-admin.php:1512
-msgid ""
-"Click \"Add Row\" to start building your review card layout. Then drag "
-"components into the columns."
+#: admin/class-fsweb-comments-core-admin.php:1605
+msgid "Click \"Add Row\" to start building your review card layout. Then drag components into the columns."
 msgstr ""
 "Clique em \"Adicionar Linha\" para começar a montar o layout do seu cartão "
 "de avaliação. Depois arraste os componentes para as colunas."
 
-#: admin/class-fsweb-comments-core-admin.php:1523
+#: admin/class-fsweb-comments-core-admin.php:1616
 msgid "Component Settings"
 msgstr "Configurações do Componente"
 
-#: admin/class-fsweb-comments-core-admin.php:1576
+#: admin/class-fsweb-comments-core-admin.php:1669
 msgid "Content"
 msgstr "Conteúdo"
 
-#: admin/class-fsweb-comments-core-admin.php:1579
+#: admin/class-fsweb-comments-core-admin.php:1672
 msgid "Category"
 msgstr "Categoria"
 
-#: admin/class-fsweb-comments-core-admin.php:1641
+#: admin/class-fsweb-comments-core-admin.php:1734
 msgid "Row"
 msgstr "Linha"
 
-#: admin/class-fsweb-comments-core-admin.php:1704
+#: admin/class-fsweb-comments-core-admin.php:1797
 msgid "Edit styles"
 msgstr "Editar estilos"
 
-#: admin/class-fsweb-comments-core-admin.php:1705
+#: admin/class-fsweb-comments-core-admin.php:1798
 msgid "Remove"
 msgstr "Remover"
 
-#: admin/class-fsweb-comments-core-admin.php:1740
+#: admin/class-fsweb-comments-core-admin.php:1833
 msgid "Untitled View"
 msgstr "Exibição sem título"
 
-#: admin/class-fsweb-comments-core-admin.php:1817
+#: admin/class-fsweb-comments-core-admin.php:1910
 msgid "View saved successfully!"
 msgstr "Exibição salva com sucesso!"
 
-#: admin/class-fsweb-comments-core-admin.php:1843
+#: admin/class-fsweb-comments-core-admin.php:1936
 msgid "View deleted."
 msgstr "Exibição excluída."
 
-#: admin/class-fsweb-comments-core-admin.php:1882
+#: admin/class-fsweb-comments-core-admin.php:1975
 #: includes/class-fsweb-comments-core-activator.php:90
 msgid "Default Form"
 msgstr "Formulário Padrão"
 
-#: admin/class-fsweb-comments-core-admin.php:1913
+#: admin/class-fsweb-comments-core-admin.php:2006
 #: includes/class-fsweb-comments-core-activator.php:119
 msgid "Default View"
 msgstr "Exibição Padrão"
@@ -750,22 +749,10 @@ msgstr "URL da imagem ou ID do anexo"
 msgid "Photo"
 msgstr "Foto"
 
-#: fsweb-update-checker/assets/js/admin.js:173
-#, javascript-format
-msgid ""
-"There is a new version of %1$s available. <a href=\"%3$s\" class=\"thickbox "
-"open-plugin-details-modal\">View version %2$s details</a> or <a "
-"href=\"%4$s\" class=\"update-link\">update now</a>."
-msgstr ""
-"Há uma nova versão de %1$s disponível. <a href=\"%3$s\" class=\"thickbox "
-"open-plugin-details-modal\">Ver detalhes da versão %2$s</a> ou <a "
-"href=\"%4$s\" class=\"update-link\">atualizar agora</a>."
-
+#. translators: %1$s is the slug, %2$s is the path of the plugin that already uses it.
 #: fsweb-update-checker/class-fsweb-update-checker.php:197
 #, php-format
-msgid ""
-"Plugin slug \"%1$s\" is already in use by %2$s. Each plugin must have a "
-"unique slug."
+msgid "Plugin slug \"%1$s\" is already in use by %2$s. Each plugin must have a unique slug."
 msgstr ""
 "O slug \"%1$s\" do plugin já está em uso por %2$s. Cada plugin deve ter um "
 "slug único."
@@ -774,34 +761,30 @@ msgstr ""
 msgid "Update Checker Conflict"
 msgstr "Conflito do verificador de atualizações"
 
-#: fsweb-update-checker/class-fsweb-update-checker.php:488
-msgid ""
-"Update information is temporarily unavailable. Please try again in a few "
-"moments."
+#: fsweb-update-checker/class-fsweb-update-checker.php:507
+msgid "Update information is temporarily unavailable. Please try again in a few moments."
 msgstr ""
 "As informações de atualização estão temporariamente indisponíveis. Tente "
 "novamente em instantes."
 
-#: fsweb-update-checker/class-fsweb-update-checker.php:588
+#. translators: 1: plugin name, 2: license page URL
+#: fsweb-update-checker/class-fsweb-update-checker.php:606
 #, php-format
-msgid ""
-"%1$s is not activated. %2$sPlease activate your license%3$s to receive "
-"automatic updates."
+msgid "%1$s is not activated. %2$sPlease activate your license%3$s to receive automatic updates."
 msgstr ""
 "%1$s não está ativado. %2$sAtive sua licença%3$s para receber atualizações "
 "automáticas."
 
-#: fsweb-update-checker/class-fsweb-update-checker.php:599
+#. translators: 1: plugin name, 2: license page URL
+#: fsweb-update-checker/class-fsweb-update-checker.php:617
 #, php-format
-msgid ""
-"%1$s: Automatic updates are disabled — your license may be expired or "
-"assigned to a different domain. %2$sCheck your license status%3$s to resume "
-"updates."
+msgid "%1$s: Automatic updates are disabled — your license may be expired or assigned to a different domain. %2$sCheck your license status%3$s to resume updates."
 msgstr ""
 "%1$s: As atualizações automáticas estão desativadas — sua licença pode ter "
 "expirado ou estar vinculada a outro domínio. %2$sVerifique o status da sua "
 "licença%3$s para retomar as atualizações."
 
+#. translators: %s: plugin name
 #: fsweb-update-checker/includes/class-admin-ui.php:123
 #, php-format
 msgid "View details for %s"
@@ -815,6 +798,7 @@ msgstr "Ver Detalhes"
 msgid "Check for Updates"
 msgstr "Verificar Atualizações"
 
+#. translators: %s: plugin name
 #: fsweb-update-checker/includes/class-admin-ui.php:164
 #, php-format
 msgid "%s — Previous Versions"
@@ -827,8 +811,7 @@ msgid "Previous Versions"
 msgstr "Versões Anteriores"
 
 #: fsweb-update-checker/includes/class-admin-ui.php:202
-msgid ""
-"Select a version to install. The current version is highlighted in green."
+msgid "Select a version to install. The current version is highlighted in green."
 msgstr ""
 "Selecione uma versão para instalar. A versão atual está destacada em verde."
 
@@ -866,9 +849,7 @@ msgstr ""
 "Uma chave de licença válida é necessária para acessar versões anteriores."
 
 #: fsweb-update-checker/includes/class-admin-ui.php:297
-msgid ""
-"Please activate your license on the plugin settings page to unlock this "
-"feature."
+msgid "Please activate your license on the plugin settings page to unlock this feature."
 msgstr ""
 "Ative sua licença na página de configurações do plugin para desbloquear este "
 "recurso."
@@ -906,6 +887,7 @@ msgstr "Uma chave de licença válida é necessária para verificar atualizaçõ
 msgid "You are running the latest version."
 msgstr "Você está usando a versão mais recente."
 
+#. translators: date format for version release date
 #: fsweb-update-checker/includes/class-admin-ui.php:381
 msgid "F j, Y"
 msgstr "j \\d\\e F \\d\\e Y"
@@ -932,7 +914,8 @@ msgstr ""
 "O servidor de atualização retornou uma resposta inválida. Tente novamente "
 "mais tarde."
 
-#: fsweb-update-checker/includes/class-metadata.php:501
+#. translators: 1: error code, 2: error message
+#: fsweb-update-checker/includes/class-metadata.php:511
 #, php-format
 msgid "[FSWEB Update Checker - %1$s] %2$s"
 msgstr "[FSWEB Update Checker - %1$s] %2$s"
@@ -949,6 +932,7 @@ msgstr "Nenhuma URL de download fornecida."
 msgid "Installation failed. Check filesystem permissions."
 msgstr "Falha na instalação. Verifique as permissões do sistema de arquivos."
 
+#. translators: %s: error message
 #: fsweb-update-checker/includes/class-rollback.php:196
 #, php-format
 msgid "Version installed but could not re-activate: %s"
@@ -962,6 +946,7 @@ msgstr "Versão instalada com sucesso!"
 msgid "Could not fetch update information."
 msgstr "Não foi possível obter as informações de atualização."
 
+#. translators: %s: latest version number
 #: fsweb-update-checker/includes/class-rollback.php:342
 #, php-format
 msgid "Update available: version %s"
@@ -1163,6 +1148,11 @@ msgstr "Sua Avaliação"
 msgid "Write your review here..."
 msgstr "Escreva sua avaliação aqui..."
 
+#: public/class-fsweb-comments-core-form-shortcode.php:670
+msgid "License is not active."
+msgstr "A licença não está ativa."
+
+#. translators: %s: field label
 #: public/class-fsweb-comments-core-form-shortcode.php:754
 #: public/class-fsweb-comments-core-form-shortcode.php:773
 #, php-format
@@ -1176,3 +1166,14 @@ msgstr "Anônimo"
 #: public/class-fsweb-comments-core-form-shortcode.php:827
 msgid "Thank you! Your review has been submitted and is pending approval."
 msgstr "Obrigado! Sua avaliação foi enviada e está aguardando aprovação."
+
+#: fsweb-update-checker/assets/js/admin.js:173
+#, javascript-format
+msgid ""
+"There is a new version of %1$s available. <a href=\"%3$s\" class=\"thickbox "
+"open-plugin-details-modal\">View version %2$s details</a> or <a "
+"href=\"%4$s\" class=\"update-link\">update now</a>."
+msgstr ""
+"Há uma nova versão de %1$s disponível. <a href=\"%3$s\" class=\"thickbox "
+"open-plugin-details-modal\">Ver detalhes da versão %2$s</a> ou <a "
+"href=\"%4$s\" class=\"update-link\">atualizar agora</a>."

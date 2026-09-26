@@ -4,7 +4,7 @@ Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,10 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.6 =
+* Fix: the license screen trusts `domain_authorized` from the /validate response instead of the license `status` — a key that was released on this domain still answers `active`, so the screen came back "Active" right after a deactivation. The status now reads Active only when this domain is authorized, and Pending otherwise (expired/invalid keys keep their own status).
+* Fix: deactivation now also clears the cached license/update state (update-checker metadata, README transient and the update_plugins transient).
+
 = 1.0.5 =
 * Fix: the license expiry is always rendered as a date in UTC — the license screen and the activation AJAX response no longer print the raw ISO string, and the value no longer shifts one day back on UTC-3 sites (2027-09-11T00:00:00+00:00 reads 11/09/2027 on the first render and after the refresh alike).
 * Fix: the license key field placeholder now shows an example in the real key format — four groups of eight characters, no FSWEB- prefix.
@@ -87,6 +91,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.6 =
+Maintenance release: the license screen stops coming back "Active" after a deactivation — the local status now honors `domain_authorized` from /validate, and deactivation clears the cached license/update state.
 
 = 1.0.5 =
 Maintenance release: the license expiry is rendered as a UTC date in the right format on the license screen and after activation (no more raw ISO string or one-day shift), and the license key placeholder shows an example in the real key format.

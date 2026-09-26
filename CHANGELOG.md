@@ -1,3 +1,7 @@
+# 1.0.6 - 26/09/2026
+  * Fix: the license screen now trusts `domain_authorized` from the /validate response instead of the license `status` — a key released on this domain keeps answering `active`, so trusting the license status brought the screen back "Active" right after a deactivation. The local status now reads Active only when this domain is authorized, and Pending otherwise (expired/invalid keys keep their own status).
+  * Fix: `deactivate()` also clears the cached license/update state (update-checker metadata, README transient and the WordPress update_plugins transient) so no stale "active" metadata survives the release.
+
 # 1.0.5 - 26/09/2026
   * Fix: the license expiry is always rendered as a date in UTC — the license screen and the activation AJAX response no longer print the raw ISO string, and the value no longer shifts one day back on UTC-3 sites (2027-09-11T00:00:00+00:00 reads 11/09/2027 on the first render and after the refresh alike).
   * Fix: the license key field placeholder now shows an example in the real key format — four groups of eight characters, no FSWEB- prefix.

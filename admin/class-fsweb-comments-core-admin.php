@@ -361,6 +361,30 @@ class Fsweb_Comments_Core_Admin {
 			}
 		}
 
+		// Human readable label for the current status (scripts update it live).
+		switch ( $license_status ) {
+			case 'active':
+				$status_label = __( 'Active', 'fsweb-comments-core' );
+				break;
+			case 'expired':
+				$status_label = __( 'Expired', 'fsweb-comments-core' );
+				break;
+			case 'invalid':
+				$status_label = __( 'Invalid', 'fsweb-comments-core' );
+				break;
+			case 'pending':
+				$status_label = __( 'Pending', 'fsweb-comments-core' );
+				break;
+			default:
+				$status_label = __( 'Inactive', 'fsweb-comments-core' );
+				break;
+		}
+
+		$has_expiry  = ( 'active' === $license_status && ! empty( $license_expires ) );
+		$show_verify = in_array( $license_status, array( 'expired', 'pending', 'invalid' ), true );
+		$expires_on  = ! empty( $license_expires )
+			? mysql2date( get_option( 'date_format' ), $license_expires )
+			: __( 'Lifetime', 'fsweb-comments-core' );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-license-wrap">
 			<hr class="wp-header-end">
@@ -369,53 +393,84 @@ class Fsweb_Comments_Core_Admin {
 				<p><?php esc_html_e( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
 			</div>
 
-			<div class="fsweb-cc-license-card">
-				<p class="description">
-					<?php esc_html_e( 'Enter your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?>
-				</p>
+			<div class="fsweb-cc-license-grid">
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-awards" aria-hidden="true"></span>
+							<?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?>
+						</h2>
+					</div>
+					<div class="fsweb-cc-card__body">
+						<div class="fsweb-cc-grid">
+							<div class="fsweb-cc-field fsweb-cc-field--full">
+								<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
+								<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
+									value="<?php echo esc_attr( $license_key ); ?>"
+									placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
+									<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
+								<p class="description"><?php esc_html_e( 'Enter your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
+							</div>
+							<div class="fsweb-cc-field">
+								<span class="fsweb-cc-field-label"><?php esc_html_e( 'Status', 'fsweb-comments-core' ); ?></span>
+								<span id="fsweb-cc-license-status" class="fsweb-cc-status fsweb-cc-status--<?php echo esc_attr( sanitize_html_class( $license_status ) ); ?>"><?php echo esc_html( $status_label ); ?></span>
+							</div>
+							<div class="fsweb-cc-field" id="fsweb-cc-expires-row" style="<?php echo $has_expiry ? '' : 'display:none;'; ?>">
+								<span class="fsweb-cc-field-label"><?php esc_html_e( 'Expires', 'fsweb-comments-core' ); ?></span>
+								<span id="fsweb-cc-license-expires"><?php echo esc_html( $expires_on ); ?></span>
+							</div>
+						</div>
 
-				<table class="form-table" role="presentation">
-					<tr>
-						<th scope="row">
-							<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
-						</th>
-						<td>
-							<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
-								value="<?php echo esc_attr( $license_key ); ?>"
-								placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
-								<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Status', 'fsweb-comments-core' ); ?></th>
-						<td>
-							<span id="fsweb-cc-license-status" class="fsweb-cc-status fsweb-cc-status--<?php echo esc_attr( $license_status ); ?>">
-								<?php
-								switch ( $license_status ) {
-									case 'active':      esc_html_e( 'Active', 'fsweb-comments-core' );      break;
-									case 'expired':     esc_html_e( 'Expired', 'fsweb-comments-core' );     break;
-									case 'invalid':     esc_html_e( 'Invalid', 'fsweb-comments-core' );     break;
-									case 'pending':     esc_html_e( 'Pending', 'fsweb-comments-core' );     break;
-									default:            esc_html_e( 'Inactive', 'fsweb-comments-core' );     break;
-								}
-								?>
-							</span>
-						</td>
-					</tr>
-					<tr id="fsweb-cc-expires-row" style="<?php echo 'active' === $license_status && ! empty( $license_expires ) ? '' : 'display:none;'; ?>">
-						<th scope="row"><?php esc_html_e( 'Expires', 'fsweb-comments-core' ); ?></th>
-						<td><span id="fsweb-cc-license-expires"><?php echo ! empty( $license_expires ) ? esc_html( mysql2date( get_option( 'date_format' ), $license_expires ) ) : esc_html__( 'Lifetime', 'fsweb-comments-core' ); ?></span></td>
-					</tr>
-				</table>
+						<div class="submit fsweb-cc-license-actions">
+							<?php
+							/*
+							 * The action buttons carry their Dashicons through CSS
+							 * pseudo-elements: the license script replaces the button
+							 * text while a request is in flight, which would wipe out a
+							 * nested <span class="dashicons">.
+							 */
+							?>
+							<button type="button" id="fsweb-cc-activate-license" class="button button-primary" style="<?php echo 'active' === $license_status ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fsweb-comments-core' ); ?></button>
+							<button type="button" id="fsweb-cc-deactivate-license" class="button button-secondary" style="<?php echo 'active' === $license_status ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Deactivate', 'fsweb-comments-core' ); ?></button>
+							<button type="button" id="fsweb-cc-validate-license" class="button button-secondary" style="<?php echo $show_verify ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Verify License', 'fsweb-comments-core' ); ?></button>
+							<span id="fsweb-cc-validate-spinner" class="spinner" style="display:none; float:none; margin-top:0;"></span>
+						</div>
+						<div id="fsweb-cc-license-message" class="notice" style="display:none;"></div>
+					</div>
+				</div>
 
-				<p class="submit">
-					<button type="button" id="fsweb-cc-activate-license" class="button button-primary" style="<?php echo in_array( $license_status, array( 'active' ), true ) ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fsweb-comments-core' ); ?></button>
-					<button type="button" id="fsweb-cc-deactivate-license" class="button button-secondary" style="<?php echo 'active' === $license_status ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Deactivate', 'fsweb-comments-core' ); ?></button>
-					<?php $show_verify = in_array( $license_status, array( 'expired', 'pending', 'invalid' ), true ); ?>
-					<button type="button" id="fsweb-cc-validate-license" class="button button-secondary" style="<?php echo $show_verify ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Verify License', 'fsweb-comments-core' ); ?></button>
-					<span id="fsweb-cc-validate-spinner" class="spinner" style="display:none; float:none; margin-top:0;"></span>
-				</p>
-				<div id="fsweb-cc-license-message" class="notice" style="display:none;"></div>
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-editor-help" aria-hidden="true"></span>
+							<?php esc_html_e( 'How it works', 'fsweb-comments-core' ); ?>
+						</h2>
+					</div>
+					<div class="fsweb-cc-card__body">
+						<ul class="fsweb-cc-help-list">
+							<li>
+								<span class="dashicons dashicons-yes" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Activate: paste the key and we validate it on the FSWEB license server.', 'fsweb-comments-core' ); ?></span>
+							</li>
+							<li>
+								<span class="dashicons dashicons-lock" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Active: automatic updates and premium support are unlocked for this site.', 'fsweb-comments-core' ); ?></span>
+							</li>
+							<li>
+								<span class="dashicons dashicons-search" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Verify: re-checks the key with the server — use it after moving or restoring the site.', 'fsweb-comments-core' ); ?></span>
+							</li>
+							<li>
+								<span class="dashicons dashicons-no" aria-hidden="true"></span>
+								<span><?php esc_html_e( 'Deactivate: releases the key so you can use it on another site.', 'fsweb-comments-core' ); ?></span>
+							</li>
+						</ul>
+						<p class="fsweb-cc-hint">
+							<span class="dashicons dashicons-shield" aria-hidden="true"></span>
+							<span><?php esc_html_e( 'The key is stored in this site\'s options and validated with the FSWEB license server every time you open this page.', 'fsweb-comments-core' ); ?></span>
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 		<?php

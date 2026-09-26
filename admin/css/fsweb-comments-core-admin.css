@@ -11,10 +11,32 @@
 .fsweb-cc-wrap {
 	--fsweb-cc-brand: #7b61ff;
 	--fsweb-cc-brand-dark: #5b3fd4;
-	--fsweb-cc-heading: #23282d;
-	--fsweb-cc-body: #3c434a;
-	--fsweb-cc-radius: 5px;
-	max-width: 1350px;
+	--fsweb-cc-heading: #1d2327;
+	--fsweb-cc-body: #50575e;
+	--fsweb-cc-muted: #787c82;
+	--fsweb-cc-line: #e2e4e7;
+	--fsweb-cc-surface: #fff;
+	--fsweb-cc-soft: #f6f7f7;
+	--fsweb-cc-radius: 8px;
+	--fsweb-cc-radius-sm: 6px;
+	--fsweb-cc-pill: 999px;
+	--fsweb-cc-shadow: 0 1px 2px rgba(16, 16, 16, 0.06), 0 8px 24px rgba(16, 16, 16, 0.06);
+	--fsweb-cc-gap: 20px;
+	--fsweb-cc-green: #1e7e34;
+	--fsweb-cc-green-bg: #edfaef;
+	--fsweb-cc-green-line: #b7e1c1;
+	--fsweb-cc-amber: #94660c;
+	--fsweb-cc-amber-bg: #fdf6e3;
+	--fsweb-cc-amber-line: #f0d87e;
+	--fsweb-cc-red: #b32d2e;
+	--fsweb-cc-blue: #1d5c96;
+	--fsweb-cc-blue-bg: #f0f6fc;
+	--fsweb-cc-blue-line: #b8d6f0;
+	max-width: none;
+}
+
+.fsweb-cc-wrap * {
+	box-sizing: border-box;
 }
 
 /* ------------------------------------------------------------------ */
@@ -49,21 +71,24 @@
 }
 
 /* ------------------------------------------------------------------ */
-/*  License status badges
+/*  Status pills
 /* ------------------------------------------------------------------ */
 .fsweb-cc-status {
-	display: inline-block;
-	padding: 3px 10px;
-	border-radius: 3px;
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 11px;
+	border-radius: var(--fsweb-cc-pill);
+	color: var(--fsweb-cc-heading);
 	font-weight: 600;
-	font-size: 13px;
-	line-height: 1.6;
+	font-size: 12.5px;
+	line-height: 1.8;
+	white-space: nowrap;
 }
 
 .fsweb-cc-status--active {
-	background: #edfaef;
-	color: #1e7e34;
-	border: 1px solid #b7e1c1;
+	background: var(--fsweb-cc-green-bg);
+	color: var(--fsweb-cc-green);
+	border: 1px solid var(--fsweb-cc-green-line);
 }
 
 .fsweb-cc-status--inactive {
@@ -72,68 +97,266 @@
 	border: 1px solid #dcdcde;
 }
 
-
 .fsweb-cc-status--expired {
-	background: #fcf9e8;
-	color: #996800;
-	border: 1px solid #f0d87e;
+	background: var(--fsweb-cc-amber-bg);
+	color: var(--fsweb-cc-amber);
+	border: 1px solid var(--fsweb-cc-amber-line);
 }
 
 .fsweb-cc-status--invalid {
 	background: #fcf0f1;
-	color: #b52727;
+	color: var(--fsweb-cc-red);
 	border: 1px solid #f1adad;
 }
 
 .fsweb-cc-status--pending {
-	background: #f0f6fc;
-	color: #1d5c96;
-	border: 1px solid #b8d6f0;
+	background: var(--fsweb-cc-blue-bg);
+	color: var(--fsweb-cc-blue);
+	border: 1px solid var(--fsweb-cc-blue-line);
 }
 
 /* ------------------------------------------------------------------ */
-/*  License page card
+/*  Cards
 /* ------------------------------------------------------------------ */
-.fsweb-cc-license-wrap .fsweb-cc-license-card {
-	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 4px;
-	padding: 20px 24px;
-	margin-top: 16px;
-	max-width: 720px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+.fsweb-cc-card {
+	margin: 0 0 20px;
+	background: var(--fsweb-cc-surface);
+	border: 1px solid var(--fsweb-cc-line);
+	border-radius: var(--fsweb-cc-radius);
+	box-shadow: var(--fsweb-cc-shadow);
+	overflow: hidden;
 }
 
-.fsweb-cc-license-card .description {
-	margin: 0 0 16px;
-	font-size: 14px;
+.fsweb-cc-card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 16px 22px;
+	border-bottom: 1px solid var(--fsweb-cc-line);
+	background: #fbfbfc;
 }
 
-.fsweb-cc-license-card .submit {
+.fsweb-cc-card__header h2 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
 	margin: 0;
-	padding: 16px 0 0;
+	color: var(--fsweb-cc-heading);
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.3;
 }
 
-#fsweb-cc-license-message {
-	margin: 12px 0 0;
+.fsweb-cc-card__header h2 .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	color: var(--fsweb-cc-brand);
+}
+
+.fsweb-cc-card__body {
+	padding: 20px 22px 22px;
 }
 
 /* ------------------------------------------------------------------ */
-/*  Welcome page
+/*  Form grid and fields
 /* ------------------------------------------------------------------ */
-.fsweb-cc-welcome {
-	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 4px;
-	padding: 24px;
-	margin-top: 16px;
-	max-width: 640px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+.fsweb-cc-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 16px 20px;
 }
 
-.fsweb-cc-welcome p {
-	font-size: 14px;
+.fsweb-cc-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.fsweb-cc-field--full {
+	grid-column: 1 / -1;
+}
+
+.fsweb-cc-field > label,
+.fsweb-cc-field-label {
+	color: var(--fsweb-cc-heading);
+	font-weight: 600;
+	font-size: 13.5px;
+}
+
+.fsweb-cc-field input[type="text"],
+.fsweb-cc-field input[type="password"],
+.fsweb-cc-field input[type="email"],
+.fsweb-cc-field input[type="url"],
+.fsweb-cc-field input[type="search"],
+.fsweb-cc-field select,
+.fsweb-cc-field textarea {
+	width: 100%;
+	max-width: none;
+	margin: 0;
+}
+
+.fsweb-cc-field .description {
+	margin: 0;
+	color: var(--fsweb-cc-muted);
+	font-size: 12.5px;
+	line-height: 1.5;
+}
+
+.fsweb-cc-hint {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 16px 0 0;
+	padding: 12px 14px;
+	border-radius: var(--fsweb-cc-radius-sm);
+	background: var(--fsweb-cc-soft);
+	color: var(--fsweb-cc-body);
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.fsweb-cc-hint .dashicons {
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	color: var(--fsweb-cc-brand);
+}
+
+.fsweb-cc-help-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.fsweb-cc-help-list li {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	color: var(--fsweb-cc-body);
+	font-size: 13.5px;
 	line-height: 1.6;
+}
+
+.fsweb-cc-help-list li + li {
+	margin-top: 12px;
+}
+
+.fsweb-cc-help-list .dashicons {
+	flex-shrink: 0;
+	margin-top: 1px;
+	width: 19px;
+	height: 19px;
+	font-size: 19px;
+	color: var(--fsweb-cc-brand);
+}
+
+/* ------------------------------------------------------------------ */
+/*  License page
+/* ------------------------------------------------------------------ */
+.fsweb-cc-license-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+	gap: var(--fsweb-cc-gap);
+	align-items: start;
+}
+
+.fsweb-cc-license-grid .fsweb-cc-card {
+	margin: 0;
+}
+
+.fsweb-cc-license-wrap .notice {
+	margin: 16px 0 0;
+	padding: 8px 12px;
+	border-left-width: 4px;
+	border-radius: var(--fsweb-cc-radius-sm);
+	box-shadow: 0 1px 2px rgba(16, 16, 16, 0.04);
+}
+
+#fsweb-cc-license-message p {
+	margin: 4px 0;
+}
+
+.fsweb-cc-license-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 20px 0 0;
+	padding: 0;
+}
+
+.fsweb-cc-license-actions .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 34px;
+	padding: 0 14px;
+	border-radius: var(--fsweb-cc-radius-sm);
+}
+
+/*
+ * Button icons come from CSS instead of a nested <span class="dashicons">:
+ * the license script replaces the button text while a request is in flight,
+ * which would drop an inner span for good.
+ */
+.fsweb-cc-license-actions .button::before {
+	font-family: dashicons;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+#fsweb-cc-activate-license::before {
+	content: "\f147";
+}
+
+#fsweb-cc-deactivate-license::before {
+	content: "\f158";
+}
+
+#fsweb-cc-validate-license::before {
+	content: "\f463";
+}
+
+/*
+ * wp-admin hides .spinner with visibility:hidden and only reveals it through
+ * .is-active, while the license script toggles it with jQuery show()/hide()
+ * (display). Restoring visibility here makes that toggle work — the inline
+ * display:none from the markup still keeps it hidden on load.
+ */
+.fsweb-cc-license-actions .spinner {
+	float: none;
+	margin: 0;
+	visibility: visible;
+}
+
+/* Narrow screens: the license grid and the form grid stack. */
+@media screen and (max-width: 960px) {
+	.fsweb-cc-license-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.fsweb-cc-hero {
+		padding: 24px 20px;
+	}
+
+	.fsweb-cc-card__header,
+	.fsweb-cc-card__body {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.fsweb-cc-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 /* ------------------------------------------------------------------ */

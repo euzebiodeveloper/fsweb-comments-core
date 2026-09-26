@@ -380,22 +380,6 @@
 	content: "\f158";
 }
 
-#fsweb-cc-validate-license::before {
-	content: "\f463";
-}
-
-/*
- * wp-admin hides .spinner with visibility:hidden and only reveals it through
- * .is-active, while the license script toggles it with jQuery show()/hide()
- * (display). Restoring visibility here makes that toggle work — the inline
- * display:none from the markup still keeps it hidden on load.
- */
-.fsweb-cc-license-actions .spinner {
-	float: none;
-	margin: 0;
-	visibility: visible;
-}
-
 /* Narrow screens: the license grid and the form grid stack. */
 @media screen and (max-width: 960px) {
 	.fsweb-cc-license-grid {

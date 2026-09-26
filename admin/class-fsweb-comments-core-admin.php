@@ -441,7 +441,6 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		$has_expiry  = ( 'active' === $license_status && ! empty( $license_expires ) );
-		$show_verify = in_array( $license_status, array( 'expired', 'pending', 'invalid' ), true );
 		$expires_on  = ! empty( $license_expires )
 			? mysql2date( get_option( 'date_format' ), $license_expires )
 			: __( 'Lifetime', 'fsweb-comments-core' );
@@ -492,8 +491,6 @@ class Fsweb_Comments_Core_Admin {
 							?>
 							<button type="button" id="fsweb-cc-activate-license" class="button button-primary" style="<?php echo 'active' === $license_status ? 'display:none;' : ''; ?>"><?php esc_html_e( 'Activate', 'fsweb-comments-core' ); ?></button>
 							<button type="button" id="fsweb-cc-deactivate-license" class="button button-secondary" style="<?php echo 'active' === $license_status ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Deactivate', 'fsweb-comments-core' ); ?></button>
-							<button type="button" id="fsweb-cc-validate-license" class="button button-secondary" style="<?php echo $show_verify ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Verify License', 'fsweb-comments-core' ); ?></button>
-							<span id="fsweb-cc-validate-spinner" class="spinner" style="display:none; float:none; margin-top:0;"></span>
 						</div>
 						<div id="fsweb-cc-license-message" class="notice" style="display:none;"></div>
 					</div>
@@ -515,10 +512,6 @@ class Fsweb_Comments_Core_Admin {
 							<li>
 								<span class="dashicons dashicons-lock" aria-hidden="true"></span>
 								<span><?php esc_html_e( 'Active: automatic updates and premium support are unlocked for this site.', 'fsweb-comments-core' ); ?></span>
-							</li>
-							<li>
-								<span class="dashicons dashicons-search" aria-hidden="true"></span>
-								<span><?php esc_html_e( 'Verify: re-checks the key with the server — use it after moving or restoring the site.', 'fsweb-comments-core' ); ?></span>
 							</li>
 							<li>
 								<span class="dashicons dashicons-no" aria-hidden="true"></span>
@@ -671,92 +664,6 @@ class Fsweb_Comments_Core_Admin {
 			'message' => __( 'License deactivated successfully!', 'fsweb-comments-core' ),
 			'status'  => 'pending',
 		) );
-	}
-
-	/**
-	 * AJAX handler — validate/sync license status with the remote server.
-	 *
-	 * Does NOT activate or deactivate — only fetches the real status
-	 * from the license-checker and updates local wp_options to match.
-	 *
-	 * @since    1.1.0
-	 */
-	public function ajax_validate_license() {
-		check_ajax_referer( 'fsweb_license_action', 'nonce' );
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'fsweb-comments-core' ) ) );
-		}
-
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$input_key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
-		// phpcs:enable
-
-		// Use the key from the input field if provided, otherwise fall back to the saved key.
-		$license_key = ! empty( $input_key ) ? $input_key : get_option( 'fsweb_comments_core_license_key', '' );
-
-		if ( empty( $license_key ) ) {
-			wp_send_json_error( array( 'message' => __( 'No license key saved. Please enter a key first.', 'fsweb-comments-core' ) ) );
-		}
-
-		$api_url = FSWEB_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fsweb-comments-core&domain=' . urlencode( home_url() );
-
-		$response = wp_remote_get( $api_url, array(
-			'timeout'   => 15,
-			'sslverify' => false,
-		) );
-
-		if ( is_wp_error( $response ) ) {
-			wp_send_json_error( array(
-				'message' => __( 'Could not reach the license server.', 'fsweb-comments-core' ),
-			) );
-		}
-
-		$code = wp_remote_retrieve_response_code( $response );
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( ! $body || ! isset( $body['status'] ) ) {
-			wp_send_json_error( array(
-				'message' => __( 'Invalid response from license server.', 'fsweb-comments-core' ),
-			) );
-		}
-
-		$remote_status  = sanitize_text_field( $body['status'] );
-		$remote_expires = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
-
-		// Sync local options with remote truth.
-		update_option( 'fsweb_comments_core_license_status', $remote_status );
-		update_option( 'fsweb_comments_core_license_expires', $remote_expires );
-
-		wp_send_json_success( array(
-			'message' => $this->status_message( $remote_status, $remote_expires ),
-			'status'  => $remote_status,
-			'expires' => $remote_expires,
-		) );
-	}
-
-	/**
-	 * Human-readable message for a given license status.
-	 *
-	 * @since  1.1.0
-	 * @param  string $status  License status.
-	 * @param  string $expires Expiration date (optional).
-	 * @return string
-	 */
-	private function status_message( $status, $expires = '' ) {
-		switch ( $status ) {
-			case 'active':
-				return __( 'License is active and valid.', 'fsweb-comments-core' );
-			case 'expired':
-				return __( 'License has expired. Please renew to continue receiving updates.', 'fsweb-comments-core' );
-			case 'invalid':
-				return __( 'License key is invalid.', 'fsweb-comments-core' );
-			case 'pending':
-				return __( 'License is pending activation.', 'fsweb-comments-core' );
-				return __( 'License was deactivated. Activate it again to resume updates.', 'fsweb-comments-core' );
-			default:
-				return __( 'License is not active.', 'fsweb-comments-core' );
-		}
 	}
 
 	/**

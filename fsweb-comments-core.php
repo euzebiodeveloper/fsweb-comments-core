@@ -45,13 +45,17 @@ define( 'FSWEB_COMMENTS_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FSWEB_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
 
 /**
- * Base URL for the license API (fsweb-license-checker REST endpoints).
+ * Base URL for the FSWEB license API.
+ *
+ * The service exposes the same /activate, /deactivate and /validate paths
+ * and the same JSON contract used here ({success, status, expires, message}).
+ * The previous bridge (License Manager for WooCommerce) was retired.
  *
  * Override in wp-config.php if needed:
- *   define( 'FSWEB_LICENSE_API_URL', 'https://yoursite.com/wp-json/fsweb/v1/license' );
+ *   define( 'FSWEB_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
  */
 if ( ! defined( 'FSWEB_LICENSE_API_URL' ) ) {
-	define( 'FSWEB_LICENSE_API_URL', 'https://flowsyncweb.com/wp-json/fsweb/v1/license' );
+	define( 'FSWEB_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
 }
 
 /**

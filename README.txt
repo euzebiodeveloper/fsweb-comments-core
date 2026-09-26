@@ -4,7 +4,7 @@ Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,10 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.5 =
+* Fix: the license expiry is always rendered as a date in UTC — the license screen and the activation AJAX response no longer print the raw ISO string, and the value no longer shifts one day back on UTC-3 sites (2027-09-11T00:00:00+00:00 reads 11/09/2027 on the first render and after the refresh alike).
+* Fix: the license key field placeholder now shows an example in the real key format — four groups of eight characters, no FSWEB- prefix.
+
 = 1.0.4 =
 * Fix: license activation and deactivation no longer depend on another FSWEB plugin's constants — each plugin now resolves the license API URL from its own constant, so an outdated sibling plugin can no longer point this one at the retired endpoint.
 
@@ -83,6 +87,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Maintenance release: the license expiry is rendered as a UTC date in the right format on the license screen and after activation (no more raw ISO string or one-day shift), and the license key placeholder shows an example in the real key format.
 
 = 1.0.4 =
 Maintenance release: license activation and deactivation use this plugin's own constant for the license API URL, so an outdated sibling FSWEB plugin can no longer redirect it to the retired endpoint.

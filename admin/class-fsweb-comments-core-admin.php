@@ -183,6 +183,27 @@ class Fsweb_Comments_Core_Admin {
 	}
 
 	/**
+	 * URL de uma tela do plugin.
+	 *
+	 * As telas são registradas sob o menu do CPT (edit.php?post_type=fsweb_review),
+	 * então montar o endereço como admin.php?page=... faz o WordPress responder
+	 * "Cannot load ...". menu_page_url() devolve o endereço correto.
+	 *
+	 * @since    1.0.0
+	 * @param    string    $slug    Slug da tela.
+	 * @return   string
+	 */
+	private function page_url( $slug ) {
+		$url = menu_page_url( $slug, false );
+
+		if ( '' === $url ) {
+			$url = admin_url( 'edit.php?post_type=fsweb_review&page=' . $slug );
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Render the shared hero header with quick navigation to the sibling screens.
 	 *
 	 * Every plugin screen opens with the same hero: title, description and a row
@@ -221,7 +242,7 @@ class Fsweb_Comments_Core_Admin {
 			</div>
 			<nav class="fsweb-cc-hero__actions" aria-label="<?php esc_attr_e( 'Quick Actions', 'fsweb-comments-core' ); ?>">
 				<?php foreach ( $screens as $slug => $screen ) : ?>
-					<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => $slug, 'post_type' => 'fsweb_review' ), admin_url( 'admin.php' ) ) ); ?>"<?php echo $slug === $current_page ? ' aria-current="page"' : ''; ?>>
+					<a class="button" href="<?php echo esc_url( $this->page_url( $slug ) ) ; ?>"<?php echo $slug === $current_page ? ' aria-current="page"' : ''; ?>>
 						<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
 						<?php echo esc_html( $screen['label'] ); ?>
 					</a>
@@ -269,7 +290,7 @@ class Fsweb_Comments_Core_Admin {
 		) );
 
 		$license_status = get_option( 'fsweb_comments_core_license_status', 'inactive' );
-		$license_url    = admin_url( 'admin.php?page=fsweb-comments-core-license&post_type=fsweb_review' );
+		$license_url    = $this->page_url( 'fsweb-comments-core-license' );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-dashboard">
 			<hr class="wp-header-end">

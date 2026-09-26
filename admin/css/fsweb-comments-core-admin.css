@@ -14,6 +14,7 @@
 	--fsweb-cc-heading: #1d2327;
 	--fsweb-cc-body: #50575e;
 	--fsweb-cc-muted: #787c82;
+	--fsweb-cc-border: rgba(16, 16, 16, 0.08);
 	--fsweb-cc-line: #e2e4e7;
 	--fsweb-cc-surface: #fff;
 	--fsweb-cc-soft: #f6f7f7;
@@ -22,6 +23,7 @@
 	--fsweb-cc-pill: 999px;
 	--fsweb-cc-shadow: 0 1px 2px rgba(16, 16, 16, 0.06), 0 8px 24px rgba(16, 16, 16, 0.06);
 	--fsweb-cc-gap: 20px;
+	--fsweb-cc-input-h: 40px;
 	--fsweb-cc-green: #1e7e34;
 	--fsweb-cc-green-bg: #edfaef;
 	--fsweb-cc-green-line: #b7e1c1;
@@ -29,9 +31,14 @@
 	--fsweb-cc-amber-bg: #fdf6e3;
 	--fsweb-cc-amber-line: #f0d87e;
 	--fsweb-cc-red: #b32d2e;
+	--fsweb-cc-red-bg: #fcf0f1;
+	--fsweb-cc-red-line: #f1adad;
 	--fsweb-cc-blue: #1d5c96;
 	--fsweb-cc-blue-bg: #f0f6fc;
 	--fsweb-cc-blue-line: #b8d6f0;
+	--fsweb-cc-neutral: #646970;
+	--fsweb-cc-neutral-bg: #f0f0f1;
+	--fsweb-cc-neutral-line: #dcdcde;
 	max-width: none;
 }
 
@@ -88,6 +95,7 @@
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 10px;
+	flex-shrink: 0;
 	margin: 0;
 }
 
@@ -96,7 +104,7 @@
 	align-items: center;
 	gap: 6px;
 	min-height: 38px;
-	padding: 0 14px;
+	padding: 0 16px;
 	border: 1px solid rgba(255, 255, 255, 0.35);
 	border-radius: var(--fsweb-cc-radius-sm);
 	background: rgba(255, 255, 255, 0.12);
@@ -113,10 +121,14 @@
 	color: #fff;
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons {
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
 	width: 18px;
 	height: 18px;
 	font-size: 18px;
+	color: #fff;
+	-webkit-text-fill-color: #fff;
+	fill: currentColor;
 }
 
 /* The screen being rendered is highlighted instead of linking back to itself. */
@@ -126,8 +138,16 @@
 	color: var(--fsweb-cc-brand-dark);
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons {
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons:before {
 	color: var(--fsweb-cc-brand-dark);
+	-webkit-text-fill-color: var(--fsweb-cc-brand-dark);
+}
+
+/* Keep admin notices readable inside the plugin pages. */
+.fsweb-cc-wrap .notice,
+.fsweb-cc-wrap .notice p {
+	color: #3c434a;
 }
 
 /* ------------------------------------------------------------------ */
@@ -136,43 +156,84 @@
 .fsweb-cc-status {
 	display: inline-flex;
 	align-items: center;
-	padding: 3px 11px;
+	align-self: flex-start;
+	gap: 5px;
+	padding: 3px 12px 3px 9px;
 	border-radius: var(--fsweb-cc-pill);
-	color: var(--fsweb-cc-heading);
+	border: 1px solid var(--fsweb-cc-neutral-line);
+	background: var(--fsweb-cc-neutral-bg);
+	color: var(--fsweb-cc-neutral);
 	font-weight: 600;
 	font-size: 12.5px;
 	line-height: 1.8;
+	letter-spacing: 0.2px;
 	white-space: nowrap;
+}
+
+/*
+ * The license script swaps the pill classes (removeClass().addClass()) and
+ * rewrites its text, so the icon comes from CSS — a nested
+ * <span class="dashicons"> would be dropped on the first status update.
+ */
+.fsweb-cc-status::before {
+	display: inline-block;
+	font-family: dashicons;
+	font-size: 15px;
+	font-weight: 400;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	speak: never;
+}
+
+.fsweb-cc-status--active::before {
+	content: "\f12a";
+}
+
+.fsweb-cc-status--inactive::before {
+	content: "\f159";
+}
+
+.fsweb-cc-status--expired::before {
+	content: "\f469";
+}
+
+.fsweb-cc-status--invalid::before {
+	content: "\f534";
+}
+
+.fsweb-cc-status--pending::before {
+	content: "\f463";
 }
 
 .fsweb-cc-status--active {
 	background: var(--fsweb-cc-green-bg);
 	color: var(--fsweb-cc-green);
-	border: 1px solid var(--fsweb-cc-green-line);
+	border-color: var(--fsweb-cc-green-line);
 }
 
 .fsweb-cc-status--inactive {
-	background: #f0f0f1;
-	color: #646970;
-	border: 1px solid #dcdcde;
+	background: var(--fsweb-cc-neutral-bg);
+	color: var(--fsweb-cc-neutral);
+	border-color: var(--fsweb-cc-neutral-line);
 }
 
 .fsweb-cc-status--expired {
 	background: var(--fsweb-cc-amber-bg);
 	color: var(--fsweb-cc-amber);
-	border: 1px solid var(--fsweb-cc-amber-line);
+	border-color: var(--fsweb-cc-amber-line);
 }
 
 .fsweb-cc-status--invalid {
-	background: #fcf0f1;
+	background: var(--fsweb-cc-red-bg);
 	color: var(--fsweb-cc-red);
-	border: 1px solid #f1adad;
+	border-color: var(--fsweb-cc-red-line);
 }
 
 .fsweb-cc-status--pending {
 	background: var(--fsweb-cc-blue-bg);
 	color: var(--fsweb-cc-blue);
-	border: 1px solid var(--fsweb-cc-blue-line);
+	border-color: var(--fsweb-cc-blue-line);
 }
 
 /* ------------------------------------------------------------------ */
@@ -203,21 +264,41 @@
 	align-items: center;
 	gap: 8px;
 	margin: 0;
+	padding: 0;
 	color: var(--fsweb-cc-heading);
-	font-size: 15px;
+	font-size: 16px;
 	font-weight: 600;
 	line-height: 1.3;
 }
 
 .fsweb-cc-card__header h2 .dashicons {
-	width: 18px;
-	height: 18px;
-	font-size: 18px;
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
 	color: var(--fsweb-cc-brand);
 }
 
 .fsweb-cc-card__body {
 	padding: 20px 22px 22px;
+}
+
+/* Tables and other flush content sit edge to edge inside the card. */
+.fsweb-cc-card__body--flush {
+	padding: 0;
+}
+
+/* A button carried by a card header (e.g. "View All") keeps a small icon. */
+.fsweb-cc-wrap .fsweb-cc-card__header .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.fsweb-cc-wrap .fsweb-cc-card__header .button > .dashicons,
+.fsweb-cc-wrap .fsweb-cc-card__header .button > .dashicons:before {
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
 }
 
 /* ------------------------------------------------------------------ */
@@ -316,6 +397,37 @@
 }
 
 /* ------------------------------------------------------------------ */
+/*  Buttons
+/* ------------------------------------------------------------------ */
+.fsweb-cc-wrap .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	border-radius: 4px;
+	font-weight: 600;
+	box-shadow: none;
+}
+
+.fsweb-cc-wrap .button > .dashicons,
+.fsweb-cc-wrap .button > .dashicons:before {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 1;
+}
+
+.fsweb-cc-wrap .button > .dashicons {
+	flex-shrink: 0;
+}
+
+.fsweb-cc-wrap .button-primary {
+	min-height: var(--fsweb-cc-input-h);
+	padding: 0 22px;
+	line-height: var(--fsweb-cc-input-h);
+}
+
+/* ------------------------------------------------------------------ */
 /*  License page
 /* ------------------------------------------------------------------ */
 .fsweb-cc-license-grid {
@@ -337,6 +449,10 @@
 	box-shadow: 0 1px 2px rgba(16, 16, 16, 0.04);
 }
 
+#fsweb-cc-license-message {
+	margin: 16px 0 0;
+}
+
 #fsweb-cc-license-message p {
 	margin: 4px 0;
 }
@@ -347,16 +463,18 @@
 	flex-wrap: wrap;
 	gap: 10px;
 	margin: 20px 0 0;
-	padding: 0;
+	padding: 16px 0 0;
+	border-top: 1px solid var(--fsweb-cc-line);
 }
 
 .fsweb-cc-license-actions .button {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	min-height: 34px;
-	padding: 0 14px;
+	min-height: 38px;
+	padding: 0 16px;
 	border-radius: var(--fsweb-cc-radius-sm);
+	line-height: 1.4;
 }
 
 /*
@@ -365,11 +483,14 @@
  * which would drop an inner span for good.
  */
 .fsweb-cc-license-actions .button::before {
+	display: inline-block;
 	font-family: dashicons;
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	speak: never;
 }
 
 #fsweb-cc-activate-license::before {
@@ -377,7 +498,7 @@
 }
 
 #fsweb-cc-deactivate-license::before {
-	content: "\f158";
+	content: "\f335";
 }
 
 /* Narrow screens: the license grid and the form grid stack. */
@@ -392,8 +513,15 @@
 		padding: 24px 20px;
 	}
 
-	.fsweb-cc-hero__actions {
-		gap: 8px;
+	.fsweb-cc-hero--split {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.fsweb-cc-hero__actions,
+	.fsweb-cc-hero__actions .button {
+		width: 100%;
+		justify-content: center;
 	}
 
 	.fsweb-cc-card__header,
@@ -410,134 +538,114 @@
 /* ------------------------------------------------------------------ */
 /*  Dashboard
 /* ------------------------------------------------------------------ */
-/* Stats cards row */
+/* Stats row */
 .fsweb-cc-stats {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 16px;
-	margin-bottom: 24px;
+	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+	gap: 14px;
+	margin: 0 0 20px;
 }
 
-.fsweb-cc-stat-card {
+.fsweb-cc-stat {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 16px 18px;
 	background: var(--fsweb-cc-surface);
 	border: 1px solid var(--fsweb-cc-line);
 	border-radius: var(--fsweb-cc-radius);
-	padding: 20px;
-	text-align: center;
 	box-shadow: var(--fsweb-cc-shadow);
 }
 
-.fsweb-cc-stat-icon {
-	display: inline-flex;
+.fsweb-cc-stat__icon {
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 38px;
-	height: 38px;
-	margin: 0 auto 10px;
+	flex-shrink: 0;
+	width: 42px;
+	height: 42px;
 	border-radius: 50%;
 	background: var(--fsweb-cc-soft);
 	color: var(--fsweb-cc-brand);
 }
 
-.fsweb-cc-stat-icon .dashicons {
-	width: 20px;
-	height: 20px;
-	font-size: 20px;
+.fsweb-cc-stat__icon .dashicons {
+	width: 22px;
+	height: 22px;
+	font-size: 22px;
 }
 
-.fsweb-cc-stat-card--active .fsweb-cc-stat-icon {
+.fsweb-cc-stat__body {
+	min-width: 0;
+}
+
+.fsweb-cc-stat__value {
+	display: block;
+	color: var(--fsweb-cc-heading);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.fsweb-cc-stat__label {
+	display: block;
+	color: var(--fsweb-cc-muted);
+	font-size: 12.5px;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+
+/* Status accents on the icon — same palette as the status pills. */
+.fsweb-cc-stat--active .fsweb-cc-stat__icon {
 	background: var(--fsweb-cc-green-bg);
 	color: var(--fsweb-cc-green);
 }
 
-.fsweb-cc-stat-card--expired .fsweb-cc-stat-icon,
-.fsweb-cc-stat-card--pending .fsweb-cc-stat-icon {
+.fsweb-cc-stat--inactive .fsweb-cc-stat__icon {
+	background: var(--fsweb-cc-neutral-bg);
+	color: var(--fsweb-cc-neutral);
+}
+
+.fsweb-cc-stat--expired .fsweb-cc-stat__icon {
 	background: var(--fsweb-cc-amber-bg);
 	color: var(--fsweb-cc-amber);
 }
 
-.fsweb-cc-stat-card--invalid .fsweb-cc-stat-icon {
-	background: #fcf0f1;
+.fsweb-cc-stat--pending .fsweb-cc-stat__icon {
+	background: var(--fsweb-cc-blue-bg);
+	color: var(--fsweb-cc-blue);
+}
+
+.fsweb-cc-stat--invalid .fsweb-cc-stat__icon {
+	background: var(--fsweb-cc-red-bg);
 	color: var(--fsweb-cc-red);
 }
-
-.fsweb-cc-stat-number {
-	display: block;
-	font-size: 28px;
-	font-weight: 700;
-	color: var(--fsweb-cc-heading);
-	line-height: 1.2;
-	margin-bottom: 4px;
-}
-
-.fsweb-cc-stat-label {
-	font-size: 12.5px;
-	color: var(--fsweb-cc-muted);
-}
-
-.fsweb-cc-stat-card--active .fsweb-cc-stat-number {
-	color: #00a32a;
-}
-
-.fsweb-cc-stat-card--expired .fsweb-cc-stat-number,
-.fsweb-cc-stat-card--invalid .fsweb-cc-stat-number,
-.fsweb-cc-stat-card--inactive .fsweb-cc-stat-number {
-	color: #d63638;
-}
-
 
 /* Dashboard grid (2 columns) */
 .fsweb-cc-dash-grid {
 	display: grid;
 	grid-template-columns: 2fr 1fr;
-	gap: 24px;
+	gap: var(--fsweb-cc-gap);
+	align-items: start;
 }
 
-.fsweb-cc-dash-panel {
-	background: var(--fsweb-cc-surface);
-	border: 1px solid var(--fsweb-cc-line);
-	border-radius: var(--fsweb-cc-radius);
-	box-shadow: var(--fsweb-cc-shadow);
-	overflow: hidden;
-}
-
-.fsweb-cc-dash-panel-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 12px;
-	padding: 16px 20px;
-	border-bottom: 1px solid var(--fsweb-cc-line);
-	background: #fbfbfc;
-}
-
-.fsweb-cc-dash-panel-header h2 {
+.fsweb-cc-dash-grid .fsweb-cc-card {
 	margin: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--fsweb-cc-heading);
-}
-
-.fsweb-cc-dash-panel-header .button {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.fsweb-cc-dash-panel-header .button .dashicons {
-	width: 16px;
-	height: 16px;
-	font-size: 16px;
 }
 
 /* Recent reviews table */
 .fsweb-cc-recent-table {
 	border: none;
+	box-shadow: none;
 }
 
 .fsweb-cc-recent-table thead th {
+	padding: 11px 14px;
+	color: var(--fsweb-cc-muted);
 	font-size: 12px;
-	color: #646970;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 .fsweb-cc-has-thumb {
@@ -546,62 +654,64 @@
 }
 
 .fsweb-cc-empty {
-	padding: 24px 20px;
-	color: #646970;
-	margin: 0;
-	font-size: 14px;
+	padding: 40px 24px;
+	text-align: center;
+}
+
+.fsweb-cc-empty .dashicons {
+	width: 40px;
+	height: 40px;
+	font-size: 40px;
+	color: #c3c4c7;
+}
+
+.fsweb-cc-empty p {
+	margin: 10px 0 0;
+	color: var(--fsweb-cc-muted);
+	font-size: 13.5px;
 }
 
 /* Quick actions */
 .fsweb-cc-quick-actions {
-	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
 
-.fsweb-cc-quick-actions .button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
-}
-
-.fsweb-cc-quick-actions .button .dashicons {
-	width: 18px;
-	height: 18px;
-	font-size: 18px;
-}
-
 /* Shortcode help box */
 .fsweb-cc-shortcode-help {
-	padding: 16px 20px;
-	border-top: 1px solid #e2e4e7;
-	background: #f6f7f7;
+	margin: 18px 0 0;
+	padding: 14px 16px;
+	border-radius: var(--fsweb-cc-radius-sm);
+	background: var(--fsweb-cc-soft);
 }
 
 .fsweb-cc-shortcode-help h3 {
 	margin: 0 0 8px;
+	color: var(--fsweb-cc-heading);
+	font-size: 13.5px;
+}
+
+.fsweb-cc-shortcode-help p {
+	margin: 0 0 8px;
 	font-size: 13px;
 }
 
+.fsweb-cc-shortcode-help p:last-child {
+	margin-bottom: 0;
+}
+
 .fsweb-cc-shortcode-help code {
-	font-size: 13px;
-	padding: 4px 8px;
+	font-size: 12.5px;
+	padding: 3px 7px;
 }
 
 @media (max-width: 960px) {
 	.fsweb-cc-stats {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 	}
 
 	.fsweb-cc-dash-grid {
-		grid-template-columns: 1fr;
-	}
-}
-
-@media (max-width: 480px) {
-	.fsweb-cc-stats {
 		grid-template-columns: 1fr;
 	}
 }
@@ -1114,9 +1224,9 @@
 	justify-content: center;
 	line-height: 1 !important;
 	vertical-align: middle;
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
 }
 
 /*

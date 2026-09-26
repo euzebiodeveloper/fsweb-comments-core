@@ -283,113 +283,131 @@ class Fsweb_Comments_Core_Admin {
 
 			<!-- Stats cards -->
 			<div class="fsweb-cc-stats">
-				<div class="fsweb-cc-stat-card">
-					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-star-filled" aria-hidden="true"></span></span>
-					<span class="fsweb-cc-stat-number"><?php echo esc_html( $total ); ?></span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'Total Reviews', 'fsweb-comments-core' ); ?></span>
-				</div>
-				<div class="fsweb-cc-stat-card">
-					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span></span>
-					<span class="fsweb-cc-stat-number"><?php echo esc_html( $month_count ); ?></span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'This Month', 'fsweb-comments-core' ); ?></span>
-				</div>
-				<div class="fsweb-cc-stat-card">
-					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-category" aria-hidden="true"></span></span>
-					<span class="fsweb-cc-stat-number"><?php echo esc_html( $categories ); ?></span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'Categories', 'fsweb-comments-core' ); ?></span>
-				</div>
-				<div class="fsweb-cc-stat-card fsweb-cc-stat-card--<?php echo esc_attr( $license_status ); ?>">
-					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-shield" aria-hidden="true"></span></span>
-					<span class="fsweb-cc-stat-number">
-						<?php echo 'active' === $license_status
-							? esc_html__( 'Active', 'fsweb-comments-core' )
-							: esc_html__( 'Inactive', 'fsweb-comments-core' ); ?>
+				<div class="fsweb-cc-stat">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-star-filled" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value"><?php echo esc_html( $total ); ?></span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'Total Reviews', 'fsweb-comments-core' ); ?></span>
 					</span>
-					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'License', 'fsweb-comments-core' ); ?></span>
+				</div>
+				<div class="fsweb-cc-stat">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value"><?php echo esc_html( $month_count ); ?></span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'This Month', 'fsweb-comments-core' ); ?></span>
+					</span>
+				</div>
+				<div class="fsweb-cc-stat">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-category" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value"><?php echo esc_html( $categories ); ?></span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'Categories', 'fsweb-comments-core' ); ?></span>
+					</span>
+				</div>
+				<div class="fsweb-cc-stat fsweb-cc-stat--<?php echo esc_attr( $license_status ); ?>">
+					<span class="fsweb-cc-stat__icon"><span class="dashicons dashicons-shield" aria-hidden="true"></span></span>
+					<span class="fsweb-cc-stat__body">
+						<span class="fsweb-cc-stat__value">
+							<?php echo 'active' === $license_status
+								? esc_html__( 'Active', 'fsweb-comments-core' )
+								: esc_html__( 'Inactive', 'fsweb-comments-core' ); ?>
+						</span>
+						<span class="fsweb-cc-stat__label"><?php esc_html_e( 'License', 'fsweb-comments-core' ); ?></span>
+					</span>
 				</div>
 			</div>
 
 			<div class="fsweb-cc-dash-grid">
 				<!-- Recent reviews -->
-				<div class="fsweb-cc-dash-panel">
-					<div class="fsweb-cc-dash-panel-header">
-						<h2><?php esc_html_e( 'Recent Reviews', 'fsweb-comments-core' ); ?></h2>
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+							<?php esc_html_e( 'Recent Reviews', 'fsweb-comments-core' ); ?>
+						</h2>
 						<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=fsweb_review' ) ); ?>" class="button button-small">
 							<span class="dashicons dashicons-external" aria-hidden="true"></span>
 							<?php esc_html_e( 'View All', 'fsweb-comments-core' ); ?>
 						</a>
 					</div>
-
-					<?php if ( $recent->have_posts() ) : ?>
-						<table class="wp-list-table widefat fixed striped fsweb-cc-recent-table">
-							<thead>
-								<tr>
-									<th><?php esc_html_e( 'Review', 'fsweb-comments-core' ); ?></th>
-									<th><?php esc_html_e( 'Date', 'fsweb-comments-core' ); ?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php while ( $recent->have_posts() ) : $recent->the_post(); ?>
+					<div class="fsweb-cc-card__body fsweb-cc-card__body--flush">
+						<?php if ( $recent->have_posts() ) : ?>
+							<table class="wp-list-table widefat fixed striped fsweb-cc-recent-table">
+								<thead>
 									<tr>
-										<td>
-											<strong>
-												<a href="<?php echo esc_url( get_edit_post_link() ); ?>">
-													<?php the_title(); ?>
-												</a>
-											</strong>
-											<?php if ( has_post_thumbnail() ) : ?>
-												<span class="fsweb-cc-has-thumb" title="<?php esc_attr_e( 'Has photo', 'fsweb-comments-core' ); ?>">📷</span>
-											<?php endif; ?>
-										</td>
-										<td><?php echo esc_html( get_the_date() ); ?></td>
+										<th><?php esc_html_e( 'Review', 'fsweb-comments-core' ); ?></th>
+										<th><?php esc_html_e( 'Date', 'fsweb-comments-core' ); ?></th>
 									</tr>
-								<?php endwhile; ?>
-								<?php wp_reset_postdata(); ?>
-							</tbody>
-						</table>
-					<?php else : ?>
-						<p class="fsweb-cc-empty">
-							<?php esc_html_e( 'No reviews yet. Create your first review to get started!', 'fsweb-comments-core' ); ?>
-						</p>
-					<?php endif; ?>
+								</thead>
+								<tbody>
+									<?php while ( $recent->have_posts() ) : $recent->the_post(); ?>
+										<tr>
+											<td>
+												<strong>
+													<a href="<?php echo esc_url( get_edit_post_link() ); ?>">
+														<?php echo esc_html( get_the_title() ); ?>
+													</a>
+												</strong>
+												<?php if ( has_post_thumbnail() ) : ?>
+													<span class="fsweb-cc-has-thumb" title="<?php esc_attr_e( 'Has photo', 'fsweb-comments-core' ); ?>">📷</span>
+												<?php endif; ?>
+											</td>
+											<td><?php echo esc_html( get_the_date() ); ?></td>
+										</tr>
+									<?php endwhile; ?>
+									<?php wp_reset_postdata(); ?>
+								</tbody>
+							</table>
+						<?php else : ?>
+							<div class="fsweb-cc-empty">
+								<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+								<p><?php esc_html_e( 'No reviews yet. Create your first review to get started!', 'fsweb-comments-core' ); ?></p>
+							</div>
+						<?php endif; ?>
+					</div>
 				</div>
 
 				<!-- Quick actions -->
-				<div class="fsweb-cc-dash-panel">
-					<div class="fsweb-cc-dash-panel-header">
-						<h2><?php esc_html_e( 'Quick Actions', 'fsweb-comments-core' ); ?></h2>
-					</div>
-					<div class="fsweb-cc-quick-actions">
-						<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=fsweb_review' ) ); ?>" class="button button-primary button-large">
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
 							<span class="dashicons dashicons-plus-alt" aria-hidden="true"></span>
-							<?php esc_html_e( 'Add New Review', 'fsweb-comments-core' ); ?>
-						</a>
-						<a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=fsweb_review_category&post_type=fsweb_review' ) ); ?>" class="button button-large">
-							<span class="dashicons dashicons-category" aria-hidden="true"></span>
-							<?php esc_html_e( 'Manage Categories', 'fsweb-comments-core' ); ?>
-						</a>
-						<a href="<?php echo esc_url( $license_url ); ?>" class="button button-large">
-							<span class="dashicons dashicons-awards" aria-hidden="true"></span>
-							<?php echo 'active' === $license_status
-								? esc_html__( 'License Settings', 'fsweb-comments-core' )
-								: esc_html__( 'Activate License', 'fsweb-comments-core' ); ?>
-						</a>
+							<?php esc_html_e( 'Quick Actions', 'fsweb-comments-core' ); ?>
+						</h2>
 					</div>
+					<div class="fsweb-cc-card__body">
+						<div class="fsweb-cc-quick-actions">
+							<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=fsweb_review' ) ); ?>" class="button button-primary button-large">
+								<span class="dashicons dashicons-plus-alt" aria-hidden="true"></span>
+								<?php esc_html_e( 'Add New Review', 'fsweb-comments-core' ); ?>
+							</a>
+							<a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=fsweb_review_category&post_type=fsweb_review' ) ); ?>" class="button button-large">
+								<span class="dashicons dashicons-category" aria-hidden="true"></span>
+								<?php esc_html_e( 'Manage Categories', 'fsweb-comments-core' ); ?>
+							</a>
+							<a href="<?php echo esc_url( $license_url ); ?>" class="button button-large">
+								<span class="dashicons dashicons-awards" aria-hidden="true"></span>
+								<?php echo 'active' === $license_status
+									? esc_html__( 'License Settings', 'fsweb-comments-core' )
+									: esc_html__( 'Activate License', 'fsweb-comments-core' ); ?>
+							</a>
+						</div>
 
-					<div class="fsweb-cc-shortcode-help">
-						<h3><?php esc_html_e( 'Shortcodes', 'fsweb-comments-core' ); ?></h3>
-						<p><?php esc_html_e( 'Use these shortcodes on any page or post:', 'fsweb-comments-core' ); ?></p>
-						<p>
-							<strong><?php esc_html_e( 'Display reviews:', 'fsweb-comments-core' ); ?></strong>
-							<code>[fsweb_reviews id="view-id"]</code>
-						</p>
-						<p>
-							<strong><?php esc_html_e( 'Review form:', 'fsweb-comments-core' ); ?></strong>
-							<code>[fsweb_review_form id="form-id"]</code>
-						</p>
-						<p class="description">
-							<?php esc_html_e( 'Create views and forms in Views Builder and Form Builder. Each gets a unique shortcode — just copy and paste.', 'fsweb-comments-core' ); ?>
-						</p>
+						<div class="fsweb-cc-shortcode-help">
+							<h3><?php esc_html_e( 'Shortcodes', 'fsweb-comments-core' ); ?></h3>
+							<p><?php esc_html_e( 'Use these shortcodes on any page or post:', 'fsweb-comments-core' ); ?></p>
+							<p>
+								<strong><?php esc_html_e( 'Display reviews:', 'fsweb-comments-core' ); ?></strong>
+								<code>[fsweb_reviews id="view-id"]</code>
+							</p>
+							<p>
+								<strong><?php esc_html_e( 'Review form:', 'fsweb-comments-core' ); ?></strong>
+								<code>[fsweb_review_form id="form-id"]</code>
+							</p>
+							<p class="description">
+								<?php esc_html_e( 'Create views and forms in Views Builder and Form Builder. Each gets a unique shortcode — just copy and paste.', 'fsweb-comments-core' ); ?>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>

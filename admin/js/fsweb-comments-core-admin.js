@@ -15,6 +15,54 @@
 	var $btnActivate   = $( '#fsweb-cc-activate-license' );
 	var $btnDeactivate = $( '#fsweb-cc-deactivate-license' );
 
+	// Site date format (PHP date() tokens), sent by wp_localize_script.
+	var dateFormat = data.date_format || 'd/m/Y';
+
+	/**
+	 * Render an expiry date without ever printing a raw ISO string.
+	 *
+	 * PHP already sends a formatted date. Should a raw ISO-8601 value reach
+	 * the response anyway, it is formatted in UTC so midnight UTC never
+	 * shifts to the previous day on UTC-3 sites.
+	 */
+	function formatExpires( value ) {
+		var date, pad, tokens;
+
+		value = ( value == null ? '' : String( value ) ).trim();
+
+		if ( ! value ) {
+			return '';
+		}
+
+		// Already a formatted date — pass it through untouched.
+		if ( ! /^\d{4}-\d{2}-\d{2}[T ]/.test( value ) ) {
+			return value;
+		}
+
+		date = new Date( value );
+
+		if ( isNaN( date.getTime() ) ) {
+			return '';
+		}
+
+		pad = function( number ) {
+			return ( number < 10 ? '0' : '' ) + number;
+		};
+
+		tokens = {
+			d: pad( date.getUTCDate() ),
+			j: String( date.getUTCDate() ),
+			m: pad( date.getUTCMonth() + 1 ),
+			n: String( date.getUTCMonth() + 1 ),
+			Y: String( date.getUTCFullYear() ),
+			y: String( date.getUTCFullYear() ).slice( -2 )
+		};
+
+		return dateFormat.replace( /[djmnYy]/g, function( token ) {
+			return tokens[ token ];
+		} );
+	}
+
 	function showMessage( text, type ) {
 		$message
 			.removeClass( 'notice-success notice-error notice-warning' )
@@ -29,6 +77,8 @@
 
 	function updateUI( status, expiresText ) {
 		var labels = { active: 'Active', inactive: 'Inactive', expired: 'Expired', invalid: 'Invalid', pending: 'Pending' };
+
+		expiresText = formatExpires( expiresText );
 
 		$status
 			.removeClass()

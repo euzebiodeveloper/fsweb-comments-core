@@ -91,9 +91,10 @@ class Fsweb_Comments_Core_Admin {
 				$this->plugin_name,
 				'FSWEB_CommentsCore_License',
 				array(
-					'ajax_url' => admin_url( 'admin-ajax.php' ),
-					'nonce'    => wp_create_nonce( 'fsweb_license_action' ),
-					'i18n'     => array(
+					'ajax_url'    => admin_url( 'admin-ajax.php' ),
+					'nonce'       => wp_create_nonce( 'fsweb_license_action' ),
+					'date_format' => get_option( 'date_format' ),
+					'i18n'        => array(
 						'confirm_deactivate' => __( 'Are you sure you want to deactivate this license?', 'fsweb-comments-core' ),
 						'activating'         => __( 'Activating…', 'fsweb-comments-core' ),
 						'deactivating'       => __( 'Deactivating…', 'fsweb-comments-core' ),
@@ -479,10 +480,15 @@ class Fsweb_Comments_Core_Admin {
 				break;
 		}
 
-		$has_expiry  = ( 'active' === $license_status && ! empty( $license_expires ) );
-		$expires_on  = ! empty( $license_expires )
-			? mysql2date( get_option( 'date_format' ), $license_expires )
-			: __( 'Lifetime', 'fsweb-comments-core' );
+		/*
+		 * The license server answers with an ISO-8601 timestamp in UTC. It is
+		 * formatted in UTC on purpose: the site timezone (UTC-3 here) would
+		 * push midnight UTC back one day, and the raw string must never reach
+		 * the screen. See format_license_expiry().
+		 */
+		$expires_on      = $this->format_license_expiry( $license_expires );
+		$expires_display = ( '' !== $expires_on ) ? $expires_on : __( 'Lifetime', 'fsweb-comments-core' );
+		$has_expiry      = ( 'active' === $license_status && '' !== $expires_on );
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-license-wrap">
 			<hr class="wp-header-end">
@@ -508,7 +514,7 @@ class Fsweb_Comments_Core_Admin {
 								<label for="fsweb-cc-license-key"><?php esc_html_e( 'License Key', 'fsweb-comments-core' ); ?></label>
 								<input type="text" id="fsweb-cc-license-key" name="fsweb_comments_core_license_key" class="regular-text"
 									value="<?php echo esc_attr( $license_key ); ?>"
-									placeholder="<?php esc_attr_e( 'e.g. FSWEB-XXXX-XXXX-XXXX', 'fsweb-comments-core' ); ?>"
+									placeholder="<?php esc_attr_e( 'e.g. A7B9C2D4-E6F8G3H5-J7K9M2N4-P6Q8R3S5', 'fsweb-comments-core' ); ?>"
 									<?php echo 'active' === $license_status ? 'readonly' : ''; ?>>
 								<p class="description"><?php esc_html_e( 'Enter your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
 							</div>
@@ -518,7 +524,7 @@ class Fsweb_Comments_Core_Admin {
 							</div>
 							<div class="fsweb-cc-field" id="fsweb-cc-expires-row" style="<?php echo $has_expiry ? '' : 'display:none;'; ?>">
 								<span class="fsweb-cc-field-label"><?php esc_html_e( 'Expires', 'fsweb-comments-core' ); ?></span>
-								<span id="fsweb-cc-license-expires"><?php echo esc_html( $expires_on ); ?></span>
+								<span id="fsweb-cc-license-expires"><?php echo esc_html( $expires_display ); ?></span>
 							</div>
 						</div>
 
@@ -600,7 +606,7 @@ class Fsweb_Comments_Core_Admin {
 			wp_send_json_success( array(
 				'message' => __( 'License is already active.', 'fsweb-comments-core' ),
 				'status'  => 'active',
-				'expires' => get_option( 'fsweb_comments_core_license_expires', '' ),
+				'expires' => $this->format_license_expiry( get_option( 'fsweb_comments_core_license_expires', '' ) ),
 			) );
 		}
 
@@ -648,7 +654,7 @@ class Fsweb_Comments_Core_Admin {
 			wp_send_json_success( array(
 				'message' => __( 'License activated successfully!', 'fsweb-comments-core' ),
 				'status'  => 'active',
-				'expires' => isset( $body['expires'] ) ? $body['expires'] : '',
+				'expires' => $this->format_license_expiry( isset( $body['expires'] ) ? $body['expires'] : '' ),
 			) );
 		}
 
@@ -774,6 +780,36 @@ class Fsweb_Comments_Core_Admin {
 			'status'  => $remote_status,
 			'expires' => $remote_expires,
 		);
+	}
+
+	/**
+	 * Format a license expiry date for display.
+	 *
+	 * The license server answers with an ISO-8601 timestamp in UTC, e.g.
+	 * "2027-09-11T00:00:00+00:00". The date is always rendered in UTC with
+	 * the site date format: using the site timezone would pull midnight UTC
+	 * back to the previous day on UTC-3 sites, and the raw ISO string must
+	 * never be printed. An empty (or unreadable) value returns '' so the UI
+	 * can hide the row.
+	 *
+	 * @since  1.0.5
+	 * @param  string $expires Raw expiry value coming from the license API.
+	 * @return string          Formatted date, or '' when there is no expiry.
+	 */
+	private function format_license_expiry( $expires ) {
+		$expires = is_string( $expires ) ? trim( $expires ) : '';
+
+		if ( '' === $expires ) {
+			return '';
+		}
+
+		$timestamp = strtotime( $expires );
+
+		if ( false === $timestamp ) {
+			return '';
+		}
+
+		return wp_date( get_option( 'date_format' ), $timestamp, new DateTimeZone( 'UTC' ) );
 	}
 
 	/**

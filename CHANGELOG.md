@@ -1,3 +1,7 @@
+# 1.0.5 - 26/09/2026
+  * Fix: the license expiry is always rendered as a date in UTC — the license screen and the activation AJAX response no longer print the raw ISO string, and the value no longer shifts one day back on UTC-3 sites (2027-09-11T00:00:00+00:00 reads 11/09/2027 on the first render and after the refresh alike).
+  * Fix: the license key field placeholder now shows an example in the real key format — four groups of eight characters, no FSWEB- prefix.
+
 # 1.0.4 - 26/09/2026
   * Fix: license activation and deactivation no longer depend on another FSWEB plugin's constants — each plugin now resolves the license API URL from its own constant, so an outdated sibling plugin can no longer point this one at the retired endpoint.
 

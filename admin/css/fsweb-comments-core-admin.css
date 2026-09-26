@@ -70,6 +70,66 @@
 	line-height: 1.6;
 }
 
+/* Hero with quick actions — navigation between the plugin screens */
+.fsweb-cc-hero--split {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	flex-wrap: wrap;
+}
+
+.fsweb-cc-hero__text {
+	min-width: 0;
+}
+
+.fsweb-cc-hero__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 0;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 38px;
+	padding: 0 14px;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	border-radius: var(--fsweb-cc-radius-sm);
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	font-weight: 600;
+	text-decoration: none;
+	box-shadow: none;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button:hover,
+.fsweb-cc-wrap .fsweb-cc-hero .button:focus {
+	background: rgba(255, 255, 255, 0.22);
+	border-color: rgba(255, 255, 255, 0.55);
+	color: #fff;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+}
+
+/* The screen being rendered is highlighted instead of linking back to itself. */
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] {
+	background: #fff;
+	border-color: #fff;
+	color: var(--fsweb-cc-brand-dark);
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons {
+	color: var(--fsweb-cc-brand-dark);
+}
+
 /* ------------------------------------------------------------------ */
 /*  Status pills
 /* ------------------------------------------------------------------ */
@@ -348,6 +408,10 @@
 		padding: 24px 20px;
 	}
 
+	.fsweb-cc-hero__actions {
+		gap: 8px;
+	}
+
 	.fsweb-cc-card__header,
 	.fsweb-cc-card__body {
 		padding-left: 16px;
@@ -371,26 +435,60 @@
 }
 
 .fsweb-cc-stat-card {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
+	background: var(--fsweb-cc-surface);
+	border: 1px solid var(--fsweb-cc-line);
+	border-radius: var(--fsweb-cc-radius);
 	padding: 20px;
 	text-align: center;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	box-shadow: var(--fsweb-cc-shadow);
+}
+
+.fsweb-cc-stat-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	margin: 0 auto 10px;
+	border-radius: 50%;
+	background: var(--fsweb-cc-soft);
+	color: var(--fsweb-cc-brand);
+}
+
+.fsweb-cc-stat-icon .dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+}
+
+.fsweb-cc-stat-card--active .fsweb-cc-stat-icon {
+	background: var(--fsweb-cc-green-bg);
+	color: var(--fsweb-cc-green);
+}
+
+.fsweb-cc-stat-card--expired .fsweb-cc-stat-icon,
+.fsweb-cc-stat-card--pending .fsweb-cc-stat-icon {
+	background: var(--fsweb-cc-amber-bg);
+	color: var(--fsweb-cc-amber);
+}
+
+.fsweb-cc-stat-card--invalid .fsweb-cc-stat-icon {
+	background: #fcf0f1;
+	color: var(--fsweb-cc-red);
 }
 
 .fsweb-cc-stat-number {
 	display: block;
 	font-size: 28px;
 	font-weight: 700;
-	color: #1d2327;
+	color: var(--fsweb-cc-heading);
 	line-height: 1.2;
 	margin-bottom: 4px;
 }
 
 .fsweb-cc-stat-label {
-	font-size: 13px;
-	color: #646970;
+	font-size: 12.5px;
+	color: var(--fsweb-cc-muted);
 }
 
 .fsweb-cc-stat-card--active .fsweb-cc-stat-number {
@@ -412,10 +510,10 @@
 }
 
 .fsweb-cc-dash-panel {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	background: var(--fsweb-cc-surface);
+	border: 1px solid var(--fsweb-cc-line);
+	border-radius: var(--fsweb-cc-radius);
+	box-shadow: var(--fsweb-cc-shadow);
 	overflow: hidden;
 }
 
@@ -423,14 +521,29 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	gap: 12px;
 	padding: 16px 20px;
-	border-bottom: 1px solid #e2e4e7;
+	border-bottom: 1px solid var(--fsweb-cc-line);
+	background: #fbfbfc;
 }
 
 .fsweb-cc-dash-panel-header h2 {
 	margin: 0;
 	font-size: 14px;
 	font-weight: 600;
+	color: var(--fsweb-cc-heading);
+}
+
+.fsweb-cc-dash-panel-header .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.fsweb-cc-dash-panel-header .button .dashicons {
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
 }
 
 /* Recent reviews table */
@@ -464,8 +577,16 @@
 }
 
 .fsweb-cc-quick-actions .button {
-	text-align: center;
+	display: inline-flex;
+	align-items: center;
 	justify-content: center;
+	gap: 6px;
+}
+
+.fsweb-cc-quick-actions .button .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
 }
 
 /* Shortcode help box */
@@ -1012,6 +1133,24 @@
 	font-size: 16px;
 	width: 16px;
 	height: 16px;
+}
+
+/*
+ * The save buttons rewrite their own label through JS while the request is in
+ * flight ("Saving…"), so their icon has to come from CSS — a nested <span>
+ * would be dropped for good.
+ */
+#fsweb-cc-save-form::before,
+#fsweb-cc-save-view::before {
+	content: "\f147";
+	display: inline-block;
+	margin-right: 6px;
+	font-family: dashicons;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1;
+	vertical-align: text-bottom;
+	-webkit-font-smoothing: antialiased;
 }
 
 /* ── Table action buttons ── */

@@ -183,6 +183,55 @@ class Fsweb_Comments_Core_Admin {
 	}
 
 	/**
+	 * Render the shared hero header with quick navigation to the sibling screens.
+	 *
+	 * Every plugin screen opens with the same hero: title, description and a row
+	 * of icon buttons that jump to the other screens. The current screen is
+	 * marked with aria-current instead of linking back to itself.
+	 *
+	 * @since    1.0.0
+	 * @param    string    $title          Hero title.
+	 * @param    string    $description    Hero description.
+	 * @param    string    $current_page   Slug of the screen being rendered.
+	 */
+	private function render_hero( $title, $description, $current_page = '' ) {
+		$screens = array(
+			'fsweb-comments-core'         => array(
+				'label' => __( 'Dashboard', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-dashboard',
+			),
+			'fsweb-comments-core-builder' => array(
+				'label' => __( 'Form Builder', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-feedback',
+			),
+			'fsweb-comments-core-views'   => array(
+				'label' => __( 'Views Builder', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-layout',
+			),
+			'fsweb-comments-core-license' => array(
+				'label' => __( 'License', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-awards',
+			),
+		);
+		?>
+		<div class="fsweb-cc-hero fsweb-cc-hero--split">
+			<div class="fsweb-cc-hero__text">
+				<h1><?php echo esc_html( $title ); ?></h1>
+				<p><?php echo esc_html( $description ); ?></p>
+			</div>
+			<nav class="fsweb-cc-hero__actions" aria-label="<?php esc_attr_e( 'Quick Actions', 'fsweb-comments-core' ); ?>">
+				<?php foreach ( $screens as $slug => $screen ) : ?>
+					<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => $slug, 'post_type' => 'fsweb_review' ), admin_url( 'admin.php' ) ) ); ?>"<?php echo $slug === $current_page ? ' aria-current="page"' : ''; ?>>
+						<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
+						<?php echo esc_html( $screen['label'] ); ?>
+					</a>
+				<?php endforeach; ?>
+			</nav>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render the Dashboard page.
 	 *
 	 * @since    1.0.0
@@ -224,26 +273,33 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-dashboard">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Dashboard', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Overview of your reviews, categories and license status.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Dashboard', 'fsweb-comments-core' ),
+				__( 'Overview of your reviews, categories and license status.', 'fsweb-comments-core' ),
+				'fsweb-comments-core'
+			);
+			?>
 
 			<!-- Stats cards -->
 			<div class="fsweb-cc-stats">
 				<div class="fsweb-cc-stat-card">
+					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-star-filled" aria-hidden="true"></span></span>
 					<span class="fsweb-cc-stat-number"><?php echo esc_html( $total ); ?></span>
 					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'Total Reviews', 'fsweb-comments-core' ); ?></span>
 				</div>
 				<div class="fsweb-cc-stat-card">
+					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span></span>
 					<span class="fsweb-cc-stat-number"><?php echo esc_html( $month_count ); ?></span>
 					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'This Month', 'fsweb-comments-core' ); ?></span>
 				</div>
 				<div class="fsweb-cc-stat-card">
+					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-category" aria-hidden="true"></span></span>
 					<span class="fsweb-cc-stat-number"><?php echo esc_html( $categories ); ?></span>
 					<span class="fsweb-cc-stat-label"><?php esc_html_e( 'Categories', 'fsweb-comments-core' ); ?></span>
 				</div>
 				<div class="fsweb-cc-stat-card fsweb-cc-stat-card--<?php echo esc_attr( $license_status ); ?>">
+					<span class="fsweb-cc-stat-icon"><span class="dashicons dashicons-shield" aria-hidden="true"></span></span>
 					<span class="fsweb-cc-stat-number">
 						<?php echo 'active' === $license_status
 							? esc_html__( 'Active', 'fsweb-comments-core' )
@@ -259,6 +315,7 @@ class Fsweb_Comments_Core_Admin {
 					<div class="fsweb-cc-dash-panel-header">
 						<h2><?php esc_html_e( 'Recent Reviews', 'fsweb-comments-core' ); ?></h2>
 						<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=fsweb_review' ) ); ?>" class="button button-small">
+							<span class="dashicons dashicons-external" aria-hidden="true"></span>
 							<?php esc_html_e( 'View All', 'fsweb-comments-core' ); ?>
 						</a>
 					</div>
@@ -304,12 +361,15 @@ class Fsweb_Comments_Core_Admin {
 					</div>
 					<div class="fsweb-cc-quick-actions">
 						<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=fsweb_review' ) ); ?>" class="button button-primary button-large">
+							<span class="dashicons dashicons-plus-alt" aria-hidden="true"></span>
 							<?php esc_html_e( 'Add New Review', 'fsweb-comments-core' ); ?>
 						</a>
 						<a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=fsweb_review_category&post_type=fsweb_review' ) ); ?>" class="button button-large">
+							<span class="dashicons dashicons-category" aria-hidden="true"></span>
 							<?php esc_html_e( 'Manage Categories', 'fsweb-comments-core' ); ?>
 						</a>
 						<a href="<?php echo esc_url( $license_url ); ?>" class="button button-large">
+							<span class="dashicons dashicons-awards" aria-hidden="true"></span>
 							<?php echo 'active' === $license_status
 								? esc_html__( 'License Settings', 'fsweb-comments-core' )
 								: esc_html__( 'Activate License', 'fsweb-comments-core' ); ?>
@@ -776,14 +836,17 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Form Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize your review forms.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-builder'
+			);
+			?>
 
 			<div class="fsweb-cc-list-toolbar">
 				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
-					<span class="dashicons dashicons-plus-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'New Form', 'fsweb-comments-core' ); ?>
 				</a>
 			</div>
@@ -879,15 +942,18 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Form Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize your review forms.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Form Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize your review forms.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-builder'
+			);
+			?>
 
 			<!-- Back to list -->
 			<p>
 				<a href="<?php echo esc_url( $list_url ); ?>" class="button">
-					<span class="dashicons dashicons-arrow-left-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-arrow-left-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'Back to list', 'fsweb-comments-core' ); ?>
 				</a>
 			</p>
@@ -903,6 +969,7 @@ class Fsweb_Comments_Core_Admin {
 						<?php esc_html_e( 'Multi-step', 'fsweb-comments-core' ); ?>
 					</label>
 					<button type="button" id="fsweb-cc-new-form" class="button">
+						<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 						<?php esc_html_e( 'Clear & New', 'fsweb-comments-core' ); ?>
 					</button>
 					<button type="button" id="fsweb-cc-save-form" class="button button-primary">
@@ -1358,14 +1425,17 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Views Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-views'
+			);
+			?>
 
 			<div class="fsweb-cc-list-toolbar">
 				<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
-					<span class="dashicons dashicons-plus-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'New View', 'fsweb-comments-core' ); ?>
 				</a>
 			</div>
@@ -1466,15 +1536,18 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-builder-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Views Builder', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Views Builder', 'fsweb-comments-core' ),
+				__( 'Create and customize how reviews are displayed.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-views'
+			);
+			?>
 
 			<!-- Back to list -->
 			<p>
 				<a href="<?php echo esc_url( $list_url ); ?>" class="button">
-					<span class="dashicons dashicons-arrow-left-alt" style="vertical-align:text-bottom;"></span>
+					<span class="dashicons dashicons-arrow-left-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
 					<?php esc_html_e( 'Back to list', 'fsweb-comments-core' ); ?>
 				</a>
 			</p>
@@ -1508,7 +1581,10 @@ class Fsweb_Comments_Core_Admin {
 					<option value="random" <?php selected( $current ? $current['order'] : '', 'random' ); ?>>Random</option>
 					<option value="menu_order" <?php selected( $current ? $current['order'] : '', 'menu_order' ); ?>>Menu order</option>
 				</select>
-				<button type="button" id="fsweb-cc-new-view" class="button"><?php esc_html_e( 'Clear & New', 'fsweb-comments-core' ); ?></button>
+				<button type="button" id="fsweb-cc-new-view" class="button">
+					<span class="dashicons dashicons-plus-alt fsweb-cc-btn-icon" aria-hidden="true"></span>
+					<?php esc_html_e( 'Clear & New', 'fsweb-comments-core' ); ?>
+				</button>
 				<button type="button" id="fsweb-cc-save-view" class="button button-primary"><?php esc_html_e( 'Save View', 'fsweb-comments-core' ); ?></button>
 				<input type="hidden" id="fsweb-cc-view-id" value="<?php echo esc_attr( $edit_id ); ?>">
 			</div>

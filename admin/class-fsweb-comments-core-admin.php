@@ -604,7 +604,7 @@ class Fsweb_Comments_Core_Admin {
 			) );
 		}
 
-		$api_url = FSWEB_LICENSE_API_URL . '/activate';
+		$api_url = FSWEB_COMMENTS_CORE_LICENSE_API_URL . '/activate';
 
 		$response = wp_remote_post( $api_url, array(
 			'timeout'   => 15,
@@ -684,7 +684,7 @@ class Fsweb_Comments_Core_Admin {
 
 		$local_status = $this->normalize_license_status( get_option( 'fsweb_comments_core_license_status', '' ), 'inactive' );
 
-		$api_url = FSWEB_LICENSE_API_URL . '/deactivate';
+		$api_url = FSWEB_COMMENTS_CORE_LICENSE_API_URL . '/deactivate';
 
 		$response = wp_remote_post( $api_url, array(
 			'timeout'   => 15,
@@ -740,7 +740,7 @@ class Fsweb_Comments_Core_Admin {
 	 * @return array|null           Array with status/expires, or null on failure.
 	 */
 	private function sync_license_status( $license_key ) {
-		$api_url = FSWEB_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fsweb-comments-core&domain=' . urlencode( home_url() );
+		$api_url = FSWEB_COMMENTS_CORE_LICENSE_API_URL . '/validate?license_key=' . urlencode( $license_key ) . '&plugin_slug=fsweb-comments-core&domain=' . urlencode( home_url() );
 
 		$response = wp_remote_get( $api_url, array(
 			'timeout'   => 10,

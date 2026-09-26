@@ -51,11 +51,19 @@ define( 'FSWEB_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
  * and the same JSON contract used here ({success, status, expires, message}).
  * The previous bridge (License Manager for WooCommerce) was retired.
  *
+ * The constant is namespaced to this plugin on purpose. Sibling FSWEB plugins
+ * (fsweb-ai-automated-contact, fsweb-mercadopago) historically defined the same
+ * generic shared license-URL constant name. WordPress loads plugins
+ * alphabetically and the first definition wins, so an outdated sibling still
+ * pointing at the retired legacy endpoint could silently force this plugin
+ * back onto it (HTTP 500). A plugin-owned name keeps each plugin's URL
+ * independent.
+ *
  * Override in wp-config.php if needed:
- *   define( 'FSWEB_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
+ *   define( 'FSWEB_COMMENTS_CORE_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
  */
-if ( ! defined( 'FSWEB_LICENSE_API_URL' ) ) {
-	define( 'FSWEB_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
+if ( ! defined( 'FSWEB_COMMENTS_CORE_LICENSE_API_URL' ) ) {
+	define( 'FSWEB_COMMENTS_CORE_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
 }
 
 /**

@@ -1,6 +1,7 @@
 # 1.0.3 - 26/09/2026
   * Fix: License activation and deactivation now call the FSWEB license API (api.flowsyncweb.com/api/license) instead of the retired License Manager for WooCommerce bridge, which answered "License Manager for WooCommerce is not active."
   * Fix: The API response body is now the source of truth for license outcomes; transport failures (unreachable server or 5xx) keep the current license state and show a neutral notice instead of an alarming error.
+  * Fix: The license API URL now lives in this plugin's own `FSWEB_COMMENTS_CORE_LICENSE_API_URL` constant, so a sibling FSWEB plugin can no longer override it and force the retired legacy endpoint.
 
 # 1.0.2 - 26/09/2026
   * New: Hero with quick-action shortcuts on every admin screen — dashboard, form builder, views builder and license.

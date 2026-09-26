@@ -183,14 +183,14 @@ class Fsweb_Comments_Core_Admin {
 	}
 
 	/**
-	 * URL de uma tela do plugin.
+	 * URL of a plugin screen.
 	 *
-	 * As telas são registradas sob o menu do CPT (edit.php?post_type=fsweb_review),
-	 * então montar o endereço como admin.php?page=... faz o WordPress responder
-	 * "Cannot load ...". menu_page_url() devolve o endereço correto.
+	 * Screens are registered under the CPT menu (edit.php?post_type=fsweb_review),
+	 * so building the address as admin.php?page=... makes WordPress answer
+	 * "Cannot load ...". menu_page_url() returns the correct address.
 	 *
 	 * @since    1.0.0
-	 * @param    string    $slug    Slug da tela.
+	 * @param    string    $slug    Screen slug.
 	 * @return   string
 	 */
 	private function page_url( $slug ) {

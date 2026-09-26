@@ -594,7 +594,7 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		// If this exact key is already active locally, don't bother the server.
-		$local_status = get_option( 'fsweb_comments_core_license_status', '' );
+		$local_status = $this->normalize_license_status( get_option( 'fsweb_comments_core_license_status', '' ), 'inactive' );
 		$local_key    = get_option( 'fsweb_comments_core_license_key', '' );
 		if ( 'active' === $local_status && $local_key === $license_key ) {
 			wp_send_json_success( array(
@@ -617,20 +617,23 @@ class Fsweb_Comments_Core_Admin {
 			'headers'   => array( 'Content-Type' => 'application/json' ),
 		) );
 
-		if ( is_wp_error( $response ) ) {
-			update_option( 'fsweb_comments_core_license_key', $license_key );
-			update_option( 'fsweb_comments_core_license_status', 'pending' );
-			update_option( 'fsweb_comments_core_license_expires', '' );
-			wp_send_json_error( array(
-				'message' => __( 'Could not reach the license server. Your key has been saved and is pending validation.', 'fsweb-comments-core' ),
-				'status'  => 'pending',
+		$code = is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+		$body = is_wp_error( $response ) ? null : json_decode( wp_remote_retrieve_body( $response ), true );
+
+		/*
+		 * Transport failure: the server was unreachable (WP_Error), answered with
+		 * a 5xx or sent a body we can't read. Keep the current license state and
+		 * return a neutral notice — never an alarming error.
+		 */
+		if ( is_wp_error( $response ) || $code >= 500 || ! is_array( $body ) || ! isset( $body['success'] ) ) {
+			wp_send_json_success( array(
+				'message' => __( 'Could not reach the license server. Your license status was not changed — please try again in a moment.', 'fsweb-comments-core' ),
+				'status'  => $local_status,
 			) );
 		}
 
-		$code = wp_remote_retrieve_response_code( $response );
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( 200 === $code && isset( $body['success'] ) && $body['success'] ) {
+		// From here on the response body is the source of truth.
+		if ( $body['success'] ) {
 			update_option( 'fsweb_comments_core_license_key', $license_key );
 			update_option( 'fsweb_comments_core_license_status', 'active' );
 			update_option( 'fsweb_comments_core_license_expires', isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '' );
@@ -649,14 +652,15 @@ class Fsweb_Comments_Core_Admin {
 			) );
 		}
 
-		// Activation failed.
+		// Business failure (e.g. "license not found"): surface the server message.
+		$remote_status = $this->normalize_license_status( isset( $body['status'] ) ? $body['status'] : '', 'invalid' );
 		update_option( 'fsweb_comments_core_license_key', $license_key );
-		update_option( 'fsweb_comments_core_license_status', 'invalid' );
-		update_option( 'fsweb_comments_core_license_expires', '' );
-		$error_msg = isset( $body['message'] ) ? sanitize_text_field( $body['message'] ) : __( 'Invalid license key.', 'fsweb-comments-core' );
+		update_option( 'fsweb_comments_core_license_status', $remote_status );
+		update_option( 'fsweb_comments_core_license_expires', isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '' );
+		$error_msg = ! empty( $body['message'] ) ? sanitize_text_field( $body['message'] ) : __( 'Invalid license key.', 'fsweb-comments-core' );
 		wp_send_json_error( array(
 			'message' => $error_msg,
-			'status'  => 'invalid',
+			'status'  => $remote_status,
 		) );
 	}
 
@@ -678,6 +682,8 @@ class Fsweb_Comments_Core_Admin {
 		$license_key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
 		// phpcs:enable
 
+		$local_status = $this->normalize_license_status( get_option( 'fsweb_comments_core_license_status', '' ), 'inactive' );
+
 		$api_url = FSWEB_LICENSE_API_URL . '/deactivate';
 
 		$response = wp_remote_post( $api_url, array(
@@ -691,19 +697,33 @@ class Fsweb_Comments_Core_Admin {
 			'headers'   => array( 'Content-Type' => 'application/json' ),
 		) );
 
-		// Always deactivate locally, even if the API call fails.
-		update_option( 'fsweb_comments_core_license_status', 'pending' );
-		update_option( 'fsweb_comments_core_license_expires', '' );
+		$code = is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+		$body = is_wp_error( $response ) ? null : json_decode( wp_remote_retrieve_body( $response ), true );
 
-		if ( is_wp_error( $response ) ) {
+		/*
+		 * Transport failure: the server never confirmed the release, so keep the
+		 * current state and warn neutrally instead of showing an alarming error.
+		 */
+		if ( is_wp_error( $response ) || $code >= 500 || ! is_array( $body ) || ! isset( $body['success'] ) ) {
 			wp_send_json_success( array(
-				'message' => __( 'License deactivated locally. The remote server could not be reached.', 'fsweb-comments-core' ),
-				'status'  => 'pending',
+				'message' => __( 'Could not reach the license server. Your license status was not changed — please try again in a moment.', 'fsweb-comments-core' ),
+				'status'  => $local_status,
 			) );
 		}
 
+		/*
+		 * The server answered — release the key locally. When the body carries a
+		 * business message (e.g. "license not found"), surface it neutrally.
+		 */
+		update_option( 'fsweb_comments_core_license_status', 'pending' );
+		update_option( 'fsweb_comments_core_license_expires', '' );
+
+		$message = ( empty( $body['success'] ) && ! empty( $body['message'] ) )
+			? sanitize_text_field( $body['message'] )
+			: __( 'License deactivated successfully!', 'fsweb-comments-core' );
+
 		wp_send_json_success( array(
-			'message' => __( 'License deactivated successfully!', 'fsweb-comments-core' ),
+			'message' => $message,
 			'status'  => 'pending',
 		) );
 	}
@@ -727,22 +747,25 @@ class Fsweb_Comments_Core_Admin {
 			'sslverify' => false,
 		) );
 
+		// Transport failure: keep the current local state.
 		if ( is_wp_error( $response ) ) {
 			return null;
 		}
 
-		$code = wp_remote_retrieve_response_code( $response );
-		if ( 200 !== $code ) {
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		if ( $code >= 500 ) {
 			return null;
 		}
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-		if ( ! is_array( $body ) || ! isset( $body['status'] ) ) {
+
+		// The body is the source of truth for the remote license status.
+		if ( ! is_array( $body ) || ! isset( $body['success'] ) ) {
 			return null;
 		}
 
-		$remote_status   = sanitize_text_field( $body['status'] );
-		$remote_expires  = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
+		$remote_status  = $this->normalize_license_status( isset( $body['status'] ) ? $body['status'] : '', 'invalid' );
+		$remote_expires = isset( $body['expires'] ) ? sanitize_text_field( $body['expires'] ) : '';
 
 		update_option( 'fsweb_comments_core_license_status', $remote_status );
 		update_option( 'fsweb_comments_core_license_expires', $remote_expires );
@@ -751,6 +774,24 @@ class Fsweb_Comments_Core_Admin {
 			'status'  => $remote_status,
 			'expires' => $remote_expires,
 		);
+	}
+
+	/**
+	 * Normalise a license status coming from the license server.
+	 *
+	 * Only the statuses the admin UI knows about are accepted; anything else
+	 * falls back to the given default so the UI never renders an unknown pill.
+	 *
+	 * @since  1.0.3
+	 * @param  mixed  $status   Raw status value (usually from the API body).
+	 * @param  string $fallback Status to use when the value is not recognised.
+	 * @return string           A safe status slug.
+	 */
+	private function normalize_license_status( $status, $fallback = 'invalid' ) {
+		$allowed = array( 'active', 'expired', 'invalid', 'pending', 'inactive' );
+		$status  = is_string( $status ) ? sanitize_key( $status ) : '';
+
+		return in_array( $status, $allowed, true ) ? $status : $fallback;
 	}
 
 	/**

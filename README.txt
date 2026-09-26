@@ -4,7 +4,7 @@ Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,10 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.3 =
+* Fix: License activation and deactivation now call the FSWEB license API (api.flowsyncweb.com/api/license) instead of the retired License Manager for WooCommerce bridge — no more "License Manager for WooCommerce is not active."
+* Fix: The API response body is now the source of truth for license outcomes; transport failures (unreachable server or 5xx) keep the current license state and show a neutral notice instead of an alarming error.
+
 = 1.0.2 =
 * New: Hero with quick-action shortcuts on every admin screen: dashboard, form builder, views builder and license.
 * New: License screen rebuilt in the family's visual language — full width, with shortcut cards.
@@ -76,6 +80,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+Maintenance release: license activation and deactivation point at the new FSWEB license API, fixing the "License Manager for WooCommerce is not active" error.
 
 = 1.0.2 =
 UI refresh on every admin screen (hero shortcuts, cards and pills), complete pt_BR translation and a fix for the hero shortcuts on the review screens.

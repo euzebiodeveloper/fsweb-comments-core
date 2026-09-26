@@ -465,10 +465,13 @@ class Fsweb_Comments_Core_Admin {
 		?>
 		<div class="wrap fsweb-cc-wrap fsweb-cc-license-wrap">
 			<hr class="wp-header-end">
-			<div class="fsweb-cc-hero">
-				<h1><?php esc_html_e( 'Comments Core — License', 'fsweb-comments-core' ); ?></h1>
-				<p><?php esc_html_e( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ); ?></p>
-			</div>
+			<?php
+			$this->render_hero(
+				__( 'Comments Core — License', 'fsweb-comments-core' ),
+				__( 'Manage your license key to receive automatic updates and premium support.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-license'
+			);
+			?>
 
 			<div class="fsweb-cc-license-grid">
 				<div class="fsweb-cc-card">

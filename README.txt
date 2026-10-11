@@ -3,8 +3,9 @@ Contributors: flowsyncweb
 Donate link: https://flowsyncweb.com/
 Tags: comments, feedback, reviews, spam
 Requires at least: 6.0
-Tested up to: 7.0
-Stable tag: 1.0.6
+Tested up to: 7.1
+Requires PHP: 8.2
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +57,10 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 
 == Changelog ==
 
+= 1.0.7 =
+* Fix: an invalid or expired license is reported as such — the admin notice no longer shows the generic "Update server is temporarily unreachable" warning; a 401/403 rejection from the update server now reads "the license credential is invalid or expired".
+* Fix: the stored license error is no longer wiped on every page load, so a rejected credential is actually shown; it is cleared only when the key changes or after a successful check.
+
 = 1.0.6 =
 * Fix: the license screen trusts `domain_authorized` from the /validate response instead of the license `status` — a key that was released on this domain still answers `active`, so the screen came back "Active" right after a deactivation. The status now reads Active only when this domain is authorized, and Pending otherwise (expired/invalid keys keep their own status).
 * Fix: deactivation now also clears the cached license/update state (update-checker metadata, README transient and the update_plugins transient).
@@ -91,6 +96,9 @@ Comments Core is designed to work with any well-coded WordPress theme. Some them
 * Star ratings and image uploads.
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+Maintenance release: a rejected credential now shows as invalid/expired instead of the misleading "update server unreachable" warning.
 
 = 1.0.6 =
 Maintenance release: the license screen stops coming back "Active" after a deactivation — the local status now honors `domain_authorized` from /validate, and deactivation clears the cached license/update state.

@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the FSWEB Comments Core plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: FSWEB Comments Core 1.0.5\n"
+"Project-Id-Version: FSWEB Comments Core 1.0.7\n"
 "Report-Msgid-Bugs-To: https://flowsyncweb.com/\n"
 "Last-Translator: Flow Sync Web <euzebio.batista@flowsyncweb.com>\n"
 "Language-Team: Portuguese (Brazil) <euzebio.batista@flowsyncweb.com>\n"
@@ -727,6 +727,12 @@ msgstr "As informações de atualização estão temporariamente indisponíveis.
 #, php-format
 msgid "%1$s is not activated. %2$sPlease activate your license%3$s to receive automatic updates."
 msgstr "%1$s não está ativado. %2$sAtive sua licença%3$s para receber atualizações automáticas."
+
+#. translators: 1: plugin name, 2: opening link tag, 3: closing link tag
+#: fsweb-update-checker/class-fsweb-update-checker.php:600
+#, php-format
+msgid "%1$s: the license credential is invalid or expired. %2$sCheck your license%3$s to resume automatic updates."
+msgstr "%1$s: a credencial de licença é inválida ou expirou. %2$sVerifique sua licença%3$s para retomar as atualizações automáticas."
 
 #. translators: 1: plugin name, 2: license page URL
 #: fsweb-update-checker/class-fsweb-update-checker.php:617

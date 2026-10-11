@@ -101,8 +101,12 @@ class Metadata {
 	/**
 	 * Set the license key to be sent with every update request.
 	 *
-	 * Also clears any stale license error that may have been recorded
-	 * before the license was activated.
+	 * Stale errors are cleared only when the key actually changes (or is set
+	 * for the first time). Wiping them on every request hid real rejections:
+	 * the fetch records the 401/403 *after* this runs, and the next page load
+	 * deleted the error before the admin notice could report it — so the user
+	 * only ever saw a leftover generic "server unreachable" warning instead of
+	 * the real invalid/expired credential message.
 	 *
 	 * @param string $license_key The license key.
 	 * @return void
@@ -110,10 +114,12 @@ class Metadata {
 	public function set_license( $license_key ) {
 		$this->license_key = sanitize_text_field( $license_key );
 
-		// If we have a key, clear any stale error from a previous
-		// failed check (e.g. cron ran before activation).
-		if ( ! empty( $this->license_key ) ) {
+		$stored_key = get_option( $this->option_name . '_license_key', '' );
+
+		if ( $stored_key !== $this->license_key ) {
+			update_option( $this->option_name . '_license_key', $this->license_key );
 			delete_option( $this->option_name . '_license_error' );
+			delete_option( $this->option_name . '_server_error' );
 		}
 	}
 
@@ -164,6 +170,19 @@ class Metadata {
 	public function has_license() {
 		return ! empty( $this->license_key )
 			&& empty( $this->get_last_license_error() );
+	}
+
+	/**
+	 * Whether a license key is configured, regardless of its validity.
+	 *
+	 * Used to tell "no credential yet" (invite activation) apart from "a
+	 * credential is configured but the server rejected it" (invalid/expired).
+	 *
+	 * @since 1.3.0
+	 * @return bool
+	 */
+	public function has_license_key() {
+		return '' !== $this->license_key;
 	}
 
 	/**

@@ -16,8 +16,9 @@
  * Plugin Name:       Comments Core
  * Plugin URI:        https://flowsyncweb.com
  * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.6
+ * Version:           1.0.7
  * Requires at least: 6.0
+ * Requires PHP:      8.2
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
  * License:           GPL-2.0+
@@ -36,7 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.6' );
+define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.7' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -145,12 +146,13 @@ function fsweb_comments_core_migrate_license() {
 }
 
 // Inject license key so the update-checker sends it with every request.
-// Without a valid key the API returns 401 and updates are blocked.
+// Always set it — even when empty — so the checker tracks the current key and
+// clears stale errors only when the key actually changes (otherwise a removed
+// key would keep the previous key's state, and a rejection for an empty key
+// could never be cleared).
 fsweb_comments_core_migrate_license();
 $fsweb_license_key = get_option( 'fsweb_comments_core_license_key', '' );
-if ( ! empty( $fsweb_license_key ) ) {
-	$fsweb_update_checker->set_license( $fsweb_license_key );
-}
+$fsweb_update_checker->set_license( $fsweb_license_key );
 
 /**
  * Reset the update checker caches after the license is activated.

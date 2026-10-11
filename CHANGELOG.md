@@ -1,3 +1,7 @@
+# 1.0.7 - 11/10/2026
+  * Fix: An invalid or expired license is reported as such — the admin notice no longer shows the generic "Update server is temporarily unreachable" warning. When the update server rejects the configured key (401/403), the notice reads "the license credential is invalid or expired"; the generic server warning is suppressed while a key is set.
+  * Fix: The update checker no longer wipes the stored license error on every page load — a rejection was hidden by a leftover server error instead of being shown; it is cleared only when the key changes or after a successful fetch.
+
 # 1.0.6 - 26/09/2026
   * Fix: the license screen now trusts `domain_authorized` from the /validate response instead of the license `status` — a key released on this domain keeps answering `active`, so trusting the license status brought the screen back "Active" right after a deactivation. The local status now reads Active only when this domain is authorized, and Pending otherwise (expired/invalid keys keep their own status).
   * Fix: `deactivate()` also clears the cached license/update state (update-checker metadata, README transient and the WordPress update_plugins transient) so no stale "active" metadata survives the release.

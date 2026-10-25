@@ -5,8 +5,8 @@
  *
  * The free edition renders every screen of the product. Premium options are
  * visible but inert, marked with a PRO pill that links to the product page.
- * When the PRO add-on is installed and licensed, those pills disappear and the
- * add-on takes over the screens it owns.
+ * When the PRO add-on is installed, those pills disappear and the add-on
+ * takes over the screens it owns.
  *
  * @link       https://flowsyncweb.com
  * @since      1.0.0
@@ -55,26 +55,18 @@ class Fsweb_Comments_Core_Admin {
 	// ------------------------------------------------------------------//
 
 	/**
-	 * Whether the PRO add-on is installed and licensed.
+	 * Whether the PRO add-on is installed and running.
 	 *
-	 * While it is not, the premium options stay visible but locked.
+	 * This edition reads no licence option: it only checks whether the
+	 * companion plugin is loaded. Unlocking happens inside the add-on, so no
+	 * feature of this plugin is gated by a licence check.
+	 *
+	 * While the add-on is absent the premium options stay visible as plain
+	 * text pointing to the separate plugin.
 	 *
 	 * @return bool
 	 */
 	public function is_pro_active() {
-		if ( ! $this->is_pro_installed() ) {
-			return false;
-		}
-
-		return 'active' === get_option( 'fsweb_comments_core_license_status', 'inactive' );
-	}
-
-	/**
-	 * Whether the PRO add-on is installed at all.
-	 *
-	 * @return bool
-	 */
-	private function is_pro_installed() {
 		return defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' );
 	}
 
@@ -168,7 +160,7 @@ class Fsweb_Comments_Core_Admin {
 	public function add_admin_menu() {
 		$parent = 'edit.php?post_type=fsweb_review';
 
-		if ( ! $this->is_pro_installed() ) {
+		if ( ! $this->is_pro_active() ) {
 			add_submenu_page(
 				$parent,
 				__( 'Overview', 'fsweb-comments-core' ),
@@ -210,8 +202,8 @@ class Fsweb_Comments_Core_Admin {
 			6
 		);
 
-		// The offer only exists while the add-on is not unlocked: once the
-		// license is active there is nothing left to sell.
+		// The offer only exists while the add-on is not installed: with the
+		// companion plugin there is nothing left to sell here.
 		if ( ! $this->is_pro_active() ) {
 			add_submenu_page(
 				$parent,
@@ -247,7 +239,7 @@ class Fsweb_Comments_Core_Admin {
 	 */
 	private function nav_screens( $current ) {
 		$screens = array();
-		$pro     = $this->is_pro_installed();
+		$pro     = $this->is_pro_active();
 
 		if ( $pro ) {
 			$screens['fsweb-comments-core-pro'] = array(
@@ -777,7 +769,7 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		// Reached only through an old bookmark: the menu entry disappears once
-		// the add-on is unlocked.
+		// the add-on is installed.
 		if ( $this->is_pro_active() ) {
 			?>
 			<div class="wrap fsweb-cc-wrap">
@@ -785,7 +777,7 @@ class Fsweb_Comments_Core_Admin {
 				<?php
 				$this->render_hero(
 					__( 'Comments Core PRO', 'fsweb-comments-core' ),
-					__( 'The PRO add-on is installed and your license is active.', 'fsweb-comments-core' ),
+					__( 'The PRO add-on is installed and running.', 'fsweb-comments-core' ),
 					'fsweb-comments-core-go-pro'
 				);
 				?>

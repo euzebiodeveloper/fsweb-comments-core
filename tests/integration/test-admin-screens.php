@@ -76,12 +76,10 @@ class Fsweb_Cc_Test_Admin_Screens extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-cc-pro-card', $offer );
 	}
 
-	public function test_the_offer_disappears_once_the_license_is_active() {
+	public function test_the_offer_disappears_once_the_add_on_is_installed() {
 		if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' ) ) {
 			$this->markTestSkipped( 'The PRO add-on is not installed.' );
 		}
-
-		update_option( 'fsweb_comments_core_license_status', 'active' );
 
 		$backup = $GLOBALS['submenu'] ?? null;
 
@@ -96,12 +94,10 @@ class Fsweb_Cc_Test_Admin_Screens extends Fsweb_Cc_Test_Case {
 		$this->assertContains( 'fsweb-comments-core-settings', $slugs );
 	}
 
-	public function test_the_hero_drops_the_offer_once_the_license_is_active() {
+	public function test_the_hero_drops_the_offer_once_the_add_on_is_installed() {
 		if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' ) ) {
 			$this->markTestSkipped( 'The PRO add-on is not installed.' );
 		}
-
-		update_option( 'fsweb_comments_core_license_status', 'active' );
 
 		$markup = $this->render( array( $this->admin(), 'render_settings_page' ) );
 
@@ -131,11 +127,14 @@ class Fsweb_Cc_Test_Admin_Screens extends Fsweb_Cc_Test_Case {
 		$this->assertFalse( $this->admin()->is_pro_active() );
 	}
 
-	public function test_license_active_without_the_add_on_keeps_the_pills() {
+	/**
+	 * The free edition must not read any licence option: a stored licence status
+	 * never unlocks or hides anything here. That check lives in the add-on.
+	 */
+	public function test_a_stored_licence_status_changes_nothing_in_the_free_edition() {
 		update_option( 'fsweb_comments_core_license_status', 'active' );
 
-		$this->assertFalse( $this->admin()->is_pro_active() );
-		$this->assertStringContainsString( 'fsweb-cc-pro-tag', $this->render( array( $this->admin(), 'render_builder_page' ) ) );
+		$this->assertSame( defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' ), $this->admin()->is_pro_active() );
 	}
 
 }

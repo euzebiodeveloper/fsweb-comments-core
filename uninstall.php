@@ -34,6 +34,3 @@ foreach ( $fsweb_cc_reviews as $fsweb_cc_review_id ) {
 	wp_delete_post( $fsweb_cc_review_id, true );
 }
 
-delete_option( 'fsweb_comments_core_license_key' );
-delete_option( 'fsweb_comments_core_license_status' );
-delete_option( 'fsweb_comments_core_license_expires' );

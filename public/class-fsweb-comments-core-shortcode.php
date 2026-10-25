@@ -55,6 +55,22 @@ class Fsweb_Comments_Core_Shortcode {
 
 		$layout = 'list' === $atts['layout'] ? 'list' : 'grid';
 
+		/**
+		 * Short-circuit the review rendering.
+		 *
+		 * The PRO add-on uses this to render saved views, the slider layout
+		 * and skins without duplicating the query.
+		 *
+		 * @since 1.0.0
+		 * @param string $output Markup. Empty to continue with the default renderer.
+		 * @param array  $atts   Shortcode attributes.
+		 */
+		$custom = apply_filters( 'fsweb_cc_reviews_pre_render', '', $atts );
+
+		if ( '' !== $custom ) {
+			return $custom;
+		}
+
 		$query = new WP_Query( $this->build_query( $atts ) );
 
 		if ( ! $query->have_posts() ) {

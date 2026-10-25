@@ -107,7 +107,10 @@ class Fsweb_Comments_Core {
 	private function define_public_hooks() {
 		$plugin_public = new Fsweb_Comments_Core_Public( $this->get_plugin_name(), $this->get_version() );
 
-		// Assets are enqueued by the shortcodes, only when they are rendered.
+		// Assets are registered on demand and enqueued by the shortcodes only.
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_scripts' );
+
 		$this->loader->add_filter( 'fsweb_cc_reviews_shortcode_output', $plugin_public, 'filter_reviews_output', 10, 2 );
 	}
 

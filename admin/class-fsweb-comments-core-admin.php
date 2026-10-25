@@ -131,7 +131,7 @@ class Fsweb_Comments_Core_Admin {
 			__( 'Go PRO', 'fsweb-comments-core' ),
 			'<span class="fsweb-menu-pro">' . esc_html__( 'Go PRO', 'fsweb-comments-core' ) . '</span>',
 			'manage_options',
-			'fsweb-comments-core-pro',
+			'fsweb-comments-core-go-pro',
 			array( $this, 'render_pro_page' )
 		);
 	}

@@ -112,7 +112,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				<h3 class="fsweb-review-form-title"><?php echo esc_html( $atts['title'] ); ?></h3>
 			<?php endif; ?>
 
-			<form class="fsweb-review-form" method="post" data-fsweb-form>
+			<form class="fsweb-review-form" method="post" data-fsweb-form<?php echo $this->form_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the filter owner. ?>>
 				<?php wp_nonce_field( 'fsweb_review_submit', 'fsweb_nonce' ); ?>
 
 				<?php foreach ( $fields as $field ) : ?>
@@ -162,6 +162,24 @@ class Fsweb_Comments_Core_Form_Shortcode {
 		$type     = isset( $field['type'] ) ? $field['type'] : 'text';
 		$required = ! empty( $field['required'] ) ? ' required' : '';
 		$name     = 'fsweb_field_' . $id;
+
+		/**
+		 * Render a field the free edition does not know.
+		 *
+		 * Returning a non-empty string short-circuits the built-in renderer.
+		 *
+		 * @since 1.0.0
+		 * @param string $html     Field markup.
+		 * @param array  $field    Field definition.
+		 * @param string $name     Input name.
+		 * @param string $required Required attribute.
+		 */
+		$custom = apply_filters( 'fsweb_cc_form_field_html', '', $field, $name, $required );
+
+		if ( '' !== $custom ) {
+			echo $custom; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the callback.
+			return;
+		}
 
 		switch ( $type ) {
 			case 'textarea':
@@ -244,6 +262,23 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	}
 
 	/**
+	 * Extra attributes for the <form> tag.
+	 *
+	 * @return string
+	 */
+	protected function form_attributes() {
+		/**
+		 * Filter extra attributes printed on the review form.
+		 *
+		 * @since 1.0.0
+		 * @param string $attributes Attributes, already prefixed with a space.
+		 */
+		$attributes = (string) apply_filters( 'fsweb_cc_form_attributes', '' );
+
+		return $attributes ? ' ' . $attributes : '';
+	}
+
+	/**
 	 * Whether submissions are open.
 	 *
 	 * @return bool
@@ -264,6 +299,19 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	 * @return void
 	 */
 	public function ajax_submit() {
+		/**
+		 * Whether the free handler should process the submission.
+		 *
+		 * The PRO add-on returns false here so its builder-driven handler — with
+		 * the custom fields, uploads and redirects — is the one that runs.
+		 *
+		 * @since 1.0.0
+		 * @param bool $handle Whether to handle the request.
+		 */
+		if ( ! apply_filters( 'fsweb_cc_form_handle_submission', true ) ) {
+			return;
+		}
+
 		check_ajax_referer( 'fsweb_review_submit', 'fsweb_nonce' );
 
 		if ( ! $this->forms_open() ) {

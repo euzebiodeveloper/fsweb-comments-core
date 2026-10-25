@@ -43,7 +43,15 @@ jobs:
             --exclude='*.zip' \
             --exclude='node_modules/' \
             --exclude='.vscode/' \
-            --exclude='.idea/'
+            --exclude='.idea/' \
+            --exclude='.distignore' \
+            --exclude='tests/' \
+            --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='phpunit.xml.dist' \
+            --exclude='.phpunit.result.cache' \
+            --exclude='vendor/' \
+            --exclude='PROMPT.md'
 
           cd /tmp/build
           zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" "${PLUGIN_SLUG}"

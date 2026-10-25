@@ -8,3 +8,6 @@ vendor/
 Thumbs.db
 .vscode/
 .idea/
+
+# test tooling
+.phpunit.result.cache

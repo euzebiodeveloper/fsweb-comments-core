@@ -175,7 +175,8 @@ class Fsweb_Comments_Core_Admin {
 				__( 'Overview', 'fsweb-comments-core' ),
 				'manage_options',
 				'fsweb-comments-core',
-				array( $this, 'render_overview_page' )
+				array( $this, 'render_overview_page' ),
+				3
 			);
 
 			add_submenu_page(
@@ -184,7 +185,8 @@ class Fsweb_Comments_Core_Admin {
 				__( 'Form Builder', 'fsweb-comments-core' ),
 				'manage_options',
 				'fsweb-comments-core-builder',
-				array( $this, 'render_builder_page' )
+				array( $this, 'render_builder_page' ),
+				4
 			);
 
 			add_submenu_page(
@@ -193,7 +195,8 @@ class Fsweb_Comments_Core_Admin {
 				__( 'Views Builder', 'fsweb-comments-core' ),
 				'manage_options',
 				'fsweb-comments-core-views',
-				array( $this, 'render_views_page' )
+				array( $this, 'render_views_page' ),
+				5
 			);
 		}
 
@@ -203,17 +206,23 @@ class Fsweb_Comments_Core_Admin {
 			__( 'Settings', 'fsweb-comments-core' ),
 			'manage_options',
 			'fsweb-comments-core-settings',
-			array( $this, 'render_settings_page' )
+			array( $this, 'render_settings_page' ),
+			6
 		);
 
-		add_submenu_page(
-			$parent,
-			__( 'Go PRO', 'fsweb-comments-core' ),
-			'<span class="fsweb-cc-menu-pro">' . esc_html__( 'Go PRO', 'fsweb-comments-core' ) . '</span>',
-			'manage_options',
-			'fsweb-comments-core-go-pro',
-			array( $this, 'render_go_pro_page' )
-		);
+		// The offer only exists while the add-on is not unlocked: once the
+		// license is active there is nothing left to sell.
+		if ( ! $this->is_pro_active() ) {
+			add_submenu_page(
+				$parent,
+				__( 'Go PRO', 'fsweb-comments-core' ),
+				'<span class="fsweb-cc-menu-pro">' . esc_html__( 'Go PRO', 'fsweb-comments-core' ) . '</span>',
+				'manage_options',
+				'fsweb-comments-core-go-pro',
+				array( $this, 'render_go_pro_page' ),
+				7
+			);
+		}
 	}
 
 	/**
@@ -238,48 +247,48 @@ class Fsweb_Comments_Core_Admin {
 	 */
 	private function nav_screens( $current ) {
 		$screens = array();
+		$pro     = $this->is_pro_installed();
 
-		if ( 'fsweb-comments-core-go-pro' !== $current ) {
-			$screens['fsweb-comments-core-go-pro'] = array(
-				'label' => __( 'Go PRO', 'fsweb-comments-core' ),
-				'icon'  => 'dashicons-star-filled',
-			);
-		}
-
-		if ( ! $this->is_pro_installed() ) {
-			$screens = array_merge(
-				array(
-					'fsweb-comments-core'         => array(
-						'label' => __( 'Overview', 'fsweb-comments-core' ),
-						'icon'  => 'dashicons-dashboard',
-					),
-					'fsweb-comments-core-builder' => array(
-						'label' => __( 'Form Builder', 'fsweb-comments-core' ),
-						'icon'  => 'dashicons-feedback',
-					),
-					'fsweb-comments-core-views'   => array(
-						'label' => __( 'Views Builder', 'fsweb-comments-core' ),
-						'icon'  => 'dashicons-layout',
-					),
-				),
-				$screens
+		if ( $pro ) {
+			$screens['fsweb-comments-core-pro'] = array(
+				'label' => __( 'Dashboard', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-dashboard',
 			);
 		} else {
-			$screens = array_merge(
-				array(
-					'fsweb-comments-core-pro' => array(
-						'label' => __( 'Dashboard', 'fsweb-comments-core' ),
-						'icon'  => 'dashicons-dashboard',
-					),
-				),
-				$screens
+			$screens['fsweb-comments-core'] = array(
+				'label' => __( 'Overview', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-dashboard',
 			);
 		}
+
+		$screens['fsweb-comments-core-builder'] = array(
+			'label' => __( 'Form Builder', 'fsweb-comments-core' ),
+			'icon'  => 'dashicons-feedback',
+		);
+
+		$screens['fsweb-comments-core-views'] = array(
+			'label' => __( 'Views Builder', 'fsweb-comments-core' ),
+			'icon'  => 'dashicons-layout',
+		);
 
 		$screens['fsweb-comments-core-settings'] = array(
 			'label' => __( 'Settings', 'fsweb-comments-core' ),
 			'icon'  => 'dashicons-admin-generic',
 		);
+
+		if ( $pro ) {
+			$screens['fsweb-comments-core-license'] = array(
+				'label' => __( 'License', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-awards',
+			);
+		}
+
+		if ( ! $this->is_pro_active() ) {
+			$screens['fsweb-comments-core-go-pro'] = array(
+				'label' => __( 'Go PRO', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-star-filled',
+			);
+		}
 
 		return $screens;
 	}
@@ -764,6 +773,33 @@ class Fsweb_Comments_Core_Admin {
 	 */
 	public function render_go_pro_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Reached only through an old bookmark: the menu entry disappears once
+		// the add-on is unlocked.
+		if ( $this->is_pro_active() ) {
+			?>
+			<div class="wrap fsweb-cc-wrap">
+				<hr class="wp-header-end">
+				<?php
+				$this->render_hero(
+					__( 'Comments Core PRO', 'fsweb-comments-core' ),
+					__( 'The PRO add-on is installed and your license is active.', 'fsweb-comments-core' ),
+					'fsweb-comments-core-go-pro'
+				);
+				?>
+				<div class="fsweb-cc-card">
+					<p><?php esc_html_e( 'Everything this page used to sell is already unlocked on your site.', 'fsweb-comments-core' ); ?></p>
+					<p>
+						<a class="button button-primary" href="<?php echo esc_url( $this->page_url( 'fsweb-comments-core-pro' ) ); ?>">
+							<span class="dashicons dashicons-dashboard" aria-hidden="true"></span>
+							<?php esc_html_e( 'Open the dashboard', 'fsweb-comments-core' ); ?>
+						</a>
+					</p>
+				</div>
+			</div>
+			<?php
 			return;
 		}
 		?>

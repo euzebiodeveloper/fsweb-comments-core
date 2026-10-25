@@ -22,9 +22,14 @@ $fsweb_cc_show_image = 'yes' === $atts['show_image'];
 		$fsweb_cc_rating = (int) get_post_meta( get_the_ID(), 'fsweb_rating', true );
 		?>
 		<article class="fsweb-review-list-item">
-			<?php if ( $fsweb_cc_show_image && has_post_thumbnail() ) : ?>
+			<?php if ( $fsweb_cc_show_image ) : ?>
 				<div class="fsweb-review-image">
-					<?php the_post_thumbnail( 'thumbnail', array( 'class' => 'fsweb-review-avatar', 'loading' => 'lazy' ) ); ?>
+					<?php if ( has_post_thumbnail() ) : ?>
+						<?php the_post_thumbnail( 'thumbnail', array( 'class' => 'fsweb-review-avatar', 'loading' => 'lazy' ) ); ?>
+					<?php else : ?>
+						<?php // A review without a photo still needs an anchor in the list item. ?>
+						<?php echo '<span class="fsweb-review-avatar fsweb-review-avatar--placeholder" aria-hidden="true"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" focusable="false"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2c-4.14 0-7.5 2.24-7.5 5v1h15v-1c0-2.76-3.36-5-7.5-5Z"/></svg></span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static markup. ?>
+					<?php endif; ?>
 				</div>
 			<?php endif; ?>
 

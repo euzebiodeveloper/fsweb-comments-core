@@ -50,6 +50,21 @@
 	object-fit: cover;
 	border: 3px solid #f0f0f1;
 }
+/* Neutral avatar when the review has no photo ----------------------- */
+.fsweb-review-avatar--placeholder {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: #f0f0f1;
+	color: #8c8f94;
+}
+
+.fsweb-review-avatar--placeholder svg {
+	width: 55%;
+	height: 55%;
+	display: block;
+}
+
 
 /* Body -------------------------------------------------------------- */
 .fsweb-review-name {

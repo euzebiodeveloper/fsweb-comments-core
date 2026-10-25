@@ -48,6 +48,12 @@ class Fsweb_Comments_Core_Shortcode {
 				'order'      => 'newest',
 				'show_image' => 'yes',
 				'columns'    => 3,
+				// Passed through to the add-on: a saved view brings its own
+				// layout, skin and composition, and dropping these here meant
+				// [fsweb_reviews id="default"] silently rendered the default
+				// grid instead of the configured view.
+				'id'         => '',
+				'skin'       => '',
 			),
 			$atts,
 			'fsweb_reviews'

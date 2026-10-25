@@ -102,11 +102,13 @@ class Fsweb_Comments_Core_Admin {
 			return;
 		}
 
+		$stylesheet = FSWEB_COMMENTS_CORE_DIR . 'admin/css/fsweb-comments-core-admin.css';
+
 		wp_enqueue_style(
 			$this->plugin_name,
 			FSWEB_COMMENTS_CORE_URL . 'admin/css/fsweb-comments-core-admin.css',
 			array(),
-			$this->version
+			file_exists( $stylesheet ) ? (string) filemtime( $stylesheet ) : $this->version
 		);
 	}
 
@@ -121,11 +123,13 @@ class Fsweb_Comments_Core_Admin {
 			return;
 		}
 
+		$script = FSWEB_COMMENTS_CORE_DIR . 'admin/js/fsweb-comments-core-admin.js';
+
 		wp_enqueue_script(
 			$this->plugin_name,
 			FSWEB_COMMENTS_CORE_URL . 'admin/js/fsweb-comments-core-admin.js',
 			array(),
-			$this->version,
+			file_exists( $script ) ? (string) filemtime( $script ) : $this->version,
 			true
 		);
 	}
@@ -441,6 +445,9 @@ class Fsweb_Comments_Core_Admin {
 		<div class="wrap fsweb-cc-wrap">
 			<hr class="wp-header-end">
 			<?php
+			?>
+		<div class="wrap fsweb-cc-wrap">
+			<?php
 			$this->render_hero(
 				__( 'Comments Core', 'fsweb-comments-core' ),
 				__( 'Collect reviews, moderate them and display them anywhere with a shortcode.', 'fsweb-comments-core' ),
@@ -553,23 +560,25 @@ class Fsweb_Comments_Core_Admin {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-
-		$this->render_hero(
-			__( 'Form Builder', 'fsweb-comments-core' ),
-			__( 'Build the review form field by field, with extra types and multiple steps.', 'fsweb-comments-core' ),
-			'fsweb-comments-core-builder',
-			array(
-				array(
-					'label'   => __( 'Get the PRO add-on', 'fsweb-comments-core' ),
-					'url'     => $this->pro_url(),
-					'icon'    => 'dashicons-star-filled',
-					'primary' => true,
-					'target'  => true,
-				),
-			)
-		);
 		?>
 		<div class="wrap fsweb-cc-wrap">
+			<?php
+			$this->render_hero(
+				__( 'Form Builder', 'fsweb-comments-core' ),
+				__( 'Build the review form field by field, with extra types and multiple steps.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-builder',
+				array(
+					array(
+						'label'   => __( 'Get the PRO add-on', 'fsweb-comments-core' ),
+						'url'     => $this->pro_url(),
+						'icon'    => 'dashicons-star-filled',
+						'primary' => true,
+						'target'  => true,
+					),
+				)
+			);
+			?>
+
 			<div class="fsweb-cc-grid">
 				<div class="fsweb-cc-card">
 					<div class="fsweb-cc-card__header">
@@ -653,23 +662,25 @@ class Fsweb_Comments_Core_Admin {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-
-		$this->render_hero(
-			__( 'Views Builder', 'fsweb-comments-core' ),
-			__( 'Design the review card and pick the layout, the skin and the CSS for each view.', 'fsweb-comments-core' ),
-			'fsweb-comments-core-views',
-			array(
-				array(
-					'label'   => __( 'Get the PRO add-on', 'fsweb-comments-core' ),
-					'url'     => $this->pro_url(),
-					'icon'    => 'dashicons-star-filled',
-					'primary' => true,
-					'target'  => true,
-				),
-			)
-		);
 		?>
 		<div class="wrap fsweb-cc-wrap">
+			<?php
+			$this->render_hero(
+				__( 'Views Builder', 'fsweb-comments-core' ),
+				__( 'Design the review card and pick the layout, the skin and the CSS for each view.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-views',
+				array(
+					array(
+						'label'   => __( 'Get the PRO add-on', 'fsweb-comments-core' ),
+						'url'     => $this->pro_url(),
+						'icon'    => 'dashicons-star-filled',
+						'primary' => true,
+						'target'  => true,
+					),
+				)
+			);
+			?>
+
 			<div class="fsweb-cc-grid">
 				<div class="fsweb-cc-card">
 					<div class="fsweb-cc-card__header">

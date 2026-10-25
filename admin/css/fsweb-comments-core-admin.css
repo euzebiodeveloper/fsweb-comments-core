@@ -35,7 +35,7 @@
 .fsweb-cc-hero {
 	position: relative;
 	overflow: hidden;
-	margin: 16px 20px 20px 2px;
+	margin: 16px 0 20px;
 	padding: 30px 36px;
 	border-radius: var(--fsweb-cc-radius);
 	background: linear-gradient(120deg, var(--fsweb-cc-brand) 0%, var(--fsweb-cc-brand-dark) 100%);
@@ -80,7 +80,7 @@
 	flex-shrink: 0;
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button {
+.fsweb-cc-hero .button {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -95,28 +95,28 @@
 	box-shadow: none;
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button:hover,
-.fsweb-cc-wrap .fsweb-cc-hero .button:focus {
+.fsweb-cc-hero .button:hover,
+.fsweb-cc-hero .button:focus {
 	background: rgba(255, 255, 255, 0.22);
 	border-color: rgba(255, 255, 255, 0.55);
 	color: #fff;
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary {
+.fsweb-cc-hero .button.button-primary {
 	background: #fff;
 	border-color: #fff;
 	color: var(--fsweb-cc-brand-dark);
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] {
+.fsweb-cc-hero .button[aria-current="page"] {
 	background: #fff;
 	border-color: #fff;
 	color: var(--fsweb-cc-brand-dark);
 	cursor: default;
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
-.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
+.fsweb-cc-hero .button .dashicons,
+.fsweb-cc-hero .button .dashicons:before {
 	color: inherit;
 	-webkit-text-fill-color: currentColor;
 }

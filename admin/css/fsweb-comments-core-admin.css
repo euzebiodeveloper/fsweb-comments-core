@@ -80,9 +80,10 @@
 	flex-shrink: 0;
 }
 
-.fsweb-cc-hero .button {
+.fsweb-cc-wrap .fsweb-cc-hero .button {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 6px;
 	min-height: 38px;
 	padding: 0 16px;
@@ -91,34 +92,50 @@
 	background: rgba(255, 255, 255, 0.12);
 	color: #fff;
 	font-weight: 600;
+	line-height: 1;
 	text-decoration: none;
 	box-shadow: none;
 }
 
-.fsweb-cc-hero .button:hover,
-.fsweb-cc-hero .button:focus {
+.fsweb-cc-wrap .fsweb-cc-hero .button:hover,
+.fsweb-cc-wrap .fsweb-cc-hero .button:focus {
 	background: rgba(255, 255, 255, 0.22);
 	border-color: rgba(255, 255, 255, 0.55);
 	color: #fff;
 }
 
-.fsweb-cc-hero .button.button-primary {
+/* White icons by default; purple when the button is highlighted. */
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
+	color: #fff;
+	-webkit-text-fill-color: #fff;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary,
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] {
 	background: #fff;
 	border-color: #fff;
 	color: var(--fsweb-cc-brand-dark);
 }
 
-.fsweb-cc-hero .button[aria-current="page"] {
-	background: #fff;
-	border-color: #fff;
-	color: var(--fsweb-cc-brand-dark);
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] {
 	cursor: default;
 }
 
-.fsweb-cc-hero .button .dashicons,
-.fsweb-cc-hero .button .dashicons:before {
-	color: inherit;
-	-webkit-text-fill-color: currentColor;
+.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary .dashicons:before,
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons:before {
+	color: var(--fsweb-cc-brand-dark);
+	-webkit-text-fill-color: var(--fsweb-cc-brand-dark);
 }
 
 /* Keep admin notices readable inside the plugin pages. */
@@ -279,6 +296,10 @@
 	margin-bottom: 0;
 }
 
+.fsweb-cc-list--ordered {
+	list-style: decimal;
+}
+
 .fsweb-cc-table th {
 	font-weight: 600;
 	color: var(--fsweb-cc-heading);
@@ -288,16 +309,21 @@
 	vertical-align: middle;
 }
 
-.fsweb-cc-locked-row th,
-.fsweb-cc-locked-row td {
-	opacity: 0.75;
+.fsweb-cc-locked-row th {
+	font-weight: 600;
+	color: var(--fsweb-cc-heading);
 }
 
-.fsweb-cc-locked-row input,
-.fsweb-cc-locked-row select,
-.fsweb-cc-locked-row textarea {
+.fsweb-cc-locked {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border: 1px dashed var(--fsweb-cc-line);
+	border-radius: var(--fsweb-cc-radius-sm);
 	background: var(--fsweb-cc-soft);
-	cursor: not-allowed;
+	color: var(--fsweb-cc-muted);
+	font-size: 13px;
+	font-style: italic;
 }
 
 /* ------------------------------------------------------------------ */
@@ -314,7 +340,19 @@
 	font-weight: 700;
 	letter-spacing: 0.4px;
 	line-height: 1.7;
+	text-decoration: none;
 	vertical-align: middle;
+}
+
+.fsweb-cc-pro-tag:hover,
+.fsweb-cc-pro-tag:focus {
+	background: #b32d2e;
+	color: #fff;
+}
+
+.fsweb-cc-menu-pro {
+	color: #d63638;
+	font-weight: 600;
 }
 
 .fsweb-cc-card--pro {
@@ -373,6 +411,26 @@
 	font-size: 17px;
 	width: 17px;
 	height: 17px;
+}
+
+.fsweb-cc-pro-card__text .button.button-primary {
+	background: var(--fsweb-cc-brand);
+	border-color: var(--fsweb-cc-brand);
+	color: #fff;
+	box-shadow: 0 4px 12px rgba(123, 97, 255, 0.25);
+}
+
+.fsweb-cc-pro-card__text .button.button-primary:hover,
+.fsweb-cc-pro-card__text .button.button-primary:focus {
+	background: var(--fsweb-cc-brand-dark);
+	border-color: var(--fsweb-cc-brand-dark);
+	color: #fff;
+}
+
+.fsweb-cc-pro-card__text .button.button-primary .dashicons,
+.fsweb-cc-pro-card__text .button.button-primary .dashicons:before {
+	color: #fff;
+	-webkit-text-fill-color: #fff;
 }
 
 /* ------------------------------------------------------------------ */

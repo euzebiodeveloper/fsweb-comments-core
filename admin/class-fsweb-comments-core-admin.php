@@ -62,7 +62,7 @@ class Fsweb_Comments_Core_Admin {
 	 * @return bool
 	 */
 	public function is_pro_active() {
-		if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' ) ) {
+		if ( ! $this->is_pro_installed() ) {
 			return false;
 		}
 
@@ -93,6 +93,9 @@ class Fsweb_Comments_Core_Admin {
 
 	/**
 	 * Enqueue the admin stylesheet on our screens.
+	 *
+	 * The version comes from the file timestamp so a changed stylesheet is
+	 * never served from the browser cache.
 	 *
 	 * @param string $hook_suffix Current admin page.
 	 * @return void
@@ -157,16 +160,14 @@ class Fsweb_Comments_Core_Admin {
 	/**
 	 * Register the submenu pages.
 	 *
-	 * The PRO add-on registers the builder and views screens with the same
-	 * slugs at a later priority, replacing these previews.
+	 * With the add-on installed it owns the overview and both builders, so the
+	 * free edition only keeps the settings screen and the PRO page.
 	 *
 	 * @return void
 	 */
 	public function add_admin_menu() {
 		$parent = 'edit.php?post_type=fsweb_review';
 
-		// With the add-on installed it owns the overview and both builders, so the
-		// free edition only keeps the settings screen to avoid duplicate menus.
 		if ( ! $this->is_pro_installed() ) {
 			add_submenu_page(
 				$parent,
@@ -204,6 +205,15 @@ class Fsweb_Comments_Core_Admin {
 			'fsweb-comments-core-settings',
 			array( $this, 'render_settings_page' )
 		);
+
+		add_submenu_page(
+			$parent,
+			__( 'Go PRO', 'fsweb-comments-core' ),
+			'<span class="fsweb-cc-menu-pro">' . esc_html__( 'Go PRO', 'fsweb-comments-core' ) . '</span>',
+			'manage_options',
+			'fsweb-comments-core-go-pro',
+			array( $this, 'render_go_pro_page' )
+		);
 	}
 
 	/**
@@ -221,35 +231,69 @@ class Fsweb_Comments_Core_Admin {
 	// ------------------------------------------------------------------//
 
 	/**
+	 * Screens shown in the hero navigation.
+	 *
+	 * @param string $current Slug of the current screen.
+	 * @return array
+	 */
+	private function nav_screens( $current ) {
+		$screens = array();
+
+		if ( 'fsweb-comments-core-go-pro' !== $current ) {
+			$screens['fsweb-comments-core-go-pro'] = array(
+				'label' => __( 'Go PRO', 'fsweb-comments-core' ),
+				'icon'  => 'dashicons-star-filled',
+			);
+		}
+
+		if ( ! $this->is_pro_installed() ) {
+			$screens = array_merge(
+				array(
+					'fsweb-comments-core'         => array(
+						'label' => __( 'Overview', 'fsweb-comments-core' ),
+						'icon'  => 'dashicons-dashboard',
+					),
+					'fsweb-comments-core-builder' => array(
+						'label' => __( 'Form Builder', 'fsweb-comments-core' ),
+						'icon'  => 'dashicons-feedback',
+					),
+					'fsweb-comments-core-views'   => array(
+						'label' => __( 'Views Builder', 'fsweb-comments-core' ),
+						'icon'  => 'dashicons-layout',
+					),
+				),
+				$screens
+			);
+		} else {
+			$screens = array_merge(
+				array(
+					'fsweb-comments-core-pro' => array(
+						'label' => __( 'Dashboard', 'fsweb-comments-core' ),
+						'icon'  => 'dashicons-dashboard',
+					),
+				),
+				$screens
+			);
+		}
+
+		$screens['fsweb-comments-core-settings'] = array(
+			'label' => __( 'Settings', 'fsweb-comments-core' ),
+			'icon'  => 'dashicons-admin-generic',
+		);
+
+		return $screens;
+	}
+
+	/**
 	 * Render the hero header shared by every screen.
 	 *
 	 * @param string $title       Screen title.
 	 * @param string $description One-line description.
 	 * @param string $current     Slug of the current screen.
-	 * @param array  $actions     Extra buttons: array( 'label', 'url', 'icon', 'primary' ).
 	 * @return void
 	 */
-	private function render_hero( $title, $description, $current = '', $actions = array() ) {
-		$overview = $this->is_pro_installed() ? 'fsweb-comments-core-pro' : 'fsweb-comments-core';
-
-		$screens = array(
-			$overview => array(
-				'label' => __( 'Overview', 'fsweb-comments-core' ),
-				'icon'  => 'dashicons-dashboard',
-			),
-			'fsweb-comments-core-builder' => array(
-				'label' => __( 'Form Builder', 'fsweb-comments-core' ),
-				'icon'  => 'dashicons-feedback',
-			),
-			'fsweb-comments-core-views'   => array(
-				'label' => __( 'Views Builder', 'fsweb-comments-core' ),
-				'icon'  => 'dashicons-layout',
-			),
-			'fsweb-comments-core-settings' => array(
-				'label' => __( 'Settings', 'fsweb-comments-core' ),
-				'icon'  => 'dashicons-admin-generic',
-			),
-		);
+	private function render_hero( $title, $description, $current = '' ) {
+		$screens = $this->nav_screens( $current );
 		?>
 		<div class="fsweb-cc-hero fsweb-cc-hero--split">
 			<div class="fsweb-cc-hero__text">
@@ -257,32 +301,19 @@ class Fsweb_Comments_Core_Admin {
 				<p><?php echo esc_html( $description ); ?></p>
 			</div>
 			<div class="fsweb-cc-hero__actions">
-				<?php foreach ( $actions as $action ) : ?>
-					<a class="button<?php echo ! empty( $action['primary'] ) ? ' button-primary' : ''; ?>"
-						href="<?php echo esc_url( $action['url'] ); ?>"
-						<?php echo ! empty( $action['target'] ) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
-						<?php if ( ! empty( $action['icon'] ) ) : ?>
-							<span class="dashicons <?php echo esc_attr( $action['icon'] ); ?>" aria-hidden="true"></span>
-						<?php endif; ?>
-						<?php echo esc_html( $action['label'] ); ?>
-					</a>
+				<?php foreach ( $screens as $slug => $screen ) : ?>
+					<?php if ( $slug === $current ) : ?>
+						<span class="button" aria-current="page">
+							<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
+							<?php echo esc_html( $screen['label'] ); ?>
+						</span>
+					<?php else : ?>
+						<a class="button" href="<?php echo esc_url( $this->page_url( $slug ) ); ?>">
+							<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
+							<?php echo esc_html( $screen['label'] ); ?>
+						</a>
+					<?php endif; ?>
 				<?php endforeach; ?>
-
-				<?php if ( '' !== $current ) : ?>
-					<?php foreach ( $screens as $slug => $screen ) : ?>
-						<?php if ( $slug === $current ) : ?>
-							<span class="button" aria-current="page">
-								<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
-								<?php echo esc_html( $screen['label'] ); ?>
-							</span>
-						<?php else : ?>
-							<a class="button" href="<?php echo esc_url( $this->page_url( $slug ) ); ?>">
-								<span class="dashicons <?php echo esc_attr( $screen['icon'] ); ?>" aria-hidden="true"></span>
-								<?php echo esc_html( $screen['label'] ); ?>
-							</a>
-						<?php endif; ?>
-					<?php endforeach; ?>
-				<?php endif; ?>
 			</div>
 		</div>
 		<?php
@@ -291,66 +322,27 @@ class Fsweb_Comments_Core_Admin {
 	/**
 	 * PRO pill.
 	 *
-	 * @param bool $locked Whether to print it.
 	 * @return void
 	 */
-	private function pro_tag( $locked = true ) {
-		if ( ! $locked ) {
-			return;
-		}
-		?>
-		<span class="fsweb-cc-pro-tag"><?php esc_html_e( 'PRO', 'fsweb-comments-core' ); ?></span>
-		<?php
-	}
-
-	/**
-	 * Invitation card shown while PRO is not licensed.
-	 *
-	 * @param string $title   Card title.
-	 * @param string $lead    Lead paragraph.
-	 * @param array  $bullets Feature list.
-	 * @return void
-	 */
-	private function render_pro_card( $title, $lead, $bullets ) {
+	private function pro_tag() {
 		if ( $this->is_pro_active() ) {
 			return;
 		}
 		?>
-		<div class="fsweb-cc-card fsweb-cc-card--pro">
-			<div class="fsweb-cc-pro-card">
-				<span class="fsweb-cc-pro-card__icon dashicons dashicons-star-filled" aria-hidden="true"></span>
-				<div class="fsweb-cc-pro-card__text">
-					<h2>
-						<?php echo esc_html( $title ); ?>
-						<?php $this->pro_tag(); ?>
-					</h2>
-					<p><?php echo esc_html( $lead ); ?></p>
-					<ul class="fsweb-cc-list">
-						<?php foreach ( $bullets as $bullet ) : ?>
-							<li><?php echo esc_html( $bullet ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-					<p>
-						<a class="button button-primary" href="<?php echo esc_url( $this->pro_url() ); ?>" target="_blank" rel="noopener noreferrer">
-							<span class="dashicons dashicons-external" aria-hidden="true"></span>
-							<?php esc_html_e( 'Get Comments Core PRO', 'fsweb-comments-core' ); ?>
-						</a>
-					</p>
-				</div>
-			</div>
-		</div>
+		<a class="fsweb-cc-pro-tag" href="<?php echo esc_url( $this->page_url( 'fsweb-comments-core-go-pro' ) ); ?>">
+			<?php esc_html_e( 'PRO', 'fsweb-comments-core' ); ?>
+		</a>
 		<?php
 	}
 
 	/**
-	 * Render a disabled control with the PRO pill.
+	 * Render a locked option: label with the PRO pill and a muted value.
 	 *
-	 * @param string $label Control label.
-	 * @param string $type  Control type: text, select, checkbox, color.
+	 * @param string $label Option label.
 	 * @param string $hint  Optional description.
 	 * @return void
 	 */
-	private function render_locked_field( $label, $type = 'text', $hint = '' ) {
+	private function render_locked_field( $label, $hint = '' ) {
 		?>
 		<tr class="fsweb-cc-locked-row">
 			<th scope="row">
@@ -358,21 +350,9 @@ class Fsweb_Comments_Core_Admin {
 				<?php $this->pro_tag(); ?>
 			</th>
 			<td>
-				<?php if ( 'checkbox' === $type ) : ?>
-					<label>
-						<input type="checkbox" disabled>
-						<?php esc_html_e( 'Available in the PRO add-on', 'fsweb-comments-core' ); ?>
-					</label>
-				<?php elseif ( 'select' === $type ) : ?>
-					<select disabled>
-						<option><?php esc_html_e( 'Available in the PRO add-on', 'fsweb-comments-core' ); ?></option>
-					</select>
-				<?php elseif ( 'textarea' === $type ) : ?>
-					<textarea class="large-text" rows="3" disabled placeholder="<?php esc_attr_e( 'Custom CSS becomes available with the PRO add-on.', 'fsweb-comments-core' ); ?>"></textarea>
-				<?php else : ?>
-					<input type="text" class="regular-text" disabled placeholder="<?php esc_attr_e( 'Available in the PRO add-on', 'fsweb-comments-core' ); ?>">
-				<?php endif; ?>
-
+				<span class="fsweb-cc-locked">
+					<?php esc_html_e( 'Available in the PRO add-on', 'fsweb-comments-core' ); ?>
+				</span>
 				<?php if ( '' !== $hint ) : ?>
 					<p class="description"><?php echo esc_html( $hint ); ?></p>
 				<?php endif; ?>
@@ -445,27 +425,10 @@ class Fsweb_Comments_Core_Admin {
 		<div class="wrap fsweb-cc-wrap">
 			<hr class="wp-header-end">
 			<?php
-			?>
-		<div class="wrap fsweb-cc-wrap">
-			<?php
 			$this->render_hero(
 				__( 'Comments Core', 'fsweb-comments-core' ),
 				__( 'Collect reviews, moderate them and display them anywhere with a shortcode.', 'fsweb-comments-core' ),
-				'fsweb-comments-core',
-				array(
-					array(
-						'label' => __( 'Add review', 'fsweb-comments-core' ),
-						'url'   => admin_url( 'post-new.php?post_type=fsweb_review' ),
-						'icon'  => 'dashicons-plus-alt',
-					),
-					array(
-						'label'   => __( 'Go PRO', 'fsweb-comments-core' ),
-						'url'     => $this->pro_url(),
-						'icon'    => 'dashicons-star-filled',
-						'primary' => true,
-						'target'  => true,
-					),
-				)
+				'fsweb-comments-core'
 			);
 			?>
 
@@ -529,23 +492,13 @@ class Fsweb_Comments_Core_Admin {
 								<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>
 								<?php esc_html_e( 'Open settings', 'fsweb-comments-core' ); ?>
 							</a>
+							<a class="button" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=fsweb_review' ) ); ?>">
+								<span class="dashicons dashicons-plus-alt" aria-hidden="true"></span>
+								<?php esc_html_e( 'Add review', 'fsweb-comments-core' ); ?>
+							</a>
 						</p>
 					</div>
 				</div>
-
-				<?php
-				$this->render_pro_card(
-					__( 'Comments Core PRO', 'fsweb-comments-core' ),
-					__( 'The free edition covers the whole flow: reviews, ratings, moderation and shortcodes. The PRO add-on gives you the visual builders and the extra layouts.', 'fsweb-comments-core' ),
-					array(
-						__( 'Drag and drop Form Builder with 8 field types and multi-step forms', 'fsweb-comments-core' ),
-						__( 'Views Builder: compose the review card with rows, columns and components', 'fsweb-comments-core' ),
-						__( 'Slider layout and ready-made skins (dark, minimal, colorful, flat)', 'fsweb-comments-core' ),
-						__( 'Custom CSS per view and front-end photo upload', 'fsweb-comments-core' ),
-						__( 'License activation and automatic updates', 'fsweb-comments-core' ),
-					)
-				);
-				?>
 			</div>
 		</div>
 		<?php
@@ -562,20 +515,12 @@ class Fsweb_Comments_Core_Admin {
 		}
 		?>
 		<div class="wrap fsweb-cc-wrap">
+			<hr class="wp-header-end">
 			<?php
 			$this->render_hero(
 				__( 'Form Builder', 'fsweb-comments-core' ),
 				__( 'Build the review form field by field, with extra types and multiple steps.', 'fsweb-comments-core' ),
-				'fsweb-comments-core-builder',
-				array(
-					array(
-						'label'   => __( 'Get the PRO add-on', 'fsweb-comments-core' ),
-						'url'     => $this->pro_url(),
-						'icon'    => 'dashicons-star-filled',
-						'primary' => true,
-						'target'  => true,
-					),
-				)
+				'fsweb-comments-core-builder'
 			);
 			?>
 
@@ -609,7 +554,7 @@ class Fsweb_Comments_Core_Admin {
 							$this->render_locked_field( __( 'Date', 'fsweb-comments-core' ) );
 							$this->render_locked_field( __( 'Select', 'fsweb-comments-core' ) );
 							$this->render_locked_field( __( 'URL', 'fsweb-comments-core' ) );
-							$this->render_locked_field( __( 'Photo upload', 'fsweb-comments-core' ), 'text', __( 'Visitors attach a photo to the review.', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Photo upload', 'fsweb-comments-core' ), __( 'Visitors attach a photo to the review.', 'fsweb-comments-core' ) );
 							?>
 						</table>
 						<p class="description">
@@ -628,26 +573,13 @@ class Fsweb_Comments_Core_Admin {
 					<div class="fsweb-cc-card__body">
 						<table class="form-table fsweb-cc-table" role="presentation">
 							<?php
-							$this->render_locked_field( __( 'Multi-step form', 'fsweb-comments-core' ), 'checkbox', __( 'Split the form into steps with a progress indicator.', 'fsweb-comments-core' ) );
-							$this->render_locked_field( __( 'Redirect after submit', 'fsweb-comments-core' ), 'text', __( 'Send the visitor to a thank-you page after the review is accepted.', 'fsweb-comments-core' ) );
-							$this->render_locked_field( __( 'Saved forms', 'fsweb-comments-core' ), 'select', __( 'Keep several forms and choose one per shortcode with [fsweb_review_form id="..."] .', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Multi-step form', 'fsweb-comments-core' ), __( 'Split the form into steps with a progress indicator.', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Redirect after submit', 'fsweb-comments-core' ), __( 'Send the visitor to a thank-you page after the review is accepted.', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Saved forms', 'fsweb-comments-core' ), __( 'Keep several forms and choose one per shortcode with [fsweb_review_form id="..."].', 'fsweb-comments-core' ) );
 							?>
 						</table>
 					</div>
 				</div>
-
-				<?php
-				$this->render_pro_card(
-					__( 'Unlock the Form Builder', 'fsweb-comments-core' ),
-					__( 'Install the PRO add-on on top of this plugin to design the form without code.', 'fsweb-comments-core' ),
-					array(
-						__( 'Drag and drop the field order', 'fsweb-comments-core' ),
-						__( '8 field types: text, email, URL, textarea, rating, select, date and file', 'fsweb-comments-core' ),
-						__( 'Multi-step forms with progress indicator', 'fsweb-comments-core' ),
-						__( 'Several saved forms, one per shortcode', 'fsweb-comments-core' ),
-					)
-				);
-				?>
 			</div>
 		</div>
 		<?php
@@ -664,20 +596,12 @@ class Fsweb_Comments_Core_Admin {
 		}
 		?>
 		<div class="wrap fsweb-cc-wrap">
+			<hr class="wp-header-end">
 			<?php
 			$this->render_hero(
 				__( 'Views Builder', 'fsweb-comments-core' ),
 				__( 'Design the review card and pick the layout, the skin and the CSS for each view.', 'fsweb-comments-core' ),
-				'fsweb-comments-core-views',
-				array(
-					array(
-						'label'   => __( 'Get the PRO add-on', 'fsweb-comments-core' ),
-						'url'     => $this->pro_url(),
-						'icon'    => 'dashicons-star-filled',
-						'primary' => true,
-						'target'  => true,
-					),
-				)
+				'fsweb-comments-core-views'
 			);
 			?>
 
@@ -699,7 +623,7 @@ class Fsweb_Comments_Core_Admin {
 								<th scope="row"><?php esc_html_e( 'List', 'fsweb-comments-core' ); ?></th>
 								<td><span class="fsweb-cc-pill is-on"><?php esc_html_e( 'Included', 'fsweb-comments-core' ); ?></span></td>
 							</tr>
-							<?php $this->render_locked_field( __( 'Slider', 'fsweb-comments-core' ), 'text', __( 'Swipe, keyboard and dot navigation, no external library.', 'fsweb-comments-core' ) ); ?>
+							<?php $this->render_locked_field( __( 'Slider', 'fsweb-comments-core' ), __( 'Swipe, keyboard and dot navigation, no external library.', 'fsweb-comments-core' ) ); ?>
 						</table>
 						<p class="description">
 							<?php esc_html_e( 'In the free edition the shortcode renders the grid and list layouts. The slider is part of the PRO add-on.', 'fsweb-comments-core' ); ?>
@@ -717,26 +641,13 @@ class Fsweb_Comments_Core_Admin {
 					<div class="fsweb-cc-card__body">
 						<table class="form-table fsweb-cc-table" role="presentation">
 							<?php
-							$this->render_locked_field( __( 'Skin', 'fsweb-comments-core' ), 'select', __( 'Dark, minimal, colorful and flat, ready to use.', 'fsweb-comments-core' ) );
-							$this->render_locked_field( __( 'Custom CSS', 'fsweb-comments-core' ), 'textarea', __( 'Write the CSS of each view without touching the theme.', 'fsweb-comments-core' ) );
-							$this->render_locked_field( __( 'Card composition', 'fsweb-comments-core' ), 'select', __( 'Choose which components appear in the card and in which order.', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Skin', 'fsweb-comments-core' ), __( 'Dark, minimal, colorful and flat, ready to use.', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Custom CSS', 'fsweb-comments-core' ), __( 'Write the CSS of each view without touching the theme.', 'fsweb-comments-core' ) );
+							$this->render_locked_field( __( 'Card composition', 'fsweb-comments-core' ), __( 'Choose which components appear in the card and in which order.', 'fsweb-comments-core' ) );
 							?>
 						</table>
 					</div>
 				</div>
-
-				<?php
-				$this->render_pro_card(
-					__( 'Unlock the Views Builder', 'fsweb-comments-core' ),
-					__( 'Install the PRO add-on to compose the card visually and reuse the view in any page.', 'fsweb-comments-core' ),
-					array(
-						__( 'Rows, columns and components with per-view styles', 'fsweb-comments-core' ),
-						__( 'Slider layout with dot navigation', 'fsweb-comments-core' ),
-						__( 'Four ready-made skins plus custom CSS', 'fsweb-comments-core' ),
-						__( 'Saved views used with [fsweb_reviews id="..."]', 'fsweb-comments-core' ),
-					)
-				);
-				?>
 			</div>
 		</div>
 		<?php
@@ -802,20 +713,18 @@ class Fsweb_Comments_Core_Admin {
 						</div>
 					</div>
 
-					<?php if ( ! $this->is_pro_active() ) : ?>
 					<div class="fsweb-cc-card">
 						<div class="fsweb-cc-card__header">
 							<h2>
 								<span class="dashicons dashicons-art" aria-hidden="true"></span>
 								<?php esc_html_e( 'Appearance', 'fsweb-comments-core' ); ?>
-								<?php $this->pro_tag(); ?>
 							</h2>
 						</div>
 						<div class="fsweb-cc-card__body">
 							<table class="form-table" role="presentation">
 								<?php
-								$this->render_locked_field( __( 'Default skin', 'fsweb-comments-core' ), 'select', __( 'Applies a ready-made skin to every view.', 'fsweb-comments-core' ) );
-								$this->render_locked_field( __( 'Custom CSS', 'fsweb-comments-core' ), 'textarea', __( 'Extra CSS loaded after the plugin styles.', 'fsweb-comments-core' ) );
+								$this->render_locked_field( __( 'Default skin', 'fsweb-comments-core' ), __( 'Applies a ready-made skin to every view.', 'fsweb-comments-core' ) );
+								$this->render_locked_field( __( 'Custom CSS', 'fsweb-comments-core' ), __( 'Extra CSS loaded after the plugin styles.', 'fsweb-comments-core' ) );
 								?>
 							</table>
 							<p class="description">
@@ -823,24 +732,81 @@ class Fsweb_Comments_Core_Admin {
 							</p>
 						</div>
 					</div>
-					<?php endif; ?>
-
-					<?php
-					$this->render_pro_card(
-						__( 'Go further with PRO', 'fsweb-comments-core' ),
-						__( 'One license unlocks the builders, the skins and the automatic updates.', 'fsweb-comments-core' ),
-						array(
-							__( 'Form Builder and Views Builder', 'fsweb-comments-core' ),
-							__( 'Slider layout, skins and custom CSS', 'fsweb-comments-core' ),
-							__( 'Front-end photo upload', 'fsweb-comments-core' ),
-							__( 'Automatic updates and priority support', 'fsweb-comments-core' ),
-						)
-					);
-					?>
 				</div>
 
 				<?php submit_button(); ?>
 			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Go PRO screen.
+	 *
+	 * Single page with the full offer; every other screen only carries the
+	 * small PRO pills next to the locked options.
+	 *
+	 * @return void
+	 */
+	public function render_go_pro_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		?>
+		<div class="wrap fsweb-cc-wrap">
+			<hr class="wp-header-end">
+			<?php
+			$this->render_hero(
+				__( 'Comments Core PRO', 'fsweb-comments-core' ),
+				__( 'Unlock the builders, the slider, the skins and the automatic updates with a single license.', 'fsweb-comments-core' ),
+				'fsweb-comments-core-go-pro'
+			);
+			?>
+
+			<div class="fsweb-cc-grid">
+				<div class="fsweb-cc-card fsweb-cc-card--pro">
+					<div class="fsweb-cc-pro-card">
+						<span class="fsweb-cc-pro-card__icon dashicons dashicons-star-filled" aria-hidden="true"></span>
+						<div class="fsweb-cc-pro-card__text">
+							<h2><?php esc_html_e( 'What the PRO add-on adds', 'fsweb-comments-core' ); ?></h2>
+							<ul class="fsweb-cc-list">
+								<li><?php esc_html_e( 'Form Builder: 8 field types, drag and drop order, multi-step forms', 'fsweb-comments-core' ); ?></li>
+								<li><?php esc_html_e( 'Views Builder: rows, columns and components with per-view styles', 'fsweb-comments-core' ); ?></li>
+								<li><?php esc_html_e( 'Slider layout with dot navigation', 'fsweb-comments-core' ); ?></li>
+								<li><?php esc_html_e( 'Four ready-made skins plus custom CSS per view', 'fsweb-comments-core' ); ?></li>
+								<li><?php esc_html_e( 'Front-end photo upload', 'fsweb-comments-core' ); ?></li>
+								<li><?php esc_html_e( 'License activation and automatic updates', 'fsweb-comments-core' ); ?></li>
+							</ul>
+							<p>
+								<a class="button button-primary" href="<?php echo esc_url( $this->pro_url() ); ?>" target="_blank" rel="noopener noreferrer">
+									<span class="dashicons dashicons-external" aria-hidden="true"></span>
+									<?php esc_html_e( 'Get Comments Core PRO', 'fsweb-comments-core' ); ?>
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="fsweb-cc-card">
+					<div class="fsweb-cc-card__header">
+						<h2>
+							<span class="dashicons dashicons-admin-plugins" aria-hidden="true"></span>
+							<?php esc_html_e( 'How the license works', 'fsweb-comments-core' ); ?>
+						</h2>
+					</div>
+					<div class="fsweb-cc-card__body">
+						<ol class="fsweb-cc-list fsweb-cc-list--ordered">
+							<li><?php esc_html_e( 'Install the free plugin (this one) and keep it active.', 'fsweb-comments-core' ); ?></li>
+							<li><?php esc_html_e( 'Buy the license and download the PRO add-on ZIP.', 'fsweb-comments-core' ); ?></li>
+							<li><?php esc_html_e( 'Install and activate the add-on — it appears under Reviews → Dashboard.', 'fsweb-comments-core' ); ?></li>
+							<li><?php esc_html_e( 'Open Reviews → License and paste your key. The PRO pills disappear and every feature is unlocked.', 'fsweb-comments-core' ); ?></li>
+						</ol>
+						<p class="description">
+							<?php esc_html_e( 'One key works for both editions: the add-on always validates the base slug fsweb-comments-core.', 'fsweb-comments-core' ); ?>
+						</p>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 	}

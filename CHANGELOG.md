@@ -19,5 +19,9 @@ plugin (now the PRO add-on).
 - Moderation queue: submissions are created as pending
 - Admin overview with published, pending and average rating counters
 - Settings screen to open or close submissions
+- Every screen opens with the same gradient hero header and quick navigation
+- Form Builder and Views Builder screens ship in the free edition with the
+  premium controls visible but locked behind a PRO pill that links to the
+  product page; the add-on removes the pills and unlocks the controls
 - Theme template overrides under `fsweb-reviews/`
 - Filters and actions for extending the query, the form and the markup

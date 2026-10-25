@@ -56,7 +56,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				'id'       => 'fsweb_email',
 				'type'     => 'email',
 				'label'    => __( 'Your email', 'fsweb-comments-core' ),
-				'required' => true,
+				'required' => (bool) get_option( 'fsweb_comments_core_require_email', true ),
 			),
 			array(
 				'id'       => 'fsweb_rating',

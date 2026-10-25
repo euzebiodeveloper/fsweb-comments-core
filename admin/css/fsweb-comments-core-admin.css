@@ -145,6 +145,50 @@
 }
 
 /* ------------------------------------------------------------------ */
+/*  Buttons with icons
+/*
+/*  WordPress gives .dashicons a 20px box, a larger line box and
+/*  `vertical-align: top`, which drops the glyph below the label. Making
+/*  every plugin button a flex row and pinning the icon box keeps icon and
+/*  text on the same centre line — in the hero and in card actions alike.
+/* ------------------------------------------------------------------ */
+.fsweb-cc-wrap .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+}
+
+#wpbody .fsweb-cc-wrap .button .dashicons {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	padding: 0;
+	font-size: 18px;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+#wpbody .fsweb-cc-wrap .button .dashicons:before {
+	display: block;
+	margin: 0;
+	font-size: inherit;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+/* The Woodmart admin skin forces line-height 1.2/1.9 on button icons,
+   which shifts the glyph inside the box. Re-assert the tight line box. */
+#wpbody .fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
+#wpbody .fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
+	font-size: 18px;
+	line-height: 1;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Stat cards
 /* ------------------------------------------------------------------ */
 .fsweb-cc-stats {

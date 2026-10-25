@@ -66,6 +66,27 @@ class Fsweb_Cc_Test_Pro_Handover extends Fsweb_Cc_Test_Case {
 		$this->assertContains( 'form_attributes', $seen );
 	}
 
+	public function test_shortcode_passes_the_view_attributes_to_the_add_on() {
+		$seen = array();
+
+		add_filter(
+			'fsweb_cc_reviews_pre_render',
+			static function ( $output, $atts ) use ( &$seen ) {
+				$seen = $atts;
+				return $output;
+			},
+			10,
+			2
+		);
+
+		do_shortcode( '[fsweb_reviews id="default" skin="dark"]' );
+
+		// Dropping these here made [fsweb_reviews id="default"] silently fall
+		// back to the grid instead of the saved view (slider, skins).
+		$this->assertSame( 'default', $seen['id'] );
+		$this->assertSame( 'dark', $seen['skin'] );
+	}
+
 	public function test_forms_open_filter_is_applied_on_submission() {
 		$called = 0;
 

@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-zip:
-    # Só executa quando o PR for mergeado (não apenas fechado)
+    # Only runs when the PR is merged, not merely closed.
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -22,15 +22,11 @@ jobs:
           ZIP_NAME="${PLUGIN_SLUG}.zip"
           BUILD_DIR="/tmp/build/${PLUGIN_SLUG}"
 
-          # Cria a estrutura de diretórios que o WordPress espera:
+          # WordPress expects the archive to contain a single plugin folder:
           #   fsweb-comments-core.zip
           #   └── fsweb-comments-core/
-          #       ├── fsweb-comments-core.php
-          #       ├── readme.txt
-          #       └── ...
           mkdir -p "${BUILD_DIR}"
 
-          # Copia os arquivos para dentro da pasta do plugin
           rsync -a ./ "${BUILD_DIR}/" \
             --exclude='.git/' \
             --exclude='.github/' \
@@ -40,21 +36,19 @@ jobs:
             --exclude='.DS_Store' \
             --exclude='Thumbs.db' \
             --exclude='CHANGELOG.md' \
-            --exclude='reasonix.toml' \
-            --exclude='.reasonix/' \
             --exclude='AGENTS.md' \
             --exclude='ROADMAP.md' \
+            --exclude='reasonix.toml' \
+            --exclude='.reasonix/' \
             --exclude='*.zip' \
             --exclude='node_modules/' \
             --exclude='.vscode/' \
             --exclude='.idea/'
 
-          # Gera o ZIP a partir do pai do diretório
           cd /tmp/build
           zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" "${PLUGIN_SLUG}"
 
           echo "ZIP criado: ${ZIP_NAME}"
-          echo "ZIP_SIZE=$(stat -c%s ${GITHUB_WORKSPACE}/${ZIP_NAME})" >> $GITHUB_ENV
           ls -lh "${GITHUB_WORKSPACE}/${ZIP_NAME}"
 
       - name: Upload ZIP as artifact
@@ -68,7 +62,7 @@ jobs:
         id: version
         run: |
           VERSION=$(grep -oP 'Version:\s*\K[0-9]+\.[0-9]+\.[0-9]+' fsweb-comments-core.php)
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Versão detectada: ${VERSION}"
 
       - name: Extract changelog
@@ -77,8 +71,8 @@ jobs:
           VERSION="${{ steps.version.outputs.VERSION }}"
           if [ -f CHANGELOG.md ]; then
             CHANGELOG="$(awk -v v="${VERSION}" '
-              index($0, "# " v " ") == 1 { print "###" substr($0, 2); found=1; next }
-              found && index($0, "# ") == 1 { exit }
+              index($0, "## " v " ") == 1 || index($0, "## [" v "]") == 1 { print "###" substr($0, 2); found=1; next }
+              found && index($0, "## ") == 1 { exit }
               found { print }
             ' CHANGELOG.md)"
           else
@@ -100,18 +94,17 @@ jobs:
           tag_name: v${{ steps.version.outputs.VERSION }}
           name: v${{ steps.version.outputs.VERSION }}
           body: |
-            # 💬 Comments Core v${{ steps.version.outputs.VERSION }}
+            # 💬 FSWEB Comments Core v${{ steps.version.outputs.VERSION }}
 
-            A lightweight, high-performance comment and feedback management system for WordPress — custom forms, star ratings, and review displays, all without code.
+            Free edition — lightweight review and feedback management for WordPress.
 
             ## ✨ Features
 
-            - 🧱 **Form Builder** — drag-and-drop forms with 8 field types
-            - ⭐ **Star Ratings** — built-in rating field
-            - 🖼️ **Views Builder** — grid, slider, and list layouts with skins and custom CSS
-            - 📷 **Image Uploads** — attach photos to reviews
-            - 🛡️ **Moderation** — submissions held as pending for approval
-            - 🔐 **License & Auto-updates** — one-click updates from your server
+            - 🧾 **Reviews CPT** with categories and moderation queue
+            - ⭐ **Star ratings** and photo support
+            - 🧩 **`[fsweb_reviews]`** shortcode with grid and list layouts
+            - ✍️ **`[fsweb_review_form]`** shortcode with AJAX submission
+            - 📊 Admin overview with average rating and pending counter
 
             ## 🔖 Changelog
 

@@ -28,6 +28,10 @@ FSWEB Comments Core is a lightweight review and feedback manager for WordPress. 
 * Theme overrides: copy a template to `yourtheme/fsweb-reviews/grid.php`
 * Translation ready
 
+**Optional add-on**
+
+The free edition is complete, has no time limit and no locked features. An optional PRO add-on, distributed from our own site and **not included in this package**, adds the form builder, the views builder, the slider, the skins and automatic updates. None of that code ships here.
+
 **Shortcodes**
 
 `[fsweb_reviews]` attributes: `layout` (grid|list), `count` (1–50), `columns` (1–4), `category`, `order` (newest|oldest|random|menu_order), `show_image` (yes|no).
@@ -51,6 +55,10 @@ FSWEB Comments Core is a lightweight review and feedback manager for WordPress. 
 2. Activate **FSWEB Comments Core** in the *Plugins* screen.
 3. Add reviews under **Reviews → Add New**, or publish the form shortcode and let visitors submit them.
 4. Approve the pending submissions.
+
+== Privacy ==
+
+The free plugin does not connect to any external service and does not send any data out of the site. The reviews, names and e-mails submitted through the form are stored in the site's own database; the e-mail is visible only in the WordPress admin.
 
 == Frequently Asked Questions ==
 

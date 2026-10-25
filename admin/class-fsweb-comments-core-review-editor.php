@@ -366,7 +366,7 @@ class Fsweb_Comments_Core_Review_Editor {
 				if ( $thumb ) {
 					echo wp_kses_post( $thumb );
 				} else {
-					echo '<span style="color:#c3c4c7;">—</span>';
+					echo '<span class="fsweb-cc-muted">—</span>';
 				}
 				break;
 
@@ -374,13 +374,13 @@ class Fsweb_Comments_Core_Review_Editor {
 				$rating = (int) get_post_meta( $post_id, 'fsweb_rating', true );
 				if ( $rating > 0 ) {
 					echo wp_kses_post(
-						'<span style="color:#f0c040;font-size:16px;letter-spacing:1px;">'
+						'<span class="fsweb-cc-stars">'
 						. str_repeat( '★', min( 5, $rating ) )
 						. str_repeat( '☆', max( 0, 5 - $rating ) )
 						. '</span>'
 					);
 				} else {
-					echo '<span style="color:#c3c4c7;">—</span>';
+					echo '<span class="fsweb-cc-muted">—</span>';
 				}
 				break;
 
@@ -389,7 +389,7 @@ class Fsweb_Comments_Core_Review_Editor {
 				if ( ! empty( $email ) ) {
 					echo '<a href="' . esc_url( 'mailto:' . $email ) . '">' . esc_html( $email ) . '</a>';
 				} else {
-					echo '<span style="color:#c3c4c7;">—</span>';
+					echo '<span class="fsweb-cc-muted">—</span>';
 				}
 				break;
 		}

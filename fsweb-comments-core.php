@@ -16,7 +16,7 @@
  * Plugin URI:        https://github.com/euzebiodeveloper/fsweb-comments-core
  * Description:       Lightweight review and feedback management for WordPress: collect reviews with star ratings, moderate them and display them anywhere with a shortcode.
  * Version:           1.0.0
- * Requires at least: 6.0
+ * Requires at least: 6.7
  * Requires PHP:      7.4
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
@@ -63,7 +63,7 @@ if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_URL' ) ) {
  *
  * @since 1.0.0
  */
-function activate_fsweb_comments_core() {
+function fsweb_comments_core_activate() {
 	require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-activator.php';
 	Fsweb_Comments_Core_Activator::activate();
 }
@@ -73,13 +73,13 @@ function activate_fsweb_comments_core() {
  *
  * @since 1.0.0
  */
-function deactivate_fsweb_comments_core() {
+function fsweb_comments_core_deactivate() {
 	require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-deactivator.php';
 	Fsweb_Comments_Core_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_fsweb_comments_core' );
-register_deactivation_hook( __FILE__, 'deactivate_fsweb_comments_core' );
+register_activation_hook( __FILE__, 'fsweb_comments_core_activate' );
+register_deactivation_hook( __FILE__, 'fsweb_comments_core_deactivate' );
 
 /**
  * The core plugin class.
@@ -91,8 +91,8 @@ require FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core.php';
  *
  * @since 1.0.0
  */
-function run_fsweb_comments_core() {
+function fsweb_comments_core_run() {
 	$plugin = new Fsweb_Comments_Core();
 	$plugin->run();
 }
-run_fsweb_comments_core();
+fsweb_comments_core_run();

@@ -1,0 +1,16 @@
+# Files excluded from the distributed ZIP (WordPress.org and the build workflow).
+/.git
+/.github
+/.gitignore
+/.distignore
+/phpunit.xml.dist
+/.phpunit.result.cache
+/composer.json
+/composer.lock
+/vendor
+/node_modules
+/tests
+/ROADMAP.md
+/PROMPT.md
+/reasonix.toml
+*.zip

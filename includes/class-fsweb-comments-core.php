@@ -49,7 +49,6 @@ class Fsweb_Comments_Core {
 		$this->plugin_name = 'fsweb-comments-core';
 
 		$this->load_dependencies();
-		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_init_hooks();
@@ -62,7 +61,6 @@ class Fsweb_Comments_Core {
 	 */
 	private function load_dependencies() {
 		require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-loader.php';
-		require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-i18n.php';
 		require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-post-types.php';
 		require_once FSWEB_COMMENTS_CORE_DIR . 'admin/class-fsweb-comments-core-admin.php';
 		require_once FSWEB_COMMENTS_CORE_DIR . 'admin/class-fsweb-comments-core-review-editor.php';
@@ -71,16 +69,6 @@ class Fsweb_Comments_Core {
 		require_once FSWEB_COMMENTS_CORE_DIR . 'public/class-fsweb-comments-core-form-shortcode.php';
 
 		$this->loader = new Fsweb_Comments_Core_Loader();
-	}
-
-	/**
-	 * Register the text domain.
-	 *
-	 * @return void
-	 */
-	private function set_locale() {
-		$plugin_i18n = new Fsweb_Comments_Core_i18n();
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**

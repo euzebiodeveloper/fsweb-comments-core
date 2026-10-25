@@ -21,7 +21,7 @@ if ( ! defined( 'FSWEB_COMMENTS_CORE_REMOVE_DATA' ) || ! FSWEB_COMMENTS_CORE_REM
 	return;
 }
 
-$reviews = get_posts(
+$fsweb_cc_reviews = get_posts(
 	array(
 		'post_type'      => 'fsweb_review',
 		'post_status'    => 'any',
@@ -30,8 +30,8 @@ $reviews = get_posts(
 	)
 );
 
-foreach ( $reviews as $review_id ) {
-	wp_delete_post( $review_id, true );
+foreach ( $fsweb_cc_reviews as $fsweb_cc_review_id ) {
+	wp_delete_post( $fsweb_cc_review_id, true );
 }
 
 delete_option( 'fsweb_comments_core_license_key' );

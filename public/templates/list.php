@@ -37,8 +37,8 @@ $fsweb_cc_show_image = 'yes' === $atts['show_image'];
 					<?php if ( $fsweb_cc_rating > 0 ) : ?>
 						<div class="fsweb-review-stars-display" aria-label="<?php echo esc_attr( sprintf( /* translators: %d: rating. */ __( 'Rated %d out of 5', 'fsweb-comments-core' ), $fsweb_cc_rating ) ); ?>">
 							<?php
-							for ( $i = 1; $i <= 5; $i++ ) {
-								echo '<span class="fsweb-star' . ( $i <= $fsweb_cc_rating ? ' fsweb-star--filled' : '' ) . '" aria-hidden="true">&#9733;</span>';
+							for ( $fsweb_cc_index = 1; $fsweb_cc_index <= 5; $fsweb_cc_index++ ) {
+								echo '<span class="fsweb-star' . ( $fsweb_cc_index <= $fsweb_cc_rating ? ' fsweb-star--filled' : '' ) . '" aria-hidden="true">&#9733;</span>';
 							}
 							?>
 						</div>

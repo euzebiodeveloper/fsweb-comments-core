@@ -1,31 +1,39 @@
 <?php
-
 /**
- * Fired when the plugin is uninstalled.
+ * Uninstall routine.
  *
- * When populating this file, consider the following flow
- * of control:
+ * Runs only when the plugin is deleted from the plugins screen. Reviews are
+ * user content, so they are kept by default. Deleting them requires the
+ * FSWEB_COMMENTS_CORE_REMOVE_DATA constant to be true in wp-config.php.
  *
- * - This method should be static
- * - Check if the $_REQUEST content actually is the plugin name
- * - Run an admin referrer check to make sure it goes through authentication
- * - Verify the output of $_GET makes sense
- * - Repeat with other user roles. Best directly by using the links/query string parameters.
- * - Repeat things for multisite. Once for a single site in the network, once sitewide.
- *
- * This file may be updated more in future version of the Boilerplate; however, this is the
- * general skeleton and outline for how the file should work.
- *
- * For more information, see the following discussion:
- * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
- *
- * @link       https://flowsyncweb.com
- * @since      1.0.0
- *
- * @package    Fsweb_Comments_Core
+ * @package Fsweb_Comments_Core
  */
 
-// If uninstall not called from WordPress, then exit.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+delete_option( 'fsweb_comments_core_form_status' );
+delete_option( 'fsweb_comments_core_require_email' );
+delete_option( 'fsweb_comments_core_version' );
+
+if ( ! defined( 'FSWEB_COMMENTS_CORE_REMOVE_DATA' ) || ! FSWEB_COMMENTS_CORE_REMOVE_DATA ) {
+	return;
+}
+
+$reviews = get_posts(
+	array(
+		'post_type'      => 'fsweb_review',
+		'post_status'    => 'any',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+	)
+);
+
+foreach ( $reviews as $review_id ) {
+	wp_delete_post( $review_id, true );
+}
+
+delete_option( 'fsweb_comments_core_license_key' );
+delete_option( 'fsweb_comments_core_license_status' );
+delete_option( 'fsweb_comments_core_license_expires' );

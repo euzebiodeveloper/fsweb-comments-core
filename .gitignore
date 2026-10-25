@@ -1,3 +1,10 @@
 ROADMAP.md
 PROMPT.md
 reasonix.toml
+node_modules/
+vendor/
+*.zip
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

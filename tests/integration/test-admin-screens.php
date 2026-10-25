@@ -76,6 +76,39 @@ class Fsweb_Cc_Test_Admin_Screens extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-cc-pro-card', $offer );
 	}
 
+	public function test_the_offer_disappears_once_the_license_is_active() {
+		if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' ) ) {
+			$this->markTestSkipped( 'The PRO add-on is not installed.' );
+		}
+
+		update_option( 'fsweb_comments_core_license_status', 'active' );
+
+		$backup = $GLOBALS['submenu'] ?? null;
+
+		$GLOBALS['submenu'] = array();
+		$this->admin()->add_admin_menu();
+
+		$slugs = wp_list_pluck( $GLOBALS['submenu']['edit.php?post_type=fsweb_review'], 2 );
+
+		$GLOBALS['submenu'] = $backup;
+
+		$this->assertNotContains( 'fsweb-comments-core-go-pro', $slugs );
+		$this->assertContains( 'fsweb-comments-core-settings', $slugs );
+	}
+
+	public function test_the_hero_drops_the_offer_once_the_license_is_active() {
+		if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_VERSION' ) ) {
+			$this->markTestSkipped( 'The PRO add-on is not installed.' );
+		}
+
+		update_option( 'fsweb_comments_core_license_status', 'active' );
+
+		$markup = $this->render( array( $this->admin(), 'render_settings_page' ) );
+
+		$this->assertStringNotContainsString( 'page=fsweb-comments-core-go-pro', $markup );
+		$this->assertStringContainsString( 'page=fsweb-comments-core-license', $markup );
+	}
+
 	public function test_users_without_capability_see_nothing() {
 		$subscriber = wp_insert_user(
 			array(

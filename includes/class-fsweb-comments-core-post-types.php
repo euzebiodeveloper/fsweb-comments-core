@@ -2,7 +2,7 @@
 /**
  * FSWEB Comments Core — Post Types & Taxonomies
  *
- * Registers the fsweb_review CPT and fsweb_review_category taxonomy.
+ * Registers the fsweb_review CPT and the fsweb_review_category taxonomy.
  *
  * @package    Fsweb_Comments_Core
  * @subpackage Fsweb_Comments_Core/includes
@@ -21,7 +21,7 @@ class Fsweb_Comments_Core_Post_Types {
 	/**
 	 * Register the Review custom post type.
 	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
 	public static function register_cpt() {
 		$labels = array(
@@ -74,7 +74,7 @@ class Fsweb_Comments_Core_Post_Types {
 	/**
 	 * Register the Review Category taxonomy.
 	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
 	public static function register_taxonomy() {
 		$labels = array(

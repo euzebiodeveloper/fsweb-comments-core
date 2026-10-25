@@ -1,35 +1,30 @@
 <?php
 
 /**
- * Fired during plugin deactivation
+ * Fired during plugin deactivation.
  *
  * @link       https://flowsyncweb.com
  * @since      1.0.0
- *
  * @package    Fsweb_Comments_Core
  * @subpackage Fsweb_Comments_Core/includes
  */
 
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 /**
- * Fired during plugin deactivation.
+ * Deactivation routine.
  *
- * This class defines all code necessary to run during the plugin's deactivation.
- *
- * @since      1.0.0
- * @package    Fsweb_Comments_Core
- * @subpackage Fsweb_Comments_Core/includes
- * @author     Flow Sync Web <euzebio.batista@flowsyncweb.com>
+ * @since 1.0.0
  */
 class Fsweb_Comments_Core_Deactivator {
 
 	/**
-	 * Short Description. (use period)
+	 * Nothing to clean up: the reviews stay in the database.
 	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
 	public static function deactivate() {
 	}
-
 }

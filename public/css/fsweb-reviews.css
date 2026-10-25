@@ -1,21 +1,35 @@
 /**
- * FSWEB Reviews — Base Styles
+ * FSWEB Reviews — Base styles.
  *
- * Shared styles for all review layouts.
+ * Shared by every layout. Themes can override anything here, or copy this
+ * file to `yourtheme/fsweb-reviews/` and adjust it.
  */
 
-/* ------------------------------------------------------------------ */
-/*  Card
-/* ------------------------------------------------------------------ */
+.fsweb-reviews {
+	--fsweb-accent: #f0c040;
+	--fsweb-text: #1d2327;
+	--fsweb-muted: #50575e;
+	--fsweb-border: #e2e4e7;
+	box-sizing: border-box;
+}
+
+.fsweb-reviews *,
+.fsweb-reviews *::before,
+.fsweb-reviews *::after {
+	box-sizing: inherit;
+}
+
+/* Card ------------------------------------------------------------- */
 .fsweb-review-card {
 	background: #fff;
-	border: 1px solid #e2e4e7;
+	border: 1px solid var(--fsweb-border);
 	border-radius: 8px;
 	padding: 24px;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-	transition: box-shadow 0.2s, transform 0.2s;
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
 	height: 100%;
-	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
 }
 
 .fsweb-review-card:hover {
@@ -23,9 +37,7 @@
 	transform: translateY(-2px);
 }
 
-/* ------------------------------------------------------------------ */
-/*  Image / Avatar
-/* ------------------------------------------------------------------ */
+/* Image / avatar ---------------------------------------------------- */
 .fsweb-review-image {
 	margin-bottom: 16px;
 	text-align: center;
@@ -39,21 +51,20 @@
 	border: 3px solid #f0f0f1;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Body
-/* ------------------------------------------------------------------ */
+/* Body -------------------------------------------------------------- */
 .fsweb-review-name {
 	margin: 0 0 8px;
 	font-size: 16px;
 	font-weight: 600;
-	color: #1d2327;
+	color: var(--fsweb-text);
 	text-align: center;
 }
 
 .fsweb-review-content {
 	font-size: 14px;
 	line-height: 1.7;
-	color: #50575e;
+	color: var(--fsweb-muted);
+	flex: 1 1 auto;
 }
 
 .fsweb-review-content p {
@@ -64,170 +75,122 @@
 	margin-bottom: 0;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Dynamic view components
-/* ------------------------------------------------------------------ */
-.fsweb-review-row + .fsweb-review-row {
-	margin-top: 16px;
-}
-
-.fsweb-review-col > * + * {
-	margin-top: 8px;
-}
-
+/* Stars ------------------------------------------------------------- */
 .fsweb-review-stars-display {
 	font-size: 20px;
 	letter-spacing: 2px;
 	line-height: 1;
+	margin-bottom: 12px;
+	text-align: center;
 }
 
 .fsweb-star {
 	color: #dcdcde;
-	font-size: 20px;
 }
 
 .fsweb-star--filled {
-	color: #f0c040;
-	font-size: 20px;
+	color: var(--fsweb-accent);
 }
 
+/* Date -------------------------------------------------------------- */
 .fsweb-review-date {
+	display: block;
+	margin-top: 16px;
 	font-size: 12px;
 	color: #8c8f94;
-}
-
-.fsweb-review-category {
-	display: inline-block;
-	font-size: 11px;
-	background: #f0f0f1;
-	padding: 2px 10px;
-	border-radius: 3px;
-	color: #50575e;
-	text-transform: uppercase;
-	font-weight: 600;
-}
-
-/* ======================================================================
-   Multi-step Form
-   ====================================================================== */
-
-/* Step indicator bar */
-.fsweb-review-steps-indicator {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-bottom: 28px;
-	padding: 0 20px;
-	flex-wrap: wrap;
-}
-
-.fsweb-review-step-dot {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 6px;
-	position: relative;
-}
-
-.fsweb-review-step-num {
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 14px;
-	font-weight: 700;
-	color: #8c8f94;
-	background: #f0f0f1;
-	border: 2px solid #dcdcde;
-	transition: all 0.2s;
-}
-
-.fsweb-review-step-dot.active .fsweb-review-step-num {
-	color: #fff;
-	background: #2271b1;
-	border-color: #2271b1;
-}
-
-.fsweb-review-step-label {
-	font-size: 12px;
-	color: #8c8f94;
-	font-weight: 500;
-	white-space: nowrap;
-}
-
-.fsweb-review-step-dot.active .fsweb-review-step-label {
-	color: #1d2327;
-	font-weight: 600;
-}
-
-.fsweb-review-step-line {
-	flex: 1;
-	height: 2px;
-	background: #dcdcde;
-	margin: 0 8px;
-	margin-bottom: 18px;
-	min-width: 30px;
-}
-
-/* Step panel */
-.fsweb-review-step-panel {
-	animation: fswebStepFadeIn 0.3s ease;
-}
-
-@keyframes fswebStepFadeIn {
-	from { opacity: 0; transform: translateX(20px); }
-	to   { opacity: 1; transform: translateX(0); }
-}
-
-.fsweb-review-step-title {
-	margin: 0 0 16px;
-	font-size: 18px;
-	font-weight: 600;
-	color: #1d2327;
 	text-align: center;
 }
 
-/* Navigation buttons */
-.fsweb-review-steps-nav {
+/* Grid layout ------------------------------------------------------- */
+.fsweb-reviews--grid {
+	display: grid;
+	grid-template-columns: repeat(var(--fsweb-columns, 3), minmax(0, 1fr));
+	gap: 24px;
+}
+
+/* List layout ------------------------------------------------------- */
+.fsweb-reviews--list {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	margin-top: 24px;
+	flex-direction: column;
+	gap: 16px;
 }
 
-.fsweb-review-step-prev,
-.fsweb-review-step-next {
-	padding: 10px 24px;
-	border: 1px solid #dcdcde;
+.fsweb-review-list-item {
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
 	background: #fff;
-	border-radius: 6px;
-	font-size: 14px;
-	font-weight: 500;
-	color: #1d2327;
-	cursor: pointer;
-	transition: all 0.15s;
+	border: 1px solid var(--fsweb-border);
+	border-radius: 8px;
+	padding: 20px;
 }
 
-.fsweb-review-step-prev:hover,
-.fsweb-review-step-next:hover {
-	border-color: #2271b1;
-	color: #2271b1;
-	background: rgba(34, 113, 177, 0.04);
+.fsweb-review-list-item .fsweb-review-image {
+	margin-bottom: 0;
+	flex: 0 0 auto;
 }
 
-/* Mobile: stack the multi-step navigation buttons vertically */
-@media (max-width: 480px) {
-	.fsweb-review-steps-nav {
-		flex-direction: column;
-		align-items: stretch;
+.fsweb-review-list-item .fsweb-review-avatar {
+	width: 64px;
+	height: 64px;
+}
+
+.fsweb-review-list-item .fsweb-review-body {
+	flex: 1 1 auto;
+}
+
+.fsweb-review-heading {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.fsweb-review-heading .fsweb-review-name {
+	margin: 0;
+	text-align: left;
+}
+
+.fsweb-review-heading .fsweb-review-stars-display {
+	margin: 0;
+}
+
+.fsweb-review-list-item .fsweb-review-date {
+	margin-top: 12px;
+	text-align: left;
+}
+
+/* Empty state ------------------------------------------------------- */
+.fsweb-reviews-empty {
+	padding: 24px;
+	text-align: center;
+	color: var(--fsweb-muted);
+}
+
+/* Responsive -------------------------------------------------------- */
+@media (max-width: 900px) {
+	.fsweb-reviews--grid {
+		grid-template-columns: repeat(min(var(--fsweb-columns, 3), 2), minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 600px) {
+	.fsweb-reviews--grid {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
-	.fsweb-review-step-prev,
-	.fsweb-review-step-next,
-	.fsweb-review-steps-nav .fsweb-review-form-submit {
-		width: 100%;
+	.fsweb-review-list-item {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.fsweb-review-heading {
+		justify-content: center;
+	}
+
+	.fsweb-review-list-item .fsweb-review-date {
+		text-align: center;
 	}
 }

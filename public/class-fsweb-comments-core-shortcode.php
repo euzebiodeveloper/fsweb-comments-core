@@ -92,6 +92,9 @@ class Fsweb_Comments_Core_Shortcode {
 
 		$template = $this->locate_template( $layout );
 
+		// Templates read $reviews; keep the historical variable name working.
+		$reviews = $query;
+
 		if ( $template ) {
 			include $template;
 		}

@@ -385,11 +385,25 @@ class Fsweb_Comments_Core_Admin {
 			'fsweb_comments_core_settings',
 			'fsweb_comments_core_require_email',
 			array(
-				'type'              => 'boolean',
-				'default'           => true,
-				'sanitize_callback' => 'rest_sanitize_boolean',
+				'type'              => 'string',
+				'default'           => '1',
+				'sanitize_callback' => array( $this, 'sanitize_require_email' ),
 			)
 		);
+	}
+
+	/**
+	 * Sanitise the "require email" checkbox.
+	 *
+	 * The value is stored as '1' or '0': a boolean false would be dropped by
+	 * update_option() when the option does not exist yet, and the default
+	 * would silently win.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string '1' when required, '0' otherwise.
+	 */
+	public function sanitize_require_email( $value ) {
+		return ( '1' === $value || 1 === $value || true === $value || 'true' === $value ) ? '1' : '0';
 	}
 
 	/**
@@ -664,7 +678,7 @@ class Fsweb_Comments_Core_Admin {
 		}
 
 		$status  = get_option( 'fsweb_comments_core_form_status', 'open' );
-		$require = (bool) get_option( 'fsweb_comments_core_require_email', true );
+		$require = '1' === get_option( 'fsweb_comments_core_require_email', '1' );
 		?>
 		<div class="wrap fsweb-cc-wrap">
 			<hr class="wp-header-end">

@@ -56,7 +56,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				'id'       => 'fsweb_email',
 				'type'     => 'email',
 				'label'    => __( 'Your email', 'fsweb-comments-core' ),
-				'required' => (bool) get_option( 'fsweb_comments_core_require_email', true ),
+				'required' => '1' === get_option( 'fsweb_comments_core_require_email', '1' ),
 			),
 			array(
 				'id'       => 'fsweb_rating',
@@ -97,7 +97,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 			'fsweb_review_form'
 		);
 
-		if ( 'publish' === get_option( 'fsweb_comments_core_form_status', 'open' ) && ! $this->forms_open() ) {
+		if ( 'closed' === get_option( 'fsweb_comments_core_form_status', 'open' ) || ! $this->forms_open() ) {
 			return '<p class="fsweb-review-form-closed">' . esc_html__( 'Review submissions are closed.', 'fsweb-comments-core' ) . '</p>';
 		}
 

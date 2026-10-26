@@ -65,15 +65,45 @@ class Fsweb_Comments_Core_Public {
 			'fsweb-reviews-base',
 			FSWEB_COMMENTS_CORE_URL . 'public/css/fsweb-reviews.css',
 			array(),
-			$this->version
+			$this->asset_version( 'public/css/fsweb-reviews.css' )
+		);
+
+		wp_register_style(
+			'fsweb-reviews-slider',
+			FSWEB_COMMENTS_CORE_URL . 'public/css/fsweb-reviews-slider.css',
+			array( 'fsweb-reviews-base' ),
+			$this->asset_version( 'public/css/fsweb-reviews-slider.css' )
+		);
+
+		wp_register_style(
+			'fsweb-reviews-theme-dark',
+			FSWEB_COMMENTS_CORE_URL . 'public/css/fsweb-reviews-theme-dark.css',
+			array( 'fsweb-reviews-base' ),
+			$this->asset_version( 'public/css/fsweb-reviews-theme-dark.css' )
 		);
 
 		wp_register_style(
 			'fsweb-review-form',
 			FSWEB_COMMENTS_CORE_URL . 'public/css/fsweb-review-form.css',
 			array( 'fsweb-reviews-base' ),
-			$this->version
+			$this->asset_version( 'public/css/fsweb-review-form.css' )
 		);
+	}
+
+	/**
+	 * Cache-busting version for a file, falling back to the plugin version.
+	 *
+	 * @param string $relative Path relative to the plugin root.
+	 * @return string
+	 */
+	private function asset_version( $relative ) {
+		$path = FSWEB_COMMENTS_CORE_DIR . $relative;
+
+		if ( file_exists( $path ) ) {
+			return (string) filemtime( $path );
+		}
+
+		return $this->version;
 	}
 
 	/**
@@ -86,7 +116,15 @@ class Fsweb_Comments_Core_Public {
 			'fsweb-review-form',
 			FSWEB_COMMENTS_CORE_URL . 'public/js/fsweb-review-form.js',
 			array(),
-			$this->version,
+			$this->asset_version( 'public/js/fsweb-review-form.js' ),
+			true
+		);
+
+		wp_register_script(
+			'fsweb-reviews-slider',
+			FSWEB_COMMENTS_CORE_URL . 'public/js/fsweb-reviews-slider.js',
+			array(),
+			$this->asset_version( 'public/js/fsweb-reviews-slider.js' ),
 			true
 		);
 
@@ -118,6 +156,48 @@ class Fsweb_Comments_Core_Public {
 
 		wp_enqueue_style( 'fsweb-reviews-base' );
 		self::$enqueued = true;
+	}
+
+	/**
+	 * Enqueue the assets a layout needs.
+	 *
+	 * The slider is the default layout, so its sheet and script load on every
+	 * page that renders reviews; the dark theme only loads when it is picked.
+	 *
+	 * @param string $layout Layout name.
+	 * @param string $theme  Theme name: `default` or `dark`.
+	 * @return void
+	 */
+	public static function enqueue_layout_assets( $layout, $theme = 'default' ) {
+		self::enqueue_styles();
+
+		if ( 'slider' === $layout ) {
+			wp_enqueue_style( 'fsweb-reviews-slider' );
+			wp_enqueue_script( 'fsweb-reviews-slider' );
+		}
+
+		if ( 'dark' === $theme ) {
+			wp_enqueue_style( 'fsweb-reviews-theme-dark' );
+		}
+	}
+
+	/**
+	 * Chevron used by the slider arrows.
+	 *
+	 * An inline SVG has its own box, so the theme's line-height and font
+	 * metrics cannot push the glyph off center the way they did with a text
+	 * arrow.
+	 *
+	 * @param string $direction Either `prev` or `next`.
+	 * @return string SVG markup.
+	 */
+	public static function arrow_icon( $direction ) {
+		$path = 'prev' === $direction ? 'M15 5 8 12l7 7' : 'M9 5l7 7-7 7';
+
+		return '<svg class="fsweb-slider-arrow-icon" viewBox="0 0 24 24" width="16" height="16"'
+			. ' fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"'
+			. ' stroke-linejoin="round" aria-hidden="true" focusable="false">'
+			. '<path d="' . esc_attr( $path ) . '"/></svg>';
 	}
 
 	/**

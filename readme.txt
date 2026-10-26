@@ -21,22 +21,23 @@ FSWEB Comments Core is a lightweight review and feedback manager for WordPress. 
 * Front-end submission form via `[fsweb_review_form]`
 * AJAX submission, nonce protected, sanitized and escaped
 * Submissions are held as **pending** until a moderator approves them
-* Grid and list layouts via `[fsweb_reviews]`
-* Photo support through the featured image
+* Slider (default), grid and list layouts via `[fsweb_reviews]`
+* Default and dark themes, chosen per shortcode
+* Photo support through the featured image, including an optional upload in the submission form
 * Average rating and post counters in the admin overview
 * Open or close submissions from Reviews → Settings
-* Theme overrides: copy a template to `yourtheme/fsweb-reviews/grid.php`
+* Theme overrides: copy a template to `yourtheme/fsweb-reviews/slider.php`
 * Translation ready
 
 **Optional add-on**
 
-The free edition is complete, has no time limit and no locked features. An optional PRO add-on, distributed from our own site and **not included in this package**, adds the form builder, the views builder, the slider, the skins and automatic updates. None of that code ships here.
+The free edition is complete, has no time limit and no locked features. An optional PRO add-on, distributed from our own site and **not included in this package**, adds the form builder, the views builder, the infinite slider with autoplay, the extra skins and automatic updates. None of that code ships here.
 
 **Shortcodes**
 
-`[fsweb_reviews]` attributes: `layout` (grid|list), `count` (1–50), `columns` (1–4), `category`, `order` (newest|oldest|random|menu_order), `show_image` (yes|no).
+`[fsweb_reviews]` attributes: `layout` (slider|grid|list), `theme` (default|dark), `count` (1–50), `slides` (1–4), `columns` (1–4), `category`, `order` (newest|oldest|random|menu_order), `show_image` (yes|no).
 
-`[fsweb_review_form]` attributes: `title`, `button`.
+`[fsweb_review_form]` attributes: `title`, `button`. Visitors can attach an optional photo (JPG, PNG, GIF or WebP, up to 2 MB); it becomes the review featured image after moderation.
 
 **Hooks for developers**
 
@@ -68,7 +69,7 @@ No. The free edition is fully functional and has no expiry.
 
 = How do I display the reviews? =
 
-Paste `[fsweb_reviews]` in any post, page or widget. Use `layout="list"` for the list layout and `columns` to change the grid.
+Paste `[fsweb_reviews]` in any post, page or widget. It renders the slider by default; use `layout="grid"` or `layout="list"` for the other formats and `theme="dark"` for the dark cards.
 
 = Where do the submissions go? =
 
@@ -78,12 +79,14 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 
 1. Overview screen with counters and quick actions.
 2. Review editor with star rating.
-3. Reviews displayed with the grid shortcode.
+3. Reviews displayed with the slider shortcode.
 
 == Changelog ==
 
 = 1.0.8 =
-* Initial release: review post type, submission form, grid and list shortcodes, admin screens.
+* Initial release: review post type, submission form, slider, grid and list shortcodes, admin screens.
+* The slider is the default layout, with arrows, dot navigation and keyboard support.
+* Default and dark themes, selectable per shortcode.
 * Optional PRO add-on documented; no feature is held behind a licence in this edition.
 
 == Upgrade Notice ==

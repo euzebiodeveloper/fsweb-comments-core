@@ -181,6 +181,40 @@
 		submit( form );
 	} );
 
+	document.addEventListener( 'change', function ( event ) {
+		var input = event.target;
+
+		if ( ! input.matches || ! input.matches( '.fsweb-review-image-input' ) ) {
+			return;
+		}
+
+		var wrapper = input.closest( '.fsweb-review-image-upload' );
+		var preview = wrapper ? wrapper.querySelector( '.fsweb-review-image-preview' ) : null;
+		var file = input.files && input.files[ 0 ];
+
+		if ( ! wrapper || ! preview ) {
+			return;
+		}
+
+		if ( ! file || 0 !== file.type.indexOf( 'image/' ) ) {
+			input.value = '';
+			wrapper.classList.remove( 'fsweb-review-image-upload--has-image' );
+			preview.hidden = true;
+			preview.removeAttribute( 'src' );
+			return;
+		}
+
+		var reader = new FileReader();
+
+		reader.onload = function ( loaded ) {
+			preview.src = loaded.target.result;
+			preview.hidden = false;
+			wrapper.classList.add( 'fsweb-review-image-upload--has-image' );
+		};
+
+		reader.readAsDataURL( file );
+	} );
+
 	document.addEventListener( 'click', function ( event ) {
 		var button = event.target.closest( '.fsweb-review-form-success-btn' );
 

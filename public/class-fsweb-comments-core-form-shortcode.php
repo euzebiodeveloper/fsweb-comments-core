@@ -47,6 +47,12 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	public function get_fields() {
 		$fields = array(
 			array(
+				'id'       => 'fsweb_photo',
+				'type'     => 'image',
+				'label'    => __( 'Your photo', 'fsweb-comments-core' ),
+				'required' => false,
+			),
+			array(
 				'id'       => 'fsweb_name',
 				'type'     => 'text',
 				'label'    => __( 'Your name', 'fsweb-comments-core' ),
@@ -112,7 +118,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				<h3 class="fsweb-review-form-title"><?php echo esc_html( $atts['title'] ); ?></h3>
 			<?php endif; ?>
 
-			<form class="fsweb-review-form" method="post" data-fsweb-form<?php echo $this->form_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the filter owner. ?>>
+			<form class="fsweb-review-form" method="post" enctype="multipart/form-data" data-fsweb-form<?php echo $this->form_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the filter owner. ?>>
 				<?php wp_nonce_field( 'fsweb_review_submit', 'fsweb_nonce' ); ?>
 
 				<?php foreach ( $fields as $field ) : ?>
@@ -209,6 +215,16 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				);
 				break;
 
+			case 'image':
+				printf(
+					'<div class="fsweb-review-image-upload"><input type="file" id="%1$s" name="%2$s" accept="image/jpeg,image/png,image/webp,image/gif" class="fsweb-review-image-input"%3$s><span class="fsweb-review-image-placeholder" aria-hidden="true"><span class="fsweb-review-image-plus">+</span><span class="fsweb-review-image-text">%4$s</span></span><img class="fsweb-review-image-preview" alt="" hidden></div>',
+					esc_attr( $id ),
+					esc_attr( $name ),
+					$required, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static attribute string.
+					esc_html__( 'Click to upload', 'fsweb-comments-core' )
+				);
+				break;
+
 			case 'rating':
 				$this->render_rating( $id, $name, $required );
 				break;
@@ -294,6 +310,89 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	}
 
 	/**
+	 * Store an uploaded review photo.
+	 *
+	 * The file is validated by extension and real mime type, size limited and
+	 * handed to wp_handle_upload(); the resulting attachment is returned so the
+	 * caller can set it as the review thumbnail.
+	 *
+	 * @param string $field_name Input name of the file field.
+	 * @return int|WP_Error Attachment id on success.
+	 */
+	protected function handle_photo_upload( $field_name ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The nonce is checked by the caller and wp_handle_upload() validates the file.
+		$file = isset( $_FILES[ $field_name ] ) ? $_FILES[ $field_name ] : null;
+		// phpcs:enable
+
+		if ( ! is_array( $file ) || ! isset( $file['tmp_name'], $file['error'], $file['size'], $file['name'] ) ) {
+			return new WP_Error( 'fsweb_photo_missing', __( 'We could not read the image. Please try again.', 'fsweb-comments-core' ) );
+		}
+
+		if ( UPLOAD_ERR_NO_FILE === (int) $file['error'] ) {
+			return new WP_Error( 'fsweb_photo_missing', __( 'We could not read the image. Please try again.', 'fsweb-comments-core' ) );
+		}
+
+		if ( UPLOAD_ERR_OK !== (int) $file['error'] ) {
+			return new WP_Error( 'fsweb_photo_upload', __( 'The image upload failed. Please try again.', 'fsweb-comments-core' ) );
+		}
+
+		if ( (int) $file['size'] > 2 * MB_IN_BYTES ) {
+			return new WP_Error( 'fsweb_photo_size', __( 'The image must be 2 MB or smaller.', 'fsweb-comments-core' ) );
+		}
+
+		$allowed = array(
+			'jpg|jpeg|jpe' => 'image/jpeg',
+			'png'          => 'image/png',
+			'gif'          => 'image/gif',
+			'webp'         => 'image/webp',
+		);
+
+		$checked = wp_check_filetype_and_ext( $file['tmp_name'], $file['name'], $allowed );
+
+		if ( empty( $checked['type'] ) || empty( $checked['ext'] ) ) {
+			return new WP_Error( 'fsweb_photo_type', __( 'Please upload a JPG, PNG, GIF or WebP image.', 'fsweb-comments-core' ) );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		$upload = wp_handle_upload(
+			$file,
+			array(
+				'test_form' => false,
+				'mimes'     => $allowed,
+			)
+		);
+
+		if ( ! is_array( $upload ) || isset( $upload['error'] ) || empty( $upload['file'] ) ) {
+			return new WP_Error( 'fsweb_photo_upload', __( 'The image upload failed. Please try again.', 'fsweb-comments-core' ) );
+		}
+
+		$attachment_id = wp_insert_attachment(
+			array(
+				'post_mime_type' => $upload['type'],
+				'post_title'     => sanitize_file_name( basename( $upload['file'] ) ),
+				'post_content'   => '',
+				'post_status'    => 'inherit',
+			),
+			$upload['file']
+		);
+
+		if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
+			return new WP_Error( 'fsweb_photo_attachment', __( 'We could not save the image. Please try again.', 'fsweb-comments-core' ) );
+		}
+
+		$metadata = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
+
+		if ( $metadata ) {
+			wp_update_attachment_metadata( $attachment_id, $metadata );
+		}
+
+		return (int) $attachment_id;
+	}
+
+	/**
 	 * Handle the AJAX submission.
 	 *
 	 * @return void
@@ -327,6 +426,18 @@ class Fsweb_Comments_Core_Form_Shortcode {
 			wp_send_json_error( array( 'message' => __( 'Please fill in every required field.', 'fsweb-comments-core' ) ), 400 );
 		}
 
+		$photo_id = 0;
+
+		if ( isset( $_FILES['fsweb_field_fsweb_photo'] ) && isset( $_FILES['fsweb_field_fsweb_photo']['error'] ) && UPLOAD_ERR_NO_FILE !== (int) $_FILES['fsweb_field_fsweb_photo']['error'] ) {
+			$photo = $this->handle_photo_upload( 'fsweb_field_fsweb_photo' );
+
+			if ( is_wp_error( $photo ) ) {
+				wp_send_json_error( array( 'message' => $photo->get_error_message() ), 400 );
+			}
+
+			$photo_id = (int) $photo;
+		}
+
 		$post_id = wp_insert_post(
 			array(
 				'post_type'    => 'fsweb_review',
@@ -345,6 +456,10 @@ class Fsweb_Comments_Core_Form_Shortcode {
 		update_post_meta( $post_id, 'fsweb_email', $email );
 		update_post_meta( $post_id, 'fsweb_rating', $stars );
 		update_post_meta( $post_id, 'fsweb_description', $text );
+
+		if ( $photo_id > 0 ) {
+			set_post_thumbnail( $post_id, $photo_id );
+		}
 
 		/**
 		 * Fires after a review is submitted from the front end.

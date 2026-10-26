@@ -23,8 +23,83 @@ class Fsweb_Cc_Test_Form_Shortcode extends Fsweb_Cc_Test_Case {
 	}
 
 	public function tearDown(): void {
-		unset( $_POST['fsweb_nonce'], $_REQUEST['fsweb_nonce'], $_POST['fsweb_field_fsweb_name'], $_POST['fsweb_field_fsweb_email'], $_POST['fsweb_field_fsweb_description'], $_POST['fsweb_field_fsweb_rating'] );
+		unset( $_POST['fsweb_nonce'], $_REQUEST['fsweb_nonce'], $_POST['fsweb_field_fsweb_name'], $_POST['fsweb_field_fsweb_email'], $_POST['fsweb_field_fsweb_description'], $_POST['fsweb_field_fsweb_rating'], $_FILES['fsweb_field_fsweb_photo'] );
 		parent::tearDown();
+	}
+
+	public function test_photo_field_is_optional_and_renders_a_file_input() {
+		$fields = $this->form->get_fields();
+		$photo  = wp_list_filter( $fields, array( 'id' => 'fsweb_photo' ) );
+
+		$this->assertCount( 1, $photo );
+		$this->assertFalse( (bool) reset( $photo )['required'] );
+		$this->assertSame( 'fsweb_photo', $fields[0]['id'], 'The photo field must come first.' );
+
+		$output = do_shortcode( '[fsweb_review_form]' );
+
+		$this->assertStringContainsString( 'enctype="multipart/form-data"', $output );
+		$this->assertStringContainsString( 'type="file"', $output );
+		$this->assertStringContainsString( 'name="fsweb_field_fsweb_photo"', $output );
+		$this->assertLessThan(
+			strpos( $output, 'name="fsweb_field_fsweb_name"' ),
+			strpos( $output, 'name="fsweb_field_fsweb_photo"' ),
+			'The photo input must render before the name input.'
+		);
+		$this->assertStringNotContainsString( 'JPG, PNG, GIF or WebP', $output );
+	}
+
+	public function test_photo_upload_rejects_a_missing_file() {
+		$result = $this->upload_photo( array( 'error' => UPLOAD_ERR_NO_FILE ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'fsweb_photo_missing', $result->get_error_code() );
+	}
+
+	public function test_photo_upload_rejects_a_file_over_two_megabytes() {
+		$result = $this->upload_photo( array( 'size' => 3 * MB_IN_BYTES ) );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'fsweb_photo_size', $result->get_error_code() );
+	}
+
+	public function test_photo_upload_rejects_a_non_image_file() {
+		$tmp = wp_tempnam( 'fsweb-photo' );
+		file_put_contents( $tmp, 'not an image' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
+
+		$result = $this->upload_photo(
+			array(
+				'tmp_name' => $tmp,
+				'name'     => 'notes.txt',
+			)
+		);
+
+		unlink( $tmp );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'fsweb_photo_type', $result->get_error_code() );
+	}
+
+	/**
+	 * Calls the protected upload handler with a fake $_FILES entry.
+	 *
+	 * @param array $overrides Values merged over a successful upload entry.
+	 * @return int|WP_Error
+	 */
+	private function upload_photo( array $overrides = array() ) {
+		$_FILES['fsweb_field_fsweb_photo'] = array_merge(
+			array(
+				'name'     => 'photo.png',
+				'tmp_name' => '',
+				'size'     => 1024,
+				'error'    => UPLOAD_ERR_OK,
+			),
+			$overrides
+		);
+
+		$method = new ReflectionMethod( 'Fsweb_Comments_Core_Form_Shortcode', 'handle_photo_upload' );
+		$method->setAccessible( true );
+
+		return $method->invoke( $this->form, 'fsweb_field_fsweb_photo' );
 	}
 
 	public function test_form_renders_nonce_and_default_fields() {

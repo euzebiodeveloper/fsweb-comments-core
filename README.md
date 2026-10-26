@@ -14,11 +14,12 @@ This is the **free edition**. Premium features live in the separate
 - Front-end submission form via `[fsweb_review_form]`
 - AJAX submission, nonce protected, sanitised and escaped
 - Submissions are held as **pending** until a moderator approves them
-- Display reviews as a **grid** or **list** via `[fsweb_reviews]`
-- Photo support through the featured image
+- Display reviews as a **slider** (default), **grid** or **list** via `[fsweb_reviews]`
+- Two themes per shortcode: **default** and **dark**
+- Photo support through the featured image, plus an optional photo upload in the submission form
 - Average rating, published and pending counters in the admin overview
 - Open/close submissions from **Reviews → Settings**
-- Theme overrides: copy a template to `yourtheme/fsweb-reviews/grid.php`
+- Theme overrides: copy a template to `yourtheme/fsweb-reviews/slider.php`
 - Translation ready (`fsweb-comments-core` text domain)
 
 ## Shortcodes
@@ -26,13 +27,15 @@ This is the **free edition**. Premium features live in the separate
 Display reviews:
 
 ```
-[fsweb_reviews layout="grid" count="6" columns="3"]
+[fsweb_reviews layout="slider" count="6" slides="3"]
 ```
 
 | Attribute    | Default  | Description                                                     |
 | ------------ | -------- | --------------------------------------------------------------- |
-| `layout`     | `grid`   | `grid` or `list`                                                 |
+| `layout`     | `slider` | `slider`, `grid` or `list`                                       |
+| `theme`      | `default`| `default` or `dark`                                             |
 | `count`      | `6`      | Number of reviews (1–50)                                         |
+| `slides`     | `3`      | Slider cards per view (1–4)                                      |
 | `columns`    | `3`      | Grid columns (1–4)                                               |
 | `category`   | —        | Category slug, comma separated                                   |
 | `order`      | `newest` | `newest`, `oldest`, `random`, `menu_order`                       |
@@ -72,9 +75,8 @@ The PRO add-on installs on top of this plugin and adds:
 
 - Drag-and-drop **Form Builder** with extra field types and multi-step forms
 - **Views Builder** — compose the review card with dynamic tags
-- **Slider** layout
-- Ready-made **skins** (dark, minimal, colorful, flat) and custom CSS
-- Front-end photo upload
+- **Infinite slider** with autoplay, on top of the free slider
+- Extra **skins** (minimal, colorful, flat) and custom CSS
 - Automatic updates and priority support
 
 ## Requirements

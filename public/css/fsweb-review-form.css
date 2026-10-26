@@ -107,6 +107,77 @@
 	border-radius: 4px;
 }
 
+/* Image upload ----------------------------------------------------- */
+.fsweb-review-image-upload {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 16px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	background: #f6f7f7;
+}
+
+.fsweb-review-image-upload:focus-within {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* The input covers the whole box so a click anywhere opens the picker; the
+   box itself stays visible underneath. */
+.fsweb-review-image-input {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.fsweb-review-image-placeholder {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 14px;
+	color: #50575e;
+	pointer-events: none;
+}
+
+.fsweb-review-image-plus {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border: 1px solid #c3c4c7;
+	border-radius: 50%;
+	background: #fff;
+	color: #2271b1;
+	font-size: 22px;
+	line-height: 1;
+}
+
+.fsweb-review-image-preview {
+	width: 72px;
+	height: 72px;
+	object-fit: cover;
+	border: 3px solid #fff;
+	border-radius: 50%;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+	pointer-events: none;
+}
+
+/* `[hidden]` loses to the class rules above, which is how the empty preview
+   frame used to stay on screen. */
+.fsweb-review-image-preview[hidden] {
+	display: none;
+}
+
+.fsweb-review-image-upload--has-image .fsweb-review-image-placeholder {
+	display: none;
+}
+
 /* Errors ----------------------------------------------------------- */
 .fsweb-review-form-field--error input,
 .fsweb-review-form-field--error select,
@@ -162,6 +233,12 @@
 	border-radius: 50%;
 	animation: fsweb-spin 0.8s linear infinite;
 	vertical-align: middle;
+}
+
+/* `display: inline-block` above beats the browser's [hidden] rule, which kept
+   the spinner turning next to the button before any submission. */
+.fsweb-review-form-spinner[hidden] {
+	display: none;
 }
 
 @keyframes fsweb-spin {

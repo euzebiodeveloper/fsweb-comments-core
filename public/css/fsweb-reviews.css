@@ -28,8 +28,10 @@
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 	transition: box-shadow 0.2s ease, transform 0.2s ease;
 	height: 100%;
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 104px minmax(0, 1fr);
+	column-gap: 20px;
+	align-items: start;
 }
 
 .fsweb-review-card:hover {
@@ -65,6 +67,57 @@
 	display: block;
 }
 
+/* Two columns: photo and name on the left, the review data on the right */
+.fsweb-review-card__aside {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.fsweb-review-card__aside .fsweb-review-image {
+	margin-bottom: 0;
+}
+
+.fsweb-review-card__aside .fsweb-review-name {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.fsweb-review-card__main {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.fsweb-review-card__main .fsweb-review-stars-display {
+	text-align: left;
+	margin-bottom: 10px;
+}
+
+.fsweb-review-card__main .fsweb-review-content {
+	text-align: left;
+}
+
+.fsweb-review-card__main .fsweb-review-date {
+	margin-top: 12px;
+	text-align: left;
+}
+
+/* No photo: a single column, otherwise the card keeps an empty gutter. */
+.fsweb-review-card--stacked {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.fsweb-review-card--stacked .fsweb-review-card__aside {
+	align-items: flex-start;
+}
+
+.fsweb-review-card--stacked .fsweb-review-name {
+	text-align: left;
+}
+
 
 /* Body -------------------------------------------------------------- */
 .fsweb-review-name {
@@ -73,6 +126,17 @@
 	font-weight: 600;
 	color: var(--fsweb-text);
 	text-align: center;
+}
+
+/* Reviewer email — first line of the data column */
+.fsweb-review-email {
+	display: block;
+	margin-bottom: 8px;
+	font-size: 13px;
+	line-height: 1.4;
+	color: var(--fsweb-email, #2271b1);
+	overflow-wrap: anywhere;
+	text-align: left;
 }
 
 .fsweb-review-content {
@@ -117,6 +181,13 @@
 }
 
 /* Grid layout ------------------------------------------------------- */
+/* Columns come from the shortcode as an attribute, so no inline style
+   attribute is needed on the wrapper. */
+.fsweb-reviews--grid[data-fsweb-columns="1"] { --fsweb-columns: 1; }
+.fsweb-reviews--grid[data-fsweb-columns="2"] { --fsweb-columns: 2; }
+.fsweb-reviews--grid[data-fsweb-columns="3"] { --fsweb-columns: 3; }
+.fsweb-reviews--grid[data-fsweb-columns="4"] { --fsweb-columns: 4; }
+
 .fsweb-reviews--grid {
 	display: grid;
 	grid-template-columns: repeat(var(--fsweb-columns, 3), minmax(0, 1fr));
@@ -152,6 +223,16 @@
 
 .fsweb-review-list-item .fsweb-review-body {
 	flex: 1 1 auto;
+}
+
+.fsweb-review-list-item .fsweb-review-name {
+	margin-bottom: 4px;
+	text-align: left;
+}
+
+.fsweb-review-list-item .fsweb-review-stars-display {
+	text-align: left;
+	margin-bottom: 10px;
 }
 
 .fsweb-review-heading {
@@ -191,6 +272,22 @@
 }
 
 @media (max-width: 600px) {
+	.fsweb-review-card {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: 14px;
+	}
+
+	.fsweb-review-card__aside {
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 14px;
+	}
+
+	.fsweb-review-card__aside .fsweb-review-name {
+		text-align: left;
+	}
+
 	.fsweb-reviews--grid {
 		grid-template-columns: minmax(0, 1fr);
 	}
@@ -198,6 +295,12 @@
 	.fsweb-review-list-item {
 		flex-direction: column;
 		align-items: center;
+		text-align: center;
+	}
+
+	.fsweb-review-list-item .fsweb-review-name,
+	.fsweb-review-list-item .fsweb-review-email,
+	.fsweb-review-list-item .fsweb-review-stars-display {
 		text-align: center;
 	}
 

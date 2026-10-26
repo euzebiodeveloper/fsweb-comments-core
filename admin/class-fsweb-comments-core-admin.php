@@ -391,6 +391,16 @@ class Fsweb_Comments_Core_Admin {
 				'sanitize_callback' => array( $this, 'sanitize_require_email' ),
 			)
 		);
+
+		register_setting(
+			'fsweb_comments_core_settings',
+			'fsweb_comments_core_default_theme',
+			array(
+				'type'              => 'string',
+				'default'           => 'default',
+				'sanitize_callback' => array( $this, 'sanitize_default_theme' ),
+			)
+		);
 	}
 
 	/**
@@ -415,6 +425,16 @@ class Fsweb_Comments_Core_Admin {
 	 */
 	public function sanitize_form_status( $value ) {
 		return 'closed' === $value ? 'closed' : 'open';
+	}
+
+	/**
+	 * Sanitise the default theme option.
+	 *
+	 * @param string $value Raw value.
+	 * @return string
+	 */
+	public function sanitize_default_theme( $value ) {
+		return 'dark' === $value ? 'dark' : 'default';
 	}
 
 	// ------------------------------------------------------------------//
@@ -478,11 +498,11 @@ class Fsweb_Comments_Core_Admin {
 					</div>
 					<div class="fsweb-cc-card__body">
 						<p><?php esc_html_e( 'Display your reviews:', 'fsweb-comments-core' ); ?></p>
-						<code class="fsweb-cc-code">[fsweb_reviews layout="grid" count="6" columns="3"]</code>
+						<code class="fsweb-cc-code">[fsweb_reviews layout="slider" count="6" slides="3"]</code>
 						<p><?php esc_html_e( 'Show the submission form:', 'fsweb-comments-core' ); ?></p>
 						<code class="fsweb-cc-code">[fsweb_review_form]</code>
 						<p class="description">
-							<?php esc_html_e( 'Attributes: layout (grid or list), count, category, order (newest, oldest, random, menu_order), show_image (yes or no), columns (1 to 4).', 'fsweb-comments-core' ); ?>
+							<?php esc_html_e( 'Attributes: layout (slider, grid or list), theme (default or dark), count, slides (1 to 4), columns (1 to 4), category, order (newest, oldest, random, menu_order), show_image (yes or no).', 'fsweb-comments-core' ); ?>
 						</p>
 					</div>
 				</div>
@@ -498,7 +518,8 @@ class Fsweb_Comments_Core_Admin {
 						<ul class="fsweb-cc-list">
 							<li><?php esc_html_e( 'Reviews post type with categories', 'fsweb-comments-core' ); ?></li>
 							<li><?php esc_html_e( 'Star ratings and photo (featured image)', 'fsweb-comments-core' ); ?></li>
-							<li><?php esc_html_e( 'Grid and list layouts', 'fsweb-comments-core' ); ?></li>
+							<li><?php esc_html_e( 'Slider (default), grid and list layouts', 'fsweb-comments-core' ); ?></li>
+							<li><?php esc_html_e( 'Default and dark themes', 'fsweb-comments-core' ); ?></li>
 							<li><?php esc_html_e( 'Submission form with moderation queue', 'fsweb-comments-core' ); ?></li>
 							<li><?php esc_html_e( 'Theme template overrides', 'fsweb-comments-core' ); ?></li>
 						</ul>
@@ -569,11 +590,14 @@ class Fsweb_Comments_Core_Admin {
 							$this->render_locked_field( __( 'Date', 'fsweb-comments-core' ) );
 							$this->render_locked_field( __( 'Select', 'fsweb-comments-core' ) );
 							$this->render_locked_field( __( 'URL', 'fsweb-comments-core' ) );
-							$this->render_locked_field( __( 'Photo upload', 'fsweb-comments-core' ), __( 'Visitors attach a photo to the review.', 'fsweb-comments-core' ) );
 							?>
+							<tr>
+								<th scope="row"><?php esc_html_e( 'Photo upload', 'fsweb-comments-core' ); ?></th>
+								<td><span class="fsweb-cc-pill is-on"><?php esc_html_e( 'Included', 'fsweb-comments-core' ); ?></span></td>
+							</tr>
 						</table>
 						<p class="description">
-							<?php esc_html_e( 'In the free edition the form always has name, email, rating and review. The PRO add-on lets you reorder, remove and add fields.', 'fsweb-comments-core' ); ?>
+							<?php esc_html_e( 'In the free edition the form has name, email, photo, rating and review. The PRO add-on lets you reorder, remove and add fields.', 'fsweb-comments-core' ); ?>
 						</p>
 					</div>
 				</div>
@@ -638,10 +662,14 @@ class Fsweb_Comments_Core_Admin {
 								<th scope="row"><?php esc_html_e( 'List', 'fsweb-comments-core' ); ?></th>
 								<td><span class="fsweb-cc-pill is-on"><?php esc_html_e( 'Included', 'fsweb-comments-core' ); ?></span></td>
 							</tr>
-							<?php $this->render_locked_field( __( 'Slider', 'fsweb-comments-core' ), __( 'Swipe, keyboard and dot navigation, no external library.', 'fsweb-comments-core' ) ); ?>
+							<tr>
+								<th scope="row"><?php esc_html_e( 'Slider', 'fsweb-comments-core' ); ?></th>
+								<td><span class="fsweb-cc-pill is-on"><?php esc_html_e( 'Included', 'fsweb-comments-core' ); ?></span></td>
+							</tr>
+							<?php $this->render_locked_field( __( 'Infinite slider', 'fsweb-comments-core' ), __( 'Autoplay and seamless looping past the last card.', 'fsweb-comments-core' ) ); ?>
 						</table>
 						<p class="description">
-							<?php esc_html_e( 'In the free edition the shortcode renders the grid and list layouts. The slider is part of the PRO add-on.', 'fsweb-comments-core' ); ?>
+							<?php esc_html_e( 'The free edition renders the slider by default, with arrows, dot navigation and keyboard support, plus the grid and list layouts. The infinite loop and autoplay come with the PRO add-on.', 'fsweb-comments-core' ); ?>
 						</p>
 					</div>
 				</div>
@@ -680,6 +708,7 @@ class Fsweb_Comments_Core_Admin {
 
 		$status  = get_option( 'fsweb_comments_core_form_status', 'open' );
 		$require = '1' === get_option( 'fsweb_comments_core_require_email', '1' );
+		$theme   = get_option( 'fsweb_comments_core_default_theme', 'default' );
 		?>
 		<div class="wrap fsweb-cc-wrap">
 			<hr class="wp-header-end">
@@ -721,13 +750,14 @@ class Fsweb_Comments_Core_Admin {
 											<input type="checkbox" name="fsweb_comments_core_require_email" value="1" <?php checked( $require ); ?>>
 											<?php esc_html_e( 'Require the visitor email', 'fsweb-comments-core' ); ?>
 										</label>
-										<p class="description"><?php esc_html_e( 'The email stays private and is only used to contact the author.', 'fsweb-comments-core' ); ?></p>
+										<p class="description"><?php esc_html_e( 'The email is saved with the review and shown on the card.', 'fsweb-comments-core' ); ?></p>
 									</td>
 								</tr>
 							</table>
 						</div>
 					</div>
 
+					<?php if ( ! $this->is_pro_active() ) : ?>
 					<div class="fsweb-cc-card">
 						<div class="fsweb-cc-card__header">
 							<h2>
@@ -737,16 +767,28 @@ class Fsweb_Comments_Core_Admin {
 						</div>
 						<div class="fsweb-cc-card__body">
 							<table class="form-table" role="presentation">
+								<tr>
+									<th scope="row">
+										<label for="fsweb_comments_core_default_theme"><?php esc_html_e( 'Theme', 'fsweb-comments-core' ); ?></label>
+									</th>
+									<td>
+										<select name="fsweb_comments_core_default_theme" id="fsweb_comments_core_default_theme">
+											<option value="default" <?php selected( $theme, 'default' ); ?>><?php esc_html_e( 'Default — light cards', 'fsweb-comments-core' ); ?></option>
+											<option value="dark" <?php selected( $theme, 'dark' ); ?>><?php esc_html_e( 'Dark — dark cards', 'fsweb-comments-core' ); ?></option>
+										</select>
+										<p class="description"><?php esc_html_e( 'Used when the shortcode does not set theme="dark" or theme="default".', 'fsweb-comments-core' ); ?></p>
+									</td>
+								</tr>
 								<?php
-								$this->render_locked_field( __( 'Default skin', 'fsweb-comments-core' ), __( 'Applies a ready-made skin to every view.', 'fsweb-comments-core' ) );
 								$this->render_locked_field( __( 'Custom CSS', 'fsweb-comments-core' ), __( 'Extra CSS loaded after the plugin styles.', 'fsweb-comments-core' ) );
 								?>
 							</table>
 							<p class="description">
-								<?php esc_html_e( 'The free edition ships the default card. Skins and custom CSS come with the PRO add-on.', 'fsweb-comments-core' ); ?>
+								<?php esc_html_e( 'The free edition ships the default and dark themes. The other skins and the custom CSS come with the PRO add-on.', 'fsweb-comments-core' ); ?>
 							</p>
 						</div>
 					</div>
+					<?php endif; ?>
 				</div>
 
 				<?php submit_button(); ?>
@@ -800,7 +842,7 @@ class Fsweb_Comments_Core_Admin {
 			<?php
 			$this->render_hero(
 				__( 'Comments Core PRO', 'fsweb-comments-core' ),
-				__( 'Unlock the builders, the slider, the skins and the automatic updates with a single license.', 'fsweb-comments-core' ),
+				__( 'Unlock the builders, the extra skins and the automatic updates with a single license.', 'fsweb-comments-core' ),
 				'fsweb-comments-core-go-pro'
 			);
 			?>
@@ -814,9 +856,8 @@ class Fsweb_Comments_Core_Admin {
 							<ul class="fsweb-cc-list">
 								<li><?php esc_html_e( 'Form Builder: 8 field types, drag and drop order, multi-step forms', 'fsweb-comments-core' ); ?></li>
 								<li><?php esc_html_e( 'Views Builder: rows, columns and components with per-view styles', 'fsweb-comments-core' ); ?></li>
-								<li><?php esc_html_e( 'Slider layout with dot navigation', 'fsweb-comments-core' ); ?></li>
+								<li><?php esc_html_e( 'Infinite slider with autoplay, on top of the free slider', 'fsweb-comments-core' ); ?></li>
 								<li><?php esc_html_e( 'Four ready-made skins plus custom CSS per view', 'fsweb-comments-core' ); ?></li>
-								<li><?php esc_html_e( 'Front-end photo upload', 'fsweb-comments-core' ); ?></li>
 								<li><?php esc_html_e( 'License activation and automatic updates', 'fsweb-comments-core' ); ?></li>
 							</ul>
 							<p>

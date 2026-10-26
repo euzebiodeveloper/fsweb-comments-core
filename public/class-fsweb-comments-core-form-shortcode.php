@@ -47,6 +47,12 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	public function get_fields() {
 		$fields = array(
 			array(
+				'id'       => 'fsweb_photo',
+				'type'     => 'image',
+				'label'    => __( 'Your photo', 'fsweb-comments-core' ),
+				'required' => false,
+			),
+			array(
 				'id'       => 'fsweb_name',
 				'type'     => 'text',
 				'label'    => __( 'Your name', 'fsweb-comments-core' ),
@@ -57,12 +63,6 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				'type'     => 'email',
 				'label'    => __( 'Your email', 'fsweb-comments-core' ),
 				'required' => '1' === get_option( 'fsweb_comments_core_require_email', '1' ),
-			),
-			array(
-				'id'       => 'fsweb_photo',
-				'type'     => 'image',
-				'label'    => __( 'Your photo', 'fsweb-comments-core' ),
-				'required' => false,
 			),
 			array(
 				'id'       => 'fsweb_rating',
@@ -217,12 +217,11 @@ class Fsweb_Comments_Core_Form_Shortcode {
 
 			case 'image':
 				printf(
-					'<div class="fsweb-review-image-upload"><input type="file" id="%1$s" name="%2$s" accept="image/jpeg,image/png,image/webp,image/gif" class="fsweb-review-image-input"%3$s><span class="fsweb-review-image-placeholder" aria-hidden="true"><span class="fsweb-review-image-plus">+</span><span class="fsweb-review-image-text">%4$s</span></span><img class="fsweb-review-image-preview" alt="" hidden><p class="description">%5$s</p></div>',
+					'<div class="fsweb-review-image-upload"><input type="file" id="%1$s" name="%2$s" accept="image/jpeg,image/png,image/webp,image/gif" class="fsweb-review-image-input"%3$s><span class="fsweb-review-image-placeholder" aria-hidden="true"><span class="fsweb-review-image-plus">+</span><span class="fsweb-review-image-text">%4$s</span></span><img class="fsweb-review-image-preview" alt="" hidden></div>',
 					esc_attr( $id ),
 					esc_attr( $name ),
 					$required, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static attribute string.
-					esc_html__( 'Click to upload', 'fsweb-comments-core' ),
-					esc_html__( 'JPG, PNG, GIF or WebP, up to 2 MB.', 'fsweb-comments-core' )
+					esc_html__( 'Click to upload', 'fsweb-comments-core' )
 				);
 				break;
 

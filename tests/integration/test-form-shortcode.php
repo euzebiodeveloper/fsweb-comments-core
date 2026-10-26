@@ -33,12 +33,19 @@ class Fsweb_Cc_Test_Form_Shortcode extends Fsweb_Cc_Test_Case {
 
 		$this->assertCount( 1, $photo );
 		$this->assertFalse( (bool) reset( $photo )['required'] );
+		$this->assertSame( 'fsweb_photo', $fields[0]['id'], 'The photo field must come first.' );
 
 		$output = do_shortcode( '[fsweb_review_form]' );
 
 		$this->assertStringContainsString( 'enctype="multipart/form-data"', $output );
 		$this->assertStringContainsString( 'type="file"', $output );
 		$this->assertStringContainsString( 'name="fsweb_field_fsweb_photo"', $output );
+		$this->assertLessThan(
+			strpos( $output, 'name="fsweb_field_fsweb_name"' ),
+			strpos( $output, 'name="fsweb_field_fsweb_photo"' ),
+			'The photo input must render before the name input.'
+		);
+		$this->assertStringNotContainsString( 'JPG, PNG, GIF or WebP', $output );
 	}
 
 	public function test_photo_upload_rejects_a_missing_file() {

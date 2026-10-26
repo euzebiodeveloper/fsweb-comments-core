@@ -28,8 +28,10 @@
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 	transition: box-shadow 0.2s ease, transform 0.2s ease;
 	height: 100%;
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 104px minmax(0, 1fr);
+	column-gap: 20px;
+	align-items: start;
 }
 
 .fsweb-review-card:hover {
@@ -63,6 +65,57 @@
 	width: 55%;
 	height: 55%;
 	display: block;
+}
+
+/* Two columns: photo and name on the left, the review data on the right */
+.fsweb-review-card__aside {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.fsweb-review-card__aside .fsweb-review-image {
+	margin-bottom: 0;
+}
+
+.fsweb-review-card__aside .fsweb-review-name {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.fsweb-review-card__main {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.fsweb-review-card__main .fsweb-review-stars-display {
+	text-align: left;
+	margin-bottom: 10px;
+}
+
+.fsweb-review-card__main .fsweb-review-content {
+	text-align: left;
+}
+
+.fsweb-review-card__main .fsweb-review-date {
+	margin-top: 12px;
+	text-align: left;
+}
+
+/* No photo: a single column, otherwise the card keeps an empty gutter. */
+.fsweb-review-card--stacked {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.fsweb-review-card--stacked .fsweb-review-card__aside {
+	align-items: flex-start;
+}
+
+.fsweb-review-card--stacked .fsweb-review-name {
+	text-align: left;
 }
 
 
@@ -198,6 +251,22 @@
 }
 
 @media (max-width: 600px) {
+	.fsweb-review-card {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: 14px;
+	}
+
+	.fsweb-review-card__aside {
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 14px;
+	}
+
+	.fsweb-review-card__aside .fsweb-review-name {
+		text-align: left;
+	}
+
 	.fsweb-reviews--grid {
 		grid-template-columns: minmax(0, 1fr);
 	}

@@ -25,7 +25,7 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-reviews--slider', $output );
 		$this->assertStringContainsString( 'fsweb-slider-stage', $output );
 		$this->assertStringContainsString( 'data-fsweb-slider', $output );
-		$this->assertSame( 2, substr_count( $output, 'fsweb-review-card' ) );
+		$this->assertSame( 2, substr_count( $output, '<article class="fsweb-review-card' ) );
 		$this->assertStringNotContainsString( 'Pending', $output );
 	}
 
@@ -82,6 +82,17 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-reviews--theme-dark', do_shortcode( '[fsweb_reviews skin="dark"]' ) );
 	}
 
+	public function test_card_puts_the_photo_and_the_name_in_one_column() {
+		$this->create_review( array( 'post_title' => 'Alice' ) );
+
+		$output = do_shortcode( '[fsweb_reviews]' );
+
+		$this->assertStringContainsString( 'fsweb-review-card__aside', $output );
+		$this->assertStringContainsString( 'fsweb-review-card__main', $output );
+		$this->assertMatchesRegularExpression( '/fsweb-review-card__aside.*fsweb-review-name/s', $output, 'The name must sit in the photo column.' );
+		$this->assertMatchesRegularExpression( '/fsweb-review-card__main.*fsweb-review-content/s', $output, 'The review text must sit in the data column.' );
+	}
+
 	public function test_default_theme_falls_back_to_the_setting() {
 		$this->create_review();
 
@@ -127,7 +138,7 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 
 		$output = do_shortcode( '[fsweb_reviews count="2"]' );
 
-		$this->assertSame( 2, substr_count( $output, 'fsweb-review-card' ) );
+		$this->assertSame( 2, substr_count( $output, '<article class="fsweb-review-card' ) );
 	}
 
 	public function test_columns_attribute_is_clamped_between_one_and_four() {

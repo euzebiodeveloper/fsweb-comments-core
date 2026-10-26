@@ -37,6 +37,10 @@ plugin (now the PRO add-on).
 
 - The default layout of `[fsweb_reviews]` is the slider: deactivating an add-on
   no longer falls back to a column of cards stacked one under the other
+- The review card is a two-column grid: photo and name on the left, stars, text
+  and date on the right; on phones the columns stack
+- The photo field is the first field of the submission form and the upload no
+  longer prints the JPG/PNG/GIF/WebP hint
 - The grid columns come from a data attribute instead of an inline style
 
 - The Go PRO screen and the PRO pills link to the live product page,

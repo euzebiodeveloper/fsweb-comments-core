@@ -1,0 +1,106 @@
+name: Tests
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  phpunit:
+    name: PHPUnit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: fsweb_cc_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    strategy:
+      matrix:
+        php: ['7.4', '8.2']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Download WordPress
+        run: |
+          curl -sSL -o /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
+          mkdir -p /tmp/wp
+          tar -xzf /tmp/wordpress.tar.gz -C /tmp/wp --strip-components=1
+
+      - name: Prepare the test site
+        env:
+          WP_TEST_ROOT: /tmp/wp
+          WP_TEST_DB: fsweb_cc_test
+          WP_TEST_DB_USER: root
+          WP_TEST_DB_PASSWORD: root
+          WP_TEST_DB_HOST: 127.0.0.1
+        run: |
+          mkdir -p /tmp/wp/wp-content/plugins
+          ln -s "$GITHUB_WORKSPACE" /tmp/wp/wp-content/plugins/fsweb-comments-core
+          php tests/bin/install-wp-tests.php
+
+      - name: Run PHPUnit
+        env:
+          WP_TEST_ROOT: /tmp/wp
+          WP_TEST_DB: fsweb_cc_test
+          WP_TEST_DB_USER: root
+          WP_TEST_DB_PASSWORD: root
+          WP_TEST_DB_HOST: 127.0.0.1
+        run: vendor/bin/phpunit --no-coverage
+
+  plugin-check:
+    name: Plugin Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install WP-CLI
+        run: |
+          curl -sSL -o /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x /tmp/wp-cli.phar
+
+      - name: Install WordPress, Plugin Check and the plugin
+        run: |
+          /tmp/wp-cli.phar core download --path=/tmp/pc --version=latest --skip-content
+          /tmp/wp-cli.phar config create --path=/tmp/pc --dbname=pc --dbuser=root --dbpass=root --dbhost=127.0.0.1 --skip-check
+          /tmp/wp-cli.phar plugin install plugin-check --path=/tmp/pc
+          ln -s "$GITHUB_WORKSPACE" /tmp/pc/wp-content/plugins/fsweb-comments-core
+          /tmp/wp-cli.phar plugin activate plugin-check --path=/tmp/pc
+
+      - name: Run Plugin Check
+        run: |
+          /tmp/wp-cli.phar plugin check fsweb-comments-core \
+            --path=/tmp/pc \
+            --exclude-directories=.github \
+            --exclude-files=.gitignore \
+            --format=table

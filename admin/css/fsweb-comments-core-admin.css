@@ -1,38 +1,24 @@
 /**
- * FSWEB Comments Core — Admin Styles
+ * FSWEB Comments Core — admin styles.
  *
- * Visual language shared with the other FSWEB plugins: a purple gradient hero
- * header, white cards with soft shadows and rounded corners.
+ * Visual language shared with the other FSWEB plugins: purple gradient hero,
+ * white cards with soft shadows, pill badges and the red PRO tag used on the
+ * premium options.
  */
 
-/* ------------------------------------------------------------------ */
-/*  Design tokens (scoped to the plugin pages)
-/* ------------------------------------------------------------------ */
-.fsweb-cc-wrap {
+.fsweb-cc-wrap,
+.fsweb-cc-hero {
 	--fsweb-cc-brand: #7b61ff;
 	--fsweb-cc-brand-dark: #5b3fd4;
 	--fsweb-cc-heading: #1d2327;
-	--fsweb-cc-body: #50575e;
-	--fsweb-cc-muted: #787c82;
-	--fsweb-cc-border: rgba(16, 16, 16, 0.08);
+	--fsweb-cc-muted: #646970;
 	--fsweb-cc-line: #e2e4e7;
-	--fsweb-cc-surface: #fff;
 	--fsweb-cc-soft: #f6f7f7;
 	--fsweb-cc-radius: 8px;
 	--fsweb-cc-radius-sm: 6px;
-	--fsweb-cc-pill: 999px;
-	--fsweb-cc-shadow: 0 1px 2px rgba(16, 16, 16, 0.06), 0 8px 24px rgba(16, 16, 16, 0.06);
-	--fsweb-cc-gap: 20px;
-	--fsweb-cc-input-h: 40px;
 	--fsweb-cc-green: #1e7e34;
 	--fsweb-cc-green-bg: #edfaef;
 	--fsweb-cc-green-line: #b7e1c1;
-	--fsweb-cc-amber: #94660c;
-	--fsweb-cc-amber-bg: #fdf6e3;
-	--fsweb-cc-amber-line: #f0d87e;
-	--fsweb-cc-red: #b32d2e;
-	--fsweb-cc-red-bg: #fcf0f1;
-	--fsweb-cc-red-line: #f1adad;
 	--fsweb-cc-neutral: #646970;
 	--fsweb-cc-neutral-bg: #f0f0f1;
 	--fsweb-cc-neutral-line: #dcdcde;
@@ -74,7 +60,6 @@
 	line-height: 1.6;
 }
 
-/* Hero with quick actions — navigation between the plugin screens */
 .fsweb-cc-hero--split {
 	display: flex;
 	align-items: center;
@@ -90,15 +75,15 @@
 .fsweb-cc-hero__actions {
 	display: flex;
 	align-items: center;
-	flex-wrap: wrap;
 	gap: 10px;
+	flex-wrap: wrap;
 	flex-shrink: 0;
-	margin: 0;
 }
 
 .fsweb-cc-wrap .fsweb-cc-hero .button {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 6px;
 	min-height: 38px;
 	padding: 0 16px;
@@ -107,6 +92,7 @@
 	background: rgba(255, 255, 255, 0.12);
 	color: #fff;
 	font-weight: 600;
+	line-height: 1;
 	text-decoration: none;
 	box-shadow: none;
 }
@@ -118,23 +104,34 @@
 	color: #fff;
 }
 
-.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
-.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
+/* White icons by default; purple when the button is highlighted. */
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons {
 	width: 18px;
 	height: 18px;
 	font-size: 18px;
-	color: #fff;
-	-webkit-text-fill-color: #fff;
-	fill: currentColor;
+	line-height: 1;
+	vertical-align: middle;
 }
 
-/* The screen being rendered is highlighted instead of linking back to itself. */
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
+	color: #fff;
+	-webkit-text-fill-color: #fff;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary,
 .fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] {
 	background: #fff;
 	border-color: #fff;
 	color: var(--fsweb-cc-brand-dark);
 }
 
+.fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] {
+	cursor: default;
+}
+
+.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary .dashicons,
+.fsweb-cc-wrap .fsweb-cc-hero .button.button-primary .dashicons:before,
 .fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons,
 .fsweb-cc-wrap .fsweb-cc-hero .button[aria-current="page"] .dashicons:before {
 	color: var(--fsweb-cc-brand-dark);
@@ -148,111 +145,147 @@
 }
 
 /* ------------------------------------------------------------------ */
-/*  Status pills
+/*  Buttons with icons
+/*
+/*  WordPress gives .dashicons a 20px box, a larger line box and
+/*  `vertical-align: top`, which drops the glyph below the label. Making
+/*  every plugin button a flex row and pinning the icon box keeps icon and
+/*  text on the same centre line — in the hero and in card actions alike.
 /* ------------------------------------------------------------------ */
-.fsweb-cc-status {
+.fsweb-cc-wrap .button {
 	display: inline-flex;
 	align-items: center;
-	align-self: flex-start;
-	gap: 5px;
-	padding: 3px 10px 3px 7px;
-	border-radius: var(--fsweb-cc-pill);
-	border: 1px solid var(--fsweb-cc-neutral-line);
-	background: var(--fsweb-cc-neutral-bg);
-	color: var(--fsweb-cc-neutral);
-	font-weight: 600;
+	justify-content: center;
+	gap: 6px;
+}
+
+#wpbody .fsweb-cc-wrap .button .dashicons {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	padding: 0;
+	font-size: 18px;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+#wpbody .fsweb-cc-wrap .button .dashicons:before {
+	display: block;
+	margin: 0;
+	font-size: inherit;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+/* The Woodmart admin skin forces line-height 1.2/1.9 on button icons,
+   which shifts the glyph inside the box. Re-assert the tight line box. */
+#wpbody .fsweb-cc-wrap .fsweb-cc-hero .button .dashicons,
+#wpbody .fsweb-cc-wrap .fsweb-cc-hero .button .dashicons:before {
+	font-size: 18px;
+	line-height: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Stat cards
+/* ------------------------------------------------------------------ */
+.fsweb-cc-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+	gap: 16px;
+	margin: 0 0 20px;
+}
+
+.fsweb-cc-stat-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 18px 20px;
+	background: #fff;
+	border: 1px solid var(--fsweb-cc-line);
+	border-radius: var(--fsweb-cc-radius);
+	box-shadow: 0 1px 2px rgba(16, 16, 16, 0.06);
+}
+
+.fsweb-cc-stat-label {
 	font-size: 12.5px;
+	font-weight: 600;
+	letter-spacing: 0.2px;
+	text-transform: uppercase;
+	color: var(--fsweb-cc-muted);
+}
+
+.fsweb-cc-stat-value {
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--fsweb-cc-heading);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Status pills
+/* ------------------------------------------------------------------ */
+.fsweb-cc-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	align-self: flex-start;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12.5px;
+	font-weight: 600;
 	line-height: 1.8;
 	white-space: nowrap;
+	background: var(--fsweb-cc-neutral-bg);
+	color: var(--fsweb-cc-neutral);
+	border: 1px solid var(--fsweb-cc-neutral-line);
 }
 
-/*
- * The license script swaps the pill classes (removeClass().addClass()) and
- * rewrites its text, so the icon comes from CSS — a nested
- * <span class="dashicons"> would be dropped on the first status update.
- * The glyphs follow the family: active = yes-alt, inactive = hidden,
- * expired = clock, pending = marker (neutral) and invalid = warning.
- */
-.fsweb-cc-status::before {
+.fsweb-cc-pill::before {
 	display: inline-block;
-	flex: 0 0 auto;
 	font-family: dashicons;
 	font-size: 15px;
-	font-weight: 400;
 	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: never;
 }
 
-.fsweb-cc-status--active::before {
+.fsweb-cc-pill.is-on::before {
 	content: "\f12a";
 }
 
-.fsweb-cc-status--inactive::before {
+.fsweb-cc-pill.is-off::before {
 	content: "\f530";
 }
 
-.fsweb-cc-status--expired::before {
-	content: "\f469";
-}
-
-.fsweb-cc-status--invalid::before {
-	content: "\f534";
-}
-
-.fsweb-cc-status--pending::before {
-	content: "\f159";
-}
-
-.fsweb-cc-status--active {
+.fsweb-cc-pill.is-on {
 	background: var(--fsweb-cc-green-bg);
 	color: var(--fsweb-cc-green);
 	border-color: var(--fsweb-cc-green-line);
 }
 
-/* Inactive and pending share the same neutral treatment: neither has a valid
-   license in use, so the pill does not pull an alert colour. */
-.fsweb-cc-status--inactive,
-.fsweb-cc-status--pending {
-	background: var(--fsweb-cc-neutral-bg);
-	color: var(--fsweb-cc-neutral);
-	border-color: var(--fsweb-cc-neutral-line);
-}
-
-.fsweb-cc-status--expired {
-	background: var(--fsweb-cc-amber-bg);
-	color: var(--fsweb-cc-amber);
-	border-color: var(--fsweb-cc-amber-line);
-}
-
-.fsweb-cc-status--invalid {
-	background: var(--fsweb-cc-red-bg);
-	color: var(--fsweb-cc-red);
-	border-color: var(--fsweb-cc-red-line);
-}
-
 /* ------------------------------------------------------------------ */
-/*  Cards
+/*  Cards and grid
 /* ------------------------------------------------------------------ */
+.fsweb-cc-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+	gap: 20px;
+	align-items: start;
+}
+
 .fsweb-cc-card {
-	margin: 0 0 20px;
-	background: var(--fsweb-cc-surface);
+	background: #fff;
 	border: 1px solid var(--fsweb-cc-line);
 	border-radius: var(--fsweb-cc-radius);
-	box-shadow: var(--fsweb-cc-shadow);
+	box-shadow: 0 1px 2px rgba(16, 16, 16, 0.06);
 	overflow: hidden;
 }
 
 .fsweb-cc-card__header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	flex-wrap: wrap;
-	padding: 16px 22px;
+	padding: 16px 20px;
 	border-bottom: 1px solid var(--fsweb-cc-line);
-	background: #fbfbfc;
+	background: linear-gradient(180deg, #fff 0%, var(--fsweb-cc-soft) 100%);
 }
 
 .fsweb-cc-card__header h2 {
@@ -260,258 +293,275 @@
 	align-items: center;
 	gap: 8px;
 	margin: 0;
-	padding: 0;
+	font-size: 15px;
+	line-height: 1.4;
 	color: var(--fsweb-cc-heading);
-	font-size: 16px;
-	font-weight: 600;
-	line-height: 1.3;
 }
 
 .fsweb-cc-card__header h2 .dashicons {
-	width: 20px;
-	height: 20px;
-	font-size: 20px;
 	color: var(--fsweb-cc-brand);
+	font-size: 19px;
+	width: 19px;
+	height: 19px;
 }
 
 .fsweb-cc-card__body {
-	padding: 20px 22px 22px;
+	padding: 20px;
 }
 
-/* Tables and other flush content sit edge to edge inside the card. */
-.fsweb-cc-card__body--flush {
-	padding: 0;
+.fsweb-cc-card__body > *:first-child {
+	margin-top: 0;
 }
 
-/* A button carried by a card header (e.g. "View All") keeps a small icon. */
-.fsweb-cc-wrap .fsweb-cc-card__header .button {
+.fsweb-cc-card__body > *:last-child {
+	margin-bottom: 0;
+}
+
+.fsweb-cc-code {
+	display: block;
+	margin: 8px 0 16px;
+	padding: 10px 14px;
+	background: var(--fsweb-cc-soft);
+	border: 1px solid var(--fsweb-cc-line);
+	border-radius: var(--fsweb-cc-radius-sm);
+	font-size: 13px;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.fsweb-cc-list {
+	margin: 0 0 16px 20px;
+	list-style: disc;
+	line-height: 1.75;
+	color: #50575e;
+}
+
+.fsweb-cc-list:last-child {
+	margin-bottom: 0;
+}
+
+.fsweb-cc-list--ordered {
+	list-style: decimal;
+}
+
+.fsweb-cc-table th {
+	font-weight: 600;
+	color: var(--fsweb-cc-heading);
+}
+
+.fsweb-cc-table td {
+	vertical-align: middle;
+}
+
+.fsweb-cc-locked-row th {
+	font-weight: 600;
+	color: var(--fsweb-cc-heading);
+}
+
+.fsweb-cc-locked {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-}
-
-.fsweb-cc-wrap .fsweb-cc-card__header .button > .dashicons,
-.fsweb-cc-wrap .fsweb-cc-card__header .button > .dashicons:before {
-	width: 16px;
-	height: 16px;
-	font-size: 16px;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Form grid and fields
-/* ------------------------------------------------------------------ */
-.fsweb-cc-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-	gap: 16px 20px;
-}
-
-.fsweb-cc-field {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	min-width: 0;
-}
-
-.fsweb-cc-field--full {
-	grid-column: 1 / -1;
-}
-
-.fsweb-cc-field > label,
-.fsweb-cc-field-label {
-	color: var(--fsweb-cc-heading);
-	font-weight: 600;
-	font-size: 13.5px;
-}
-
-.fsweb-cc-field input[type="text"],
-.fsweb-cc-field input[type="password"],
-.fsweb-cc-field input[type="email"],
-.fsweb-cc-field input[type="url"],
-.fsweb-cc-field input[type="search"],
-.fsweb-cc-field select,
-.fsweb-cc-field textarea {
-	width: 100%;
-	max-width: none;
-	margin: 0;
-}
-
-.fsweb-cc-field .description {
-	margin: 0;
-	color: var(--fsweb-cc-muted);
-	font-size: 12.5px;
-	line-height: 1.5;
-}
-
-.fsweb-cc-hint {
-	display: flex;
-	align-items: flex-start;
-	gap: 8px;
-	margin: 16px 0 0;
-	padding: 12px 14px;
+	padding: 4px 10px;
+	border: 1px dashed var(--fsweb-cc-line);
 	border-radius: var(--fsweb-cc-radius-sm);
 	background: var(--fsweb-cc-soft);
-	color: var(--fsweb-cc-body);
+	color: var(--fsweb-cc-muted);
 	font-size: 13px;
-	line-height: 1.55;
+	font-style: italic;
 }
 
-.fsweb-cc-hint .dashicons {
-	flex-shrink: 0;
-	width: 18px;
-	height: 18px;
-	font-size: 18px;
-	color: var(--fsweb-cc-brand);
+/* ------------------------------------------------------------------ */
+/*  Review list columns
+/* ------------------------------------------------------------------ */
+.fsweb-cc-muted {
+	color: #c3c4c7;
 }
 
-.fsweb-cc-help-list {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+.fsweb-cc-stars {
+	color: #f0c040;
+	font-size: 16px;
+	letter-spacing: 1px;
 }
 
-.fsweb-cc-help-list li {
+/* ------------------------------------------------------------------ */
+/*  PRO tag and invitation card
+/* ------------------------------------------------------------------ */
+.fsweb-cc-pro-tag {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 1px 7px;
+	border-radius: 999px;
+	background: #d63638;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.4px;
+	line-height: 1.7;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+.fsweb-cc-pro-tag:hover,
+.fsweb-cc-pro-tag:focus {
+	background: #b32d2e;
+	color: #fff;
+}
+
+.fsweb-cc-menu-pro {
+	color: #d63638;
+	font-weight: 600;
+}
+
+.fsweb-cc-card--pro {
+	border: 1px solid rgba(214, 54, 56, 0.35);
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(214, 54, 56, 0.1) 0%, rgba(214, 54, 56, 0) 55%),
+		linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
+	box-shadow: 0 12px 30px rgba(214, 54, 56, 0.08);
+}
+
+.fsweb-cc-pro-card {
 	display: flex;
 	align-items: flex-start;
-	gap: 10px;
-	color: var(--fsweb-cc-body);
-	font-size: 13.5px;
-	line-height: 1.6;
+	gap: 20px;
+	padding: 24px;
 }
 
-.fsweb-cc-help-list li + li {
-	margin-top: 12px;
-}
-
-.fsweb-cc-help-list .dashicons {
-	flex-shrink: 0;
-	margin-top: 1px;
-	width: 19px;
-	height: 19px;
-	font-size: 19px;
-	color: var(--fsweb-cc-brand);
-}
-
-/* ------------------------------------------------------------------ */
-/*  Buttons
-/* ------------------------------------------------------------------ */
-.fsweb-cc-wrap .button {
+.fsweb-cc-pro-card__icon {
+	flex: 0 0 auto;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
-	border-radius: 4px;
-	font-weight: 600;
-	box-shadow: none;
-}
-
-.fsweb-cc-wrap .button > .dashicons,
-.fsweb-cc-wrap .button > .dashicons:before {
-	width: 18px;
-	height: 18px;
-	font-size: 18px;
+	width: 54px;
+	height: 54px;
+	border-radius: 15px;
+	background: #d63638;
+	color: #fff;
+	font-size: 26px;
 	line-height: 1;
+	box-shadow: 0 8px 18px rgba(214, 54, 56, 0.25);
 }
 
-.fsweb-cc-wrap .button > .dashicons {
-	flex-shrink: 0;
+.fsweb-cc-pro-card__text {
+	flex: 1 1 auto;
+	min-width: 0;
 }
 
-.fsweb-cc-wrap .button-primary {
-	min-height: var(--fsweb-cc-input-h);
-	padding: 0 22px;
-	line-height: var(--fsweb-cc-input-h);
-}
-
-/* ------------------------------------------------------------------ */
-/*  License page
-/* ------------------------------------------------------------------ */
-.fsweb-cc-license-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: var(--fsweb-cc-gap);
-	align-items: start;
-}
-
-.fsweb-cc-license-grid .fsweb-cc-card {
-	margin: 0;
-}
-
-.fsweb-cc-license-wrap .notice {
-	margin: 16px 0 0;
-	padding: 8px 12px;
-	border-left-width: 4px;
-	border-radius: var(--fsweb-cc-radius-sm);
-	box-shadow: 0 1px 2px rgba(16, 16, 16, 0.04);
-}
-
-#fsweb-cc-license-message {
-	margin: 16px 0 0;
-}
-
-#fsweb-cc-license-message p {
-	margin: 4px 0;
-}
-
-.fsweb-cc-license-actions {
+.fsweb-cc-pro-card__text h2 {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 10px;
-	margin: 20px 0 0;
-	padding: 16px 0 0;
-	border-top: 1px solid var(--fsweb-cc-line);
+	gap: 4px;
+	margin: 0 0 6px;
+	font-size: 19px;
+	line-height: 1.3;
+	color: var(--fsweb-cc-heading);
 }
 
-.fsweb-cc-license-actions .button {
+.fsweb-cc-pro-card__text > p {
+	margin: 0 0 10px;
+	max-width: 720px;
+	color: #50575e;
+}
+
+.fsweb-cc-pro-card__text .button .dashicons {
+	font-size: 17px;
+	width: 17px;
+	height: 17px;
+}
+
+.fsweb-cc-pro-card__text .button.button-primary {
+	background: var(--fsweb-cc-brand);
+	border-color: var(--fsweb-cc-brand);
+	color: #fff;
+	box-shadow: 0 4px 12px rgba(123, 97, 255, 0.25);
+}
+
+.fsweb-cc-pro-card__text .button.button-primary:hover,
+.fsweb-cc-pro-card__text .button.button-primary:focus {
+	background: var(--fsweb-cc-brand-dark);
+	border-color: var(--fsweb-cc-brand-dark);
+	color: #fff;
+}
+
+.fsweb-cc-pro-card__text .button.button-primary .dashicons,
+.fsweb-cc-pro-card__text .button.button-primary .dashicons:before {
+	color: #fff;
+	-webkit-text-fill-color: #fff;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Review editor
+/* ------------------------------------------------------------------ */
+.fsweb-review-editor-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding: 8px 0;
+}
+
+.fsweb-review-editor-field {
+	display: grid;
+	grid-template-columns: 160px 1fr;
+	gap: 16px;
+	align-items: start;
+}
+
+.fsweb-review-editor-label {
+	font-weight: 600;
+	padding-top: 6px;
+}
+
+.fsweb-review-editor-required {
+	color: #d63638;
+}
+
+.fsweb-review-editor-input input,
+.fsweb-review-editor-input textarea,
+.fsweb-review-editor-input select {
+	width: 100%;
+	max-width: 480px;
+}
+
+.fsweb-review-editor-stars {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	min-height: 38px;
-	padding: 0 16px;
-	border-radius: var(--fsweb-cc-radius-sm);
-	line-height: 1.4;
+	flex-direction: row-reverse;
+	gap: 2px;
+	justify-content: flex-end;
 }
 
-/*
- * Button icons come from CSS instead of a nested <span class="dashicons">:
- * the license script replaces the button text while a request is in flight,
- * which would drop an inner span for good.
- */
-.fsweb-cc-license-actions .button::before {
-	display: inline-block;
-	font-family: dashicons;
-	font-size: 18px;
-	font-weight: 400;
+.fsweb-review-editor-stars input[type="radio"] {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+}
+
+.fsweb-review-editor-stars label {
+	font-size: 26px;
 	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: never;
+	color: #c3c4c7;
+	cursor: pointer;
 }
 
-#fsweb-cc-activate-license::before {
-	content: "\f147";
+.fsweb-review-editor-stars label:hover,
+.fsweb-review-editor-stars label:hover ~ label,
+.fsweb-review-editor-stars input:checked ~ label {
+	color: #f0c040;
 }
 
-#fsweb-cc-deactivate-license::before {
-	content: "\f335";
+.fsweb-review-editor-rating-badge {
+	font-size: 13px;
+	color: #646970;
+	margin-right: 10px;
+	order: 6;
 }
 
-/* Narrow screens: the license grid and the form grid stack. */
-@media screen and (max-width: 960px) {
-	.fsweb-cc-license-grid {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-@media screen and (max-width: 782px) {
+@media (max-width: 782px) {
 	.fsweb-cc-hero {
-		padding: 24px 20px;
-	}
-
-	.fsweb-cc-hero--split {
-		flex-direction: column;
-		align-items: stretch;
+		padding: 24px;
 	}
 
 	.fsweb-cc-hero__actions,
@@ -520,1361 +570,12 @@
 		justify-content: center;
 	}
 
-	.fsweb-cc-card__header,
-	.fsweb-cc-card__body {
-		padding-left: 16px;
-		padding-right: 16px;
+	.fsweb-cc-pro-card {
+		flex-direction: column;
 	}
 
-	.fsweb-cc-grid {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-/* ------------------------------------------------------------------ */
-/*  Dashboard
-/* ------------------------------------------------------------------ */
-/* Stats row */
-.fsweb-cc-stats {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-	gap: 14px;
-	margin: 0 0 20px;
-}
-
-.fsweb-cc-stat {
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	padding: 16px 18px;
-	background: var(--fsweb-cc-surface);
-	border: 1px solid var(--fsweb-cc-line);
-	border-radius: var(--fsweb-cc-radius);
-	box-shadow: var(--fsweb-cc-shadow);
-}
-
-.fsweb-cc-stat__icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	width: 42px;
-	height: 42px;
-	border-radius: 50%;
-	background: var(--fsweb-cc-soft);
-	color: var(--fsweb-cc-brand);
-}
-
-.fsweb-cc-stat__icon .dashicons {
-	width: 22px;
-	height: 22px;
-	font-size: 22px;
-}
-
-.fsweb-cc-stat__body {
-	min-width: 0;
-}
-
-.fsweb-cc-stat__value {
-	display: block;
-	color: var(--fsweb-cc-heading);
-	font-size: 22px;
-	font-weight: 700;
-	line-height: 1.2;
-}
-
-.fsweb-cc-stat__label {
-	display: block;
-	color: var(--fsweb-cc-muted);
-	font-size: 12.5px;
-	text-transform: uppercase;
-	letter-spacing: 0.4px;
-}
-
-/* Status accents on the icon — same palette as the status pills. */
-.fsweb-cc-stat--active .fsweb-cc-stat__icon {
-	background: var(--fsweb-cc-green-bg);
-	color: var(--fsweb-cc-green);
-}
-
-.fsweb-cc-stat--inactive .fsweb-cc-stat__icon,
-.fsweb-cc-stat--pending .fsweb-cc-stat__icon {
-	background: var(--fsweb-cc-neutral-bg);
-	color: var(--fsweb-cc-neutral);
-}
-
-.fsweb-cc-stat--expired .fsweb-cc-stat__icon {
-	background: var(--fsweb-cc-amber-bg);
-	color: var(--fsweb-cc-amber);
-}
-
-.fsweb-cc-stat--invalid .fsweb-cc-stat__icon {
-	background: var(--fsweb-cc-red-bg);
-	color: var(--fsweb-cc-red);
-}
-
-/* Dashboard grid (2 columns) */
-.fsweb-cc-dash-grid {
-	display: grid;
-	grid-template-columns: 2fr 1fr;
-	gap: var(--fsweb-cc-gap);
-	align-items: start;
-}
-
-.fsweb-cc-dash-grid .fsweb-cc-card {
-	margin: 0;
-}
-
-/* Recent reviews table */
-.fsweb-cc-recent-table {
-	border: none;
-	box-shadow: none;
-}
-
-.fsweb-cc-recent-table thead th {
-	padding: 11px 14px;
-	color: var(--fsweb-cc-muted);
-	font-size: 12px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.fsweb-cc-has-thumb {
-	margin-left: 6px;
-	font-size: 12px;
-}
-
-.fsweb-cc-empty {
-	padding: 40px 24px;
-	text-align: center;
-}
-
-.fsweb-cc-empty .dashicons {
-	width: 40px;
-	height: 40px;
-	font-size: 40px;
-	color: #c3c4c7;
-}
-
-.fsweb-cc-empty p {
-	margin: 10px 0 0;
-	color: var(--fsweb-cc-muted);
-	font-size: 13.5px;
-}
-
-/* Quick actions */
-.fsweb-cc-quick-actions {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-/* Shortcode help box */
-.fsweb-cc-shortcode-help {
-	margin: 18px 0 0;
-	padding: 14px 16px;
-	border-radius: var(--fsweb-cc-radius-sm);
-	background: var(--fsweb-cc-soft);
-}
-
-.fsweb-cc-shortcode-help h3 {
-	margin: 0 0 8px;
-	color: var(--fsweb-cc-heading);
-	font-size: 13.5px;
-}
-
-.fsweb-cc-shortcode-help p {
-	margin: 0 0 8px;
-	font-size: 13px;
-}
-
-.fsweb-cc-shortcode-help p:last-child {
-	margin-bottom: 0;
-}
-
-.fsweb-cc-shortcode-help code {
-	font-size: 12.5px;
-	padding: 3px 7px;
-}
-
-@media (max-width: 960px) {
-	.fsweb-cc-stats {
-		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-	}
-
-	.fsweb-cc-dash-grid {
+	.fsweb-review-editor-field {
 		grid-template-columns: 1fr;
+		gap: 6px;
 	}
-}
-
-/* ------------------------------------------------------------------ */
-/*  Form Builder
-/* ------------------------------------------------------------------ */
-.fsweb-cc-builder-wrap .description {
-	margin-bottom: 16px;
-}
-
-.fsweb-cc-builder {
-	display: grid;
-	grid-template-columns: 260px 1fr;
-	gap: 24px;
-	align-items: start;
-}
-
-/* Palette (left) */
-.fsweb-cc-builder-palette {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
-	padding: 16px;
-	position: sticky;
-	top: 40px;
-}
-
-.fsweb-cc-builder-palette h3 {
-	margin: 0 0 12px;
-	font-size: 13px;
-	font-weight: 600;
-}
-
-.fsweb-cc-palette-items {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	margin-bottom: 16px;
-}
-
-.fsweb-cc-palette-item {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 12px;
-	background: #f6f7f7;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
-	cursor: grab;
-	font-size: 13px;
-	transition: background 0.15s, border-color 0.15s;
-}
-
-.fsweb-cc-palette-item:hover {
-	background: #f0f0f1;
-	border-color: #7b61ff;
-}
-
-.fsweb-cc-palette-item .dashicons {
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-	color: #646970;
-}
-
-/* Canvas (right) */
-.fsweb-cc-builder-canvas {
-	min-height: 300px;
-}
-
-.fsweb-cc-builder-toolbar {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 12px;
-}
-
-.fsweb-cc-builder-toolbar h3 {
-	margin: 0;
-	font-size: 14px;
-}
-
-/* Sortable field list */
-.fsweb-cc-fields-sortable {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	min-height: 60px;
-}
-
-/* Field card */
-.fsweb-cc-field-card {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
-	overflow: hidden;
-	transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.fsweb-cc-field-card:hover {
-	border-color: #8c8f94;
-	box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-.fsweb-cc-field-header {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 12px 14px;
-	cursor: default;
-}
-
-.fsweb-cc-field-handle {
-	cursor: grab;
-	color: #8c8f94;
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-}
-
-.fsweb-cc-field-label-text {
-	flex: 1;
-	font-size: 14px;
-}
-
-.fsweb-cc-field-type-badge {
-	font-size: 11px;
-	background: #f0f0f1;
-	padding: 2px 8px;
-	border-radius: 3px;
-	color: #50575e;
-	text-transform: uppercase;
-	font-weight: 600;
-}
-
-.fsweb-cc-field-toggle,
-.fsweb-cc-field-delete {
-	border: none;
-	background: #d63638;
-	cursor: pointer;
-	padding: 0;
-	color: #fff;
-	font-size: 16px !important;
-	width: 26px;
-	height: 26px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 4px;
-	transition: background 0.15s;
-	line-height: 1 !important;
-}
-
-.fsweb-cc-field-toggle:hover,
-.fsweb-cc-field-delete:hover {
-	background: #b32d2e;
-}
-
-/* Field body */
-.fsweb-cc-field-body {
-	padding: 0 14px 14px;
-	border-top: 1px solid #e2e4e7;
-	background: #f9f9f9;
-}
-
-.fsweb-cc-field-row {
-	padding: 10px 0 0;
-}
-
-.fsweb-cc-field-row label {
-	display: block;
-	font-size: 12px;
-	font-weight: 600;
-	color: #3c434a;
-	margin-bottom: 4px;
-}
-
-.fsweb-cc-field-row input[type="text"],
-.fsweb-cc-field-row select,
-.fsweb-cc-field-row textarea {
-	width: 100%;
-	max-width: 400px;
-}
-
-.fsweb-cc-field-row textarea {
-	resize: vertical;
-}
-
-/* Sortable placeholder */
-.fsweb-cc-field-placeholder {
-	background: #f0f6fc;
-	border: 2px dashed #7b61ff;
-	border-radius: 6px;
-	height: 48px;
-}
-
-/* Empty state */
-#fsweb-cc-builder-empty {
-	padding: 40px 20px;
-	text-align: center;
-	border: 2px dashed #dcdcde;
-	border-radius: 6px;
-	color: #8c8f94;
-}
-
-/* Save feedback */
-#fsweb-cc-builder-message {
-	margin-top: 16px;
-}
-
-@media (max-width: 782px) {
-	.fsweb-cc-builder {
-		grid-template-columns: 1fr;
-	}
-
-	.fsweb-cc-builder-palette {
-		position: static;
-	}
-
-	.fsweb-cc-palette-items {
-		flex-direction: row;
-		flex-wrap: wrap;
-	}
-
-	.fsweb-cc-palette-item {
-		flex: 0 0 auto;
-	}
-}
-
-/* ------------------------------------------------------------------ */
-/*  Views Builder — row/column layout
-/* ------------------------------------------------------------------ */
-
-.fsweb-cc-views-canvas {
-	flex: 1;
-	min-height: 200px;
-}
-
-/* Row */
-.fsweb-cc-view-row {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
-	margin-bottom: 12px;
-	overflow: hidden;
-}
-
-.fsweb-cc-view-row-toolbar {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	background: #f6f7f7;
-	border-bottom: 1px solid #e2e4e7;
-}
-
-.fsweb-cc-row-handle {
-	cursor: grab;
-	color: #8c8f94;
-	font-size: 16px;
-}
-
-.fsweb-cc-view-row-toolbar strong {
-	font-size: 12px;
-	flex: 1;
-}
-
-.fsweb-cc-col-btn {
-	border: 1px solid #c3c4c7;
-	background: #fff;
-	border-radius: 3px;
-	padding: 3px 10px;
-	font-size: 12px;
-	cursor: pointer;
-	line-height: 1.4;
-	transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.fsweb-cc-col-btn:hover {
-	border-color: #7b61ff;
-	color: #7b61ff;
-}
-
-.fsweb-cc-col-btn.active {
-	background: #7b61ff;
-	color: #fff;
-	border-color: #7b61ff;
-}
-
-.fsweb-cc-delete-row {
-	border: none;
-	background: #d63638;
-	cursor: pointer;
-	color: #fff;
-	font-size: 16px !important;
-	padding: 0;
-	width: 26px;
-	height: 26px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 4px;
-	transition: background 0.15s;
-	margin-left: auto;
-	line-height: 1 !important;
-}
-
-.fsweb-cc-delete-row:hover {
-	background: #b32d2e;
-}
-
-/* Columns */
-.fsweb-cc-view-cols {
-	display: flex;
-	align-items: stretch;
-	min-height: 60px;
-}
-
-.fsweb-cc-view-col {
-	border-right: 1px dashed #e2e4e7;
-	padding: 8px;
-	display: flex;
-	flex-direction: column;
-}
-
-.fsweb-cc-view-col:last-child {
-	border-right: none;
-}
-
-.fsweb-cc-col-inner {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	min-height: 64px;
-	border: 2px dashed transparent;
-	border-radius: 4px;
-	transition: border-color 0.15s, background 0.15s;
-}
-
-/* Always-visible drop zone indicator on empty inner containers */
-.fsweb-cc-col-inner:empty {
-	border-color: #dcdcde;
-	background: #f9f9f9;
-}
-
-.fsweb-cc-col-inner:empty::after {
-	content: "Drop component here";
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex: 1;
-	font-size: 12px;
-	color: #8c8f94;
-}
-
-/* Highlight intensifies during drag */
-.fsweb-cc-col-inner.fsweb-cc-col-droppable:empty {
-	border-color: #7b61ff;
-	background: #f0f6fc;
-}
-
-.fsweb-cc-col-inner.fsweb-cc-col-droppable:empty::after {
-	color: #7b61ff;
-}
-
-/* Component — now uses .fsweb-cc-field-card styles */
-.fsweb-cc-view-comp {
-	/* field-card handles all styling */
-}
-
-.fsweb-cc-comp--dragging {
-	/* space collapsed via JS negative margin */
-}
-
-.fsweb-cc-view-comp:active {
-	/* handled by field-card */
-}
-
-.fsweb-cc-view-comp .dashicons {
-	/* field-card handles icon styling */
-}
-
-.fsweb-cc-comp-delete {
-	border: none;
-	background: none;
-	cursor: pointer;
-	color: #8c8f94;
-	margin-left: auto;
-	font-size: 14px !important;
-	padding: 0;
-	width: 20px;
-	height: 20px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 3px;
-	flex-shrink: 0;
-	transition: color 0.15s, background 0.15s;
-	line-height: 1 !important;
-}
-
-.fsweb-cc-comp-delete:hover {  /* retained for backward compat, delete btn now uses .fsweb-cc-field-delete */
-	color: #d63638;
-	background: rgba(214, 54, 56, 0.08);
-}
-
-.fsweb-cc-comp-type-label {
-	display: inline-block;
-	padding: 2px 10px;
-	font-size: 12px;
-	font-weight: 600;
-	color: #7b61ff;
-	background: rgba(123, 97, 255, 0.08);
-	border-radius: 4px;
-	margin-bottom: 12px;
-}
-
-/* Sortable placeholders */
-.fsweb-cc-row-placeholder {
-	background: #f0f6fc;
-	border: 2px dashed #7b61ff;
-	border-radius: 6px;
-	height: 52px;
-	margin-bottom: 12px;
-}
-
-.fsweb-cc-comp-placeholder {
-	background: transparent;
-	height: 0;
-	margin: 0;
-}
-
-/* ---- Empty placeholder slots (static grid cells) ------------------------ */
-
-.fsweb-cc-view-comp--empty {
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	padding: 7px 10px !important;
-	border: 2px dashed #dcdcde !important;
-	border-radius: 4px !important;
-	background: #fafafa !important;
-	color: #8c8f94 !important;
-	font-size: 13px !important;
-	margin-bottom: 4px !important;
-	box-sizing: border-box !important;
-	min-height: 50px !important;
-}
-
-/* Empty slot lights up when a component is dragged over it */
-.fsweb-cc-view-comp--empty.fsweb-cc-empty--hover {
-	border-color: #7b61ff !important;
-	background: #f0f6fc !important;
-	color: #7b61ff !important;
-	box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.2);
-}
-
-/* Extra slot that appears during drag — same look as normal empty slot. */
-.fsweb-cc-view-comp--extra {
-	/* no extra styling — the class exists only for JS identification */
-}
-
-/* Row highlight during drag */
-.fsweb-cc-row--dragging {
-	box-shadow: 0 0 0 2px rgba(123, 97, 255, 0.25);
-}
-
-.fsweb-cc-row--dragging .fsweb-cc-view-row-toolbar {
-	background: #f0f6fc;
-}
-
-#fsweb-cc-view-message {
-	margin-top: 12px;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Template list
-/* ------------------------------------------------------------------ */
-.fsweb-cc-list-toolbar {
-	margin-bottom: 16px;
-}
-
-.fsweb-cc-templates-table {
-	margin-top: 8px;
-}
-
-.fsweb-cc-templates-table th,
-.fsweb-cc-templates-table td {
-	vertical-align: middle;
-}
-
-.fsweb-cc-shortcode-copy-wrap {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.fsweb-cc-shortcode-copy-wrap code {
-	font-size: 13px;
-	cursor: pointer;
-	user-select: all;
-}
-
-/* Dashicon inside buttons (New Form / New View / Add Row) */
-.fsweb-cc-btn-icon {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	line-height: 1 !important;
-	vertical-align: middle;
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-}
-
-/*
- * The save buttons rewrite their own label through JS while the request is in
- * flight ("Saving…"), so their icon has to come from CSS — a nested <span>
- * would be dropped for good.
- */
-#fsweb-cc-save-form::before,
-#fsweb-cc-save-view::before {
-	content: "\f147";
-	display: inline-block;
-	margin-right: 6px;
-	font-family: dashicons;
-	font-size: 18px;
-	font-weight: 400;
-	line-height: 1;
-	vertical-align: text-bottom;
-	-webkit-font-smoothing: antialiased;
-}
-
-/* ── Table action buttons ── */
-/* Combined specificity with .button to beat WordPress core styles */
-
-/* Edit — yellow bg, dark icon */
-.button.fsweb-cc-edit-btn {
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	min-width: 30px;
-	width: 30px;
-	height: 30px;
-	min-height: 30px;
-	padding: 0 !important;
-	line-height: 1 !important;
-	vertical-align: middle !important;
-	border-radius: 4px;
-	background: #f0c33c !important;
-	border-color: #dba617 !important;
-	color: #3c434a !important;
-	transition: background 0.15s, border-color 0.15s;
-}
-
-.button.fsweb-cc-edit-btn:hover {
-	background: #dba617 !important;
-	border-color: #c49a0f !important;
-}
-
-.button.fsweb-cc-edit-btn .dashicons,
-.button.fsweb-cc-edit-btn .dashicons-edit {
-	display: block !important;
-	font-size: 16px !important;
-	width: 16px !important;
-	height: 16px !important;
-	line-height: 1 !important;
-	color: #3c434a !important;
-}
-
-/* Delete — red bg, white icon */
-.button.fsweb-cc-delete-form,
-.button.fsweb-cc-delete-view {
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	min-width: 30px;
-	width: 30px;
-	height: 30px;
-	min-height: 30px;
-	padding: 0 !important;
-	line-height: 1 !important;
-	vertical-align: middle !important;
-	border-radius: 4px;
-	background: #d63638 !important;
-	border-color: #b32d2e !important;
-	color: #fff !important;
-	transition: background 0.15s, border-color 0.15s;
-}
-
-.button.fsweb-cc-delete-form:hover,
-.button.fsweb-cc-delete-view:hover {
-	background: #b32d2e !important;
-	border-color: #962325 !important;
-}
-
-.button.fsweb-cc-delete-form .dashicons,
-.button.fsweb-cc-delete-form .dashicons-trash,
-.button.fsweb-cc-delete-view .dashicons,
-.button.fsweb-cc-delete-view .dashicons-trash {
-	display: block !important;
-	font-size: 16px !important;
-	width: 16px !important;
-	height: 16px !important;
-	line-height: 1 !important;
-	color: #fff !important;
-}
-
-/* Copy — subtle blue bg, outlined */
-.button.fsweb-cc-copy-btn {
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	min-width: 30px;
-	width: 30px;
-	height: 30px;
-	min-height: 30px;
-	padding: 0 !important;
-	line-height: 1 !important;
-	vertical-align: middle !important;
-	border-radius: 4px;
-	background: #eaf0f6 !important;
-	border: 1px solid #94a3b8 !important;
-	color: #50575e !important;
-	transition: background 0.15s, border-color 0.15s;
-}
-
-.button.fsweb-cc-copy-btn:hover {
-	background: #d4dfeb !important;
-	border-color: #64748b !important;
-}
-
-.button.fsweb-cc-copy-btn .dashicons,
-.button.fsweb-cc-copy-btn .dashicons-clipboard {
-	display: block !important;
-	font-size: 16px !important;
-	width: 16px !important;
-	height: 16px !important;
-	color: #50575e !important;
-}
-
-.button.fsweb-cc-copy-btn .dashicons {
-	line-height: 1 !important;
-}
-
-.button.fsweb-cc-copy-btn .dashicons-clipboard {
-	line-height: 1.2 !important;
-	writing-mode: vertical-rl !important;
-}
-
-.fsweb-cc-action-buttons {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.fsweb-cc-empty-state {
-	padding: 40px 20px;
-	text-align: center;
-	border: 2px dashed #dcdcde;
-	border-radius: 6px;
-	color: #8c8f94;
-	margin-top: 16px;
-}
-
-.fsweb-cc-empty-state p {
-	font-size: 14px;
-	margin: 0;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Field card — icon + edit button
-/* ------------------------------------------------------------------ */
-.fsweb-cc-field-icon {
-	color: #50575e;
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-}
-
-.fsweb-cc-field-edit {
-	border: none;
-	background: #f0c33c;
-	cursor: pointer;
-	padding: 0;
-	color: #3c434a;
-	font-size: 16px !important;
-	width: 26px;
-	height: 26px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 4px;
-	transition: background 0.15s;
-	margin-left: auto;
-	line-height: 1 !important;
-}
-
-.fsweb-cc-field-edit:hover {
-	background: #dba617;
-}
-
-.fsweb-cc-field-header {
-	cursor: pointer;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Modal
-/* ------------------------------------------------------------------ */
-.fsweb-cc-modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 100000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.fsweb-cc-modal-backdrop {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-.fsweb-cc-modal-content {
-	position: relative;
-	background: #fff;
-	border-radius: 8px;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-	width: 480px;
-	max-width: 90vw;
-	max-height: 85vh;
-	overflow-y: auto;
-	z-index: 1;
-}
-
-.fsweb-cc-modal-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 16px 20px;
-	border-bottom: 1px solid #e2e4e7;
-}
-
-.fsweb-cc-modal-header h3 {
-	margin: 0;
-	font-size: 15px;
-}
-
-.fsweb-cc-modal-close {
-	border: none;
-	background: none;
-	cursor: pointer;
-	color: #8c8f94;
-	font-size: 18px;
-	padding: 2px;
-}
-
-.fsweb-cc-modal-close:hover {
-	color: #d63638;
-}
-
-.fsweb-cc-modal-body {
-	padding: 20px;
-}
-
-.fsweb-cc-modal-body .fsweb-cc-field-row {
-	padding: 8px 0;
-}
-
-.fsweb-cc-modal-body .fsweb-cc-field-row:first-child {
-	padding-top: 0;
-}
-
-.fsweb-cc-modal-body .fsweb-cc-field-row label {
-	display: block;
-	font-size: 12px;
-	font-weight: 600;
-	color: #3c434a;
-	margin-bottom: 4px;
-}
-
-.fsweb-cc-modal-body .fsweb-cc-field-row input[type="text"],
-.fsweb-cc-modal-body .fsweb-cc-field-row select,
-.fsweb-cc-modal-body .fsweb-cc-field-row textarea {
-	width: 100%;
-}
-
-.fsweb-cc-modal-body .fsweb-cc-field-row textarea {
-	resize: vertical;
-}
-
-.fsweb-cc-modal-body .description {
-	margin-top: 4px;
-	font-size: 12px;
-}
-
-.fsweb-cc-modal-footer {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: 8px;
-	padding: 12px 20px;
-	border-top: 1px solid #e2e4e7;
-	background: #f6f7f7;
-	border-radius: 0 0 8px 8px;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Copy button feedback
-/* ------------------------------------------------------------------ */
-.button.fsweb-cc-copy-btn .dashicons-yes,
-.button.fsweb-cc-copy-btn-inline .dashicons-yes {
-	color: #00a32a !important;
-}
-
-.button.fsweb-cc-copy-btn-inline {
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	min-width: 30px;
-	width: 30px;
-	height: 30px;
-	min-height: 30px;
-	padding: 0 !important;
-	line-height: 1 !important;
-	vertical-align: middle !important;
-	background: #eaf0f6 !important;
-	border: 1px solid #94a3b8 !important;
-	border-radius: 4px;
-	color: #50575e !important;
-	transition: background 0.15s, border-color 0.15s;
-}
-
-.button.fsweb-cc-copy-btn-inline:hover {
-	background: #d4dfeb !important;
-	border-color: #64748b !important;
-}
-
-.button.fsweb-cc-copy-btn-inline .dashicons,
-.button.fsweb-cc-copy-btn-inline .dashicons-clipboard {
-	display: block !important;
-	font-size: 16px !important;
-	width: 16px !important;
-	height: 16px !important;
-	color: #50575e !important;
-}
-
-.button.fsweb-cc-copy-btn-inline .dashicons {
-	line-height: 1 !important;
-}
-
-.button.fsweb-cc-copy-btn-inline .dashicons-clipboard {
-	line-height: 1.2 !important;
-	writing-mode: vertical-rl !important;
-}
-
-/* Ensure button-primary dashicons stay white; only background changes on hover */
-.button.button-primary .dashicons,
-.button.button-primary .dashicons-plus-alt {
-	color: #fff !important;
-}
-
-.button.button-primary:hover .dashicons,
-.button.button-primary:hover .dashicons-plus-alt {
-	color: #fff !important;
-}
-
-/* ======================================================================
-   Multi-step Builder
-   ====================================================================== */
-
-#fsweb-cc-steps-container {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.fsweb-cc-step {
-	background: #fff;
-	border: 2px dashed #c3c4c7;
-	border-radius: 8px;
-	overflow: hidden;
-}
-
-.fsweb-cc-step-header {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 14px;
-	background: #f0f0f1;
-	border-bottom: 1px solid #dcdcde;
-}
-
-.fsweb-cc-step-handle {
-	cursor: grab;
-	color: #8c8f94;
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-}
-
-.fsweb-cc-step-label {
-	flex: 1;
-	border: 1px solid transparent;
-	background: transparent;
-	font-size: 14px;
-	font-weight: 600;
-	padding: 4px 8px;
-	border-radius: 4px;
-	color: #1d2327;
-	min-width: 120px;
-}
-
-.fsweb-cc-step-label:focus {
-	border-color: #7b61ff;
-	background: #fff;
-	outline: none;
-	box-shadow: 0 0 0 1px #7b61ff;
-}
-
-.fsweb-cc-step-badge {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 22px;
-	height: 22px;
-	padding: 0 6px;
-	font-size: 12px;
-	font-weight: 700;
-	color: #fff;
-	background: #7b61ff;
-	border-radius: 11px;
-}
-
-.fsweb-cc-step-delete {
-	cursor: pointer;
-	color: #8c8f94;
-	font-size: 16px;
-	width: 26px;
-	height: 26px;
-	line-height: 26px !important;
-	text-align: center;
-	border-radius: 4px;
-	border: none;
-	background: transparent;
-}
-
-.fsweb-cc-step-delete:hover {
-	color: #d63638;
-	background: rgba(214, 54, 56, 0.08);
-}
-
-.fsweb-cc-step-fields {
-	padding: 12px 14px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	min-height: 60px;
-}
-
-.fsweb-cc-step-fields:empty::after {
-	content: 'Drag fields here';
-	display: block;
-	text-align: center;
-	color: #8c8f94;
-	font-size: 13px;
-	padding: 20px 0;
-	font-style: italic;
-}
-
-.fsweb-cc-step-placeholder {
-	border: 2px dashed #7b61ff !important;
-	border-radius: 8px;
-	min-height: 80px;
-	background: rgba(123, 97, 255, 0.04);
-}
-
-#fsweb-cc-add-step {
-	align-self: flex-start;
-	padding: 8px 20px;
-	border: 2px dashed #8c8f94;
-	background: transparent;
-	color: #50575e;
-	font-size: 13px;
-	font-weight: 600;
-	border-radius: 6px;
-	cursor: pointer;
-	transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-
-#fsweb-cc-add-step:hover {
-	border-color: #7b61ff;
-	color: #7b61ff;
-	background: rgba(123, 97, 255, 0.04);
-}
-
-/* Multi-step toggle label */
-#fsweb-cc-multi-step-toggle {
-	font-size: 13px;
-	color: #3c434a;
-	margin-left: 4px;
-}
-
-/* Multi-step badge in list */
-.fsweb-cc-multi-badge {
-	display: inline-block;
-	margin-left: 8px;
-	padding: 1px 8px;
-	font-size: 11px;
-	font-weight: 600;
-	color: #7b61ff;
-	background: rgba(123, 97, 255, 0.1);
-	border-radius: 4px;
-	vertical-align: middle;
-}
-
-/* ======================================================================
-   Review Editor — Meta box fields
-   ====================================================================== */
-
-.fsweb-review-editor-fields {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.fsweb-review-editor-field {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.fsweb-review-editor-label {
-	font-weight: 600;
-	font-size: 13px;
-	color: #1d2327;
-}
-
-.fsweb-review-editor-required {
-	color: #d63638;
-	margin-left: 2px;
-}
-
-.fsweb-review-editor-input {
-	/* wrapper for alignment */
-}
-
-/* Star rating in admin meta box */
-.fsweb-review-editor-stars {
-	display: flex;
-	flex-direction: row-reverse;
-	justify-content: flex-end;
-	align-items: center;
-	gap: 3px;
-}
-
-.fsweb-review-editor-stars input[type="radio"] {
-	position: absolute;
-	opacity: 0;
-	width: 0;
-	height: 0;
-	overflow: hidden;
-}
-
-.fsweb-review-editor-stars label {
-	font-size: 22px;
-	color: #c3c4c7;
-	cursor: pointer;
-	transition: color 0.15s, transform 0.15s;
-}
-
-.fsweb-review-editor-stars label:hover,
-.fsweb-review-editor-stars label:hover ~ label {
-	color: #f0c040;
-	transform: scale(1.15);
-}
-
-.fsweb-review-editor-stars input:checked ~ label {
-	color: #f0c040;
-	transform: scale(1.05);
-}
-
-.fsweb-review-editor-rating-badge {
-	margin-left: 0;
-	margin-right: 8px;
-	font-size: 11px;
-	color: #50575e;
-	font-weight: 600;
-	background: #f0f0f1;
-	padding: 1px 7px;
-	border-radius: 3px;
-	white-space: nowrap;
-	align-self: center;
-}
-
-/* Image field in admin meta box */
-.fsweb-review-editor-image-empty {
-	width: 150px;
-	height: 100px;
-	border: 2px dashed #c3c4c7;
-	border-radius: 4px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #8c8f94;
-	font-size: 13px;
-	margin-bottom: 8px;
-	background: #f9f9f9;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Views Builder — Style (Skin) Block
-/* ------------------------------------------------------------------ */
-.fsweb-cc-builder-styles select {
-	margin-bottom: 8px;
-}
-
-.fsweb-cc-code-editor {
-	width: 100%;
-	font-family: "Courier New", Consolas, monospace;
-	font-size: 12px;
-	line-height: 1.5;
-	resize: vertical;
-	background: #1e1e2e;
-	color: #e0e0f0;
-	border: 1px solid #3a3a5c;
-	border-radius: 4px;
-	padding: 10px;
-	tab-size: 4;
-	box-sizing: border-box;
-	min-height: 160px;
-}
-
-.fsweb-cc-code-editor:focus {
-	border-color: #7b61ff;
-	box-shadow: 0 0 0 1px #7b61ff;
-	outline: none;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Component Modal — Reset button
-/* ------------------------------------------------------------------ */
-.fsweb-cc-style-reset {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 20px;
-	height: 20px;
-	padding: 0;
-	border: 1px solid #dcdcde;
-	border-radius: 50%;
-	background: #fff;
-	color: #8c8f94;
-	font-size: 14px;
-	line-height: 1;
-	cursor: pointer;
-	flex-shrink: 0;
-	transition: all 0.15s;
-}
-
-.fsweb-cc-style-reset:hover {
-	border-color: #c00;
-	color: #c00;
-	background: #fef0f0;
 }

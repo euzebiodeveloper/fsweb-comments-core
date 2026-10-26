@@ -5,99 +5,150 @@
  *
  * @link       https://flowsyncweb.com
  * @since      1.0.0
- *
  * @package    Fsweb_Comments_Core
  * @subpackage Fsweb_Comments_Core/public
  */
 
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 /**
- * The public-facing functionality of the plugin.
+ * Public-facing functionality.
  *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the public-facing stylesheet and JavaScript.
+ * Assets are registered here and only enqueued by the shortcodes that need
+ * them, so pages without reviews stay untouched.
  *
- * @package    Fsweb_Comments_Core
- * @subpackage Fsweb_Comments_Core/public
- * @author     Flow Sync Web <euzebio.batista@flowsyncweb.com>
+ * @since 1.0.0
  */
 class Fsweb_Comments_Core_Public {
 
 	/**
-	 * The ID of this plugin.
+	 * Plugin slug.
 	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var string
 	 */
 	private $plugin_name;
 
 	/**
-	 * The version of this plugin.
+	 * Plugin version.
 	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var string
 	 */
 	private $version;
 
 	/**
-	 * Initialize the class and set its properties.
+	 * Whether the front-end assets were already enqueued.
 	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @var bool
+	 */
+	private static $enqueued = false;
+
+	/**
+	 * Set the plugin identity.
+	 *
+	 * @param string $plugin_name Plugin slug.
+	 * @param string $version     Plugin version.
 	 */
 	public function __construct( $plugin_name, $version ) {
-
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+		$this->version     = $version;
 	}
 
 	/**
-	 * Register the stylesheets for the public-facing side of the site.
+	 * Register the public stylesheet.
 	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
-	public function enqueue_styles() {
+	public function register_styles() {
+		wp_register_style(
+			'fsweb-reviews-base',
+			FSWEB_COMMENTS_CORE_URL . 'public/css/fsweb-reviews.css',
+			array(),
+			$this->version
+		);
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Fsweb_Comments_Core_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Fsweb_Comments_Core_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/fsweb-comments-core-public.css', array(), $this->version, 'all' );
-
+		wp_register_style(
+			'fsweb-review-form',
+			FSWEB_COMMENTS_CORE_URL . 'public/css/fsweb-review-form.css',
+			array( 'fsweb-reviews-base' ),
+			$this->version
+		);
 	}
 
 	/**
-	 * Register the JavaScript for the public-facing side of the site.
+	 * Register the public scripts.
 	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
-	public function enqueue_scripts() {
+	public function register_scripts() {
+		wp_register_script(
+			'fsweb-review-form',
+			FSWEB_COMMENTS_CORE_URL . 'public/js/fsweb-review-form.js',
+			array(),
+			$this->version,
+			true
+		);
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Fsweb_Comments_Core_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Fsweb_Comments_Core_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/fsweb-comments-core-public.js', array( 'jquery' ), $this->version, false );
-
+		wp_localize_script(
+			'fsweb-review-form',
+			'fswebReviews',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'fsweb_review_submit' ),
+				'i18n'    => array(
+					'submitting' => __( 'Sending…', 'fsweb-comments-core' ),
+					'success'    => __( 'Thank you! Your review was submitted and is awaiting moderation.', 'fsweb-comments-core' ),
+					'error'      => __( 'We could not send your review. Please try again.', 'fsweb-comments-core' ),
+					'required'   => __( 'Please fill in the required fields.', 'fsweb-comments-core' ),
+				),
+			)
+		);
 	}
 
+	/**
+	 * Enqueue the base styles once.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_styles() {
+		if ( self::$enqueued ) {
+			return;
+		}
+
+		wp_enqueue_style( 'fsweb-reviews-base' );
+		self::$enqueued = true;
+	}
+
+	/**
+	 * Enqueue the form styles and script.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_form_assets() {
+		self::enqueue_styles();
+		wp_enqueue_style( 'fsweb-review-form' );
+		wp_enqueue_script( 'fsweb-review-form' );
+	}
+
+	/**
+	 * Filter the rendered reviews markup.
+	 *
+	 * Gives the PRO add-on a single place to inject its layouts, skins and
+	 * dynamic views without touching this class.
+	 *
+	 * @param string $output Rendered HTML.
+	 * @param array  $atts   Shortcode attributes.
+	 * @return string
+	 */
+	public function filter_reviews_output( $output, $atts ) {
+		/**
+		 * Filter the final markup of [fsweb_reviews].
+		 *
+		 * @since 1.0.0
+		 * @param string $output Rendered HTML.
+		 * @param array  $atts   Shortcode attributes.
+		 */
+		return apply_filters( 'fsweb_cc_reviews_html', $output, $atts );
+	}
 }

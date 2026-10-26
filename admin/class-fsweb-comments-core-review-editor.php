@@ -2,8 +2,7 @@
 /**
  * FSWEB Comments Core — Review Editor
  *
- * Customises the fsweb_review edit screen with a meta box that displays
- * all form fields, plus custom columns on the list page.
+ * Adds the Review Details meta box and custom list columns.
  *
  * @package    Fsweb_Comments_Core
  * @subpackage Fsweb_Comments_Core/admin
@@ -15,33 +14,25 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * Review Editor — meta box, save, columns.
+ * Review Editor — meta box, save and columns.
  */
 class Fsweb_Comments_Core_Review_Editor {
 
 	/**
-	 * Constructor — registers hooks.
-	 *
-	 * @since    1.0.0
+	 * Register the hooks.
 	 */
 	public function __construct() {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 		add_action( 'save_post_fsweb_review', array( $this, 'save_meta_box' ) );
 
-		// Custom columns on the list page.
 		add_filter( 'manage_fsweb_review_posts_columns', array( $this, 'custom_columns' ) );
 		add_action( 'manage_fsweb_review_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
-		add_filter( 'manage_edit-fsweb_review_sortable_columns', array( $this, 'sortable_columns' ) );
 	}
 
-	// ------------------------------------------------------------------//
-	//  Meta Box
-	// ------------------------------------------------------------------//
-
 	/**
-	 * Add the "Review Details" meta box.
+	 * Add the Review Details meta box.
 	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
 	public function add_meta_box() {
 		add_meta_box(
@@ -55,20 +46,15 @@ class Fsweb_Comments_Core_Review_Editor {
 	}
 
 	/**
-	 * Render the meta box content.
+	 * Render the meta box.
 	 *
-	 * @since    1.0.0
-	 * @param    \WP_Post $post    The post being edited.
+	 * @param WP_Post $post Post being edited.
+	 * @return void
 	 */
 	public function render_meta_box( $post ) {
 		wp_nonce_field( 'fsweb_review_editor', 'fsweb_review_editor_nonce' );
 
-		$fields = $this->get_form_fields();
-
-		if ( empty( $fields ) ) {
-			echo '<p>' . esc_html__( 'No form fields configured. Set up a form in the Form Builder first.', 'fsweb-comments-core' ) . '</p>';
-			return;
-		}
+		$fields = $this->get_fields();
 
 		echo '<div class="fsweb-review-editor-fields">';
 		foreach ( $fields as $field ) {
@@ -78,31 +64,29 @@ class Fsweb_Comments_Core_Review_Editor {
 	}
 
 	/**
-	 * Save meta box data.
+	 * Save the meta box values.
 	 *
-	 * @since    1.0.0
-	 * @param    int $post_id    Post ID.
+	 * @param int $post_id Post ID.
+	 * @return void
 	 */
 	public function save_meta_box( $post_id ) {
-		// Bail on autosave.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
-		// Check nonce.
 		if ( ! isset( $_POST['fsweb_review_editor_nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( sanitize_key( $_POST['fsweb_review_editor_nonce'] ), 'fsweb_review_editor' ) ) {
+
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['fsweb_review_editor_nonce'] ) ), 'fsweb_review_editor' ) ) {
 			return;
 		}
 
-		// Check permissions.
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
-		$fields = $this->get_form_fields();
+		$fields          = $this->get_fields();
 		$name_handled    = false;
 		$content_handled = false;
 
@@ -110,16 +94,14 @@ class Fsweb_Comments_Core_Review_Editor {
 			$field_id   = $field['id'];
 			$field_type = $field['type'];
 
-			// Skip image — file uploads should use media library.
 			if ( 'image' === $field_type ) {
 				continue;
 			}
 
-			// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized per-type in switch below.
+			// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitised per type below.
 			$raw = isset( $_POST[ 'fsweb_field_' . $field_id ] ) ? wp_unslash( $_POST[ 'fsweb_field_' . $field_id ] ) : '';
 			// phpcs:enable
 
-			// Sanitise by type.
 			switch ( $field_type ) {
 				case 'email':
 					$value = sanitize_email( $raw );
@@ -131,163 +113,129 @@ class Fsweb_Comments_Core_Review_Editor {
 					$value = sanitize_textarea_field( $raw );
 					break;
 				case 'rating':
-					$value = min( 5, max( 1, (int) $raw ) );
+					$value = min( 5, max( 0, (int) $raw ) );
 					break;
 				default:
 					$value = sanitize_text_field( $raw );
 					break;
 			}
 
-			// Match name field: first text field, or field with 'name' in ID.
 			if ( ! $name_handled && ( 'text' === $field_type || false !== stripos( $field_id, 'name' ) ) ) {
 				$name_handled = true;
 				if ( get_post_field( 'post_title', $post_id ) !== $value ) {
 					remove_action( 'save_post_fsweb_review', array( $this, 'save_meta_box' ) );
-					wp_update_post( array(
-						'ID'         => $post_id,
-						'post_title' => $value,
-					) );
+					wp_update_post(
+						array(
+							'ID'         => $post_id,
+							'post_title' => $value,
+						)
+					);
 					add_action( 'save_post_fsweb_review', array( $this, 'save_meta_box' ) );
 				}
 				continue;
 			}
 
-			// Match content field: first textarea, or field with 'desc'/'review' in ID.
 			if ( ! $content_handled && ( 'textarea' === $field_type || false !== stripos( $field_id, 'desc' ) || false !== stripos( $field_id, 'review' ) ) ) {
 				$content_handled = true;
 				if ( get_post_field( 'post_content', $post_id ) !== $value ) {
 					remove_action( 'save_post_fsweb_review', array( $this, 'save_meta_box' ) );
-					wp_update_post( array(
-						'ID'           => $post_id,
-						'post_content' => $value,
-					) );
+					wp_update_post(
+						array(
+							'ID'           => $post_id,
+							'post_content' => $value,
+						)
+					);
 					add_action( 'save_post_fsweb_review', array( $this, 'save_meta_box' ) );
 				}
 				continue;
 			}
 
-			// Store everything else as post meta.
 			update_post_meta( $post_id, $field_id, $value );
 		}
 	}
 
-	// ------------------------------------------------------------------//
-	//  Field rendering
-	// ------------------------------------------------------------------//
-
 	/**
-	 * Get form fields from the stored form configuration.
+	 * Fields shown in the editor.
 	 *
-	 * Falls back to default fields if no form exists.
+	 * The PRO add-on filters this list to reuse the fields of the form
+	 * builder, so a review created by a custom form is fully editable.
 	 *
-	 * @since    1.0.0
-	 * @return   array
+	 * @return array
 	 */
-	private function get_form_fields() {
-		$forms = get_option( 'fsweb_review_forms', array() );
-
-		if ( empty( $forms ) ) {
-			return $this->default_fields();
-		}
-
-		$first = reset( $forms );
-
-		// Flatten multi-step fields.
-		if ( ! empty( $first['multi_step'] ) && ! empty( $first['steps'] ) ) {
-			$all = array();
-			foreach ( $first['steps'] as $step ) {
-				foreach ( $step['fields'] as $f ) {
-					$all[] = $f;
-				}
-			}
-			return $all;
-		}
-
-		if ( ! empty( $first['fields'] ) ) {
-			return $first['fields'];
-		}
-
-		return $this->default_fields();
-	}
-
-	/**
-	 * Default fields when no form is configured.
-	 *
-	 * @since    1.0.0
-	 * @return   array
-	 */
-	private function default_fields() {
-		return array(
+	private function get_fields() {
+		$fields = array(
 			array(
-				'id'       => 'name',
+				'id'       => 'fsweb_name',
 				'type'     => 'text',
 				'label'    => __( 'Name', 'fsweb-comments-core' ),
 				'required' => true,
 			),
 			array(
-				'id'       => 'email',
+				'id'       => 'fsweb_email',
 				'type'     => 'email',
 				'label'    => __( 'Email', 'fsweb-comments-core' ),
 				'required' => false,
 			),
 			array(
-				'id'       => 'rating',
+				'id'       => 'fsweb_rating',
 				'type'     => 'rating',
 				'label'    => __( 'Rating', 'fsweb-comments-core' ),
 				'required' => true,
 			),
 			array(
-				'id'       => 'description',
+				'id'       => 'fsweb_description',
 				'type'     => 'textarea',
-				'label'    => __( 'Description', 'fsweb-comments-core' ),
+				'label'    => __( 'Review', 'fsweb-comments-core' ),
 				'required' => true,
 			),
 		);
+
+		/**
+		 * Filter the fields displayed on the review edit screen.
+		 *
+		 * @since 1.0.0
+		 * @param array $fields Field definitions.
+		 */
+		return (array) apply_filters( 'fsweb_cc_review_editor_fields', $fields );
 	}
 
 	/**
-	 * Resolve the current value of a field for a given post.
+	 * Resolve the current value of a field.
 	 *
-	 * @since    1.0.0
-	 * @param    array    $field    Field config.
-	 * @param    \WP_Post $post     Post object.
-	 * @return   string
+	 * @param array   $field Field definition.
+	 * @param WP_Post $post  Post object.
+	 * @return string
 	 */
 	private function get_field_value( $field, $post ) {
 		$id   = $field['id'];
 		$type = $field['type'];
 
-		// Match by type + keyword — same logic as the AJAX submit handler.
-		if ( 'text' === $type || false !== stripos( $id, 'name' ) ) {
-			// Only return post_title for the first text/name field.
-			static $name_resolved = false;
-			if ( ! $name_resolved ) {
-				$name_resolved = true;
-				return get_post_field( 'post_title', $post );
-			}
+		static $name_resolved    = false;
+		static $content_resolved = false;
+
+		if ( ( 'text' === $type || false !== stripos( $id, 'name' ) ) && ! $name_resolved ) {
+			$name_resolved = true;
+			return get_post_field( 'post_title', $post );
 		}
-		if ( 'textarea' === $type || false !== stripos( $id, 'desc' ) || false !== stripos( $id, 'review' ) ) {
-			static $content_resolved = false;
-			if ( ! $content_resolved ) {
-				$content_resolved = true;
-				return get_post_field( 'post_content', $post );
-			}
+
+		if ( ( 'textarea' === $type || false !== stripos( $id, 'desc' ) || false !== stripos( $id, 'review' ) ) && ! $content_resolved ) {
+			$content_resolved = true;
+			return get_post_field( 'post_content', $post );
 		}
 
 		return (string) get_post_meta( $post->ID, $id, true );
 	}
 
 	/**
-	 * Render a single field row inside the meta box.
+	 * Render one field.
 	 *
-	 * @since    1.0.0
-	 * @param    array    $field    Field config.
-	 * @param    \WP_Post $post     Post object.
+	 * @param array   $field Field definition.
+	 * @param WP_Post $post  Post object.
+	 * @return void
 	 */
 	private function render_field( $field, $post ) {
 		$type = $field['type'];
 
-		// Image is handled by the Featured Image meta box — skip.
 		if ( 'image' === $type ) {
 			return;
 		}
@@ -321,7 +269,7 @@ class Fsweb_Comments_Core_Review_Editor {
 						break;
 
 					case 'rating':
-						$this->render_rating_input( $name, $field_id, $value, $required );
+						$this->render_rating_input( $name, $value );
 						break;
 
 					case 'date':
@@ -332,18 +280,18 @@ class Fsweb_Comments_Core_Review_Editor {
 						echo '<select id="' . esc_attr( $name ) . '" name="' . esc_attr( $name ) . '" class="regular-text">';
 						echo '<option value="">' . esc_html__( '— Select —', 'fsweb-comments-core' ) . '</option>';
 						if ( ! empty( $field['options'] ) ) {
-							$opts = explode( "\n", $field['options'] );
-							foreach ( $opts as $opt ) {
-								$opt = trim( $opt );
-								if ( '' !== $opt ) {
-									echo '<option value="' . esc_attr( $opt ) . '"' . selected( $value, $opt, false ) . '>' . esc_html( $opt ) . '</option>';
+							$options = explode( "\n", $field['options'] );
+							foreach ( $options as $option ) {
+								$option = trim( $option );
+								if ( '' !== $option ) {
+									echo '<option value="' . esc_attr( $option ) . '"' . selected( $value, $option, false ) . '>' . esc_html( $option ) . '</option>';
 								}
 							}
 						}
 						echo '</select>';
 						break;
 
-					default: // text + name.
+					default:
 						echo '<input type="text" id="' . esc_attr( $name ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" class="widefat">';
 						break;
 				}
@@ -354,18 +302,16 @@ class Fsweb_Comments_Core_Review_Editor {
 	}
 
 	/**
-	 * Render a star-rating input (radio group).
+	 * Star rating radio group.
 	 *
-	 * @since    1.0.0
-	 * @param    string $name      Input name attr.
-	 * @param    string $field_id  Field identifier.
-	 * @param    string $value     Current rating (1-5).
-	 * @param    bool   $required  Whether a rating is required.
+	 * @param string $name  Input name.
+	 * @param string $value Current rating.
+	 * @return void
 	 */
-	private function render_rating_input( $name, $field_id, $value, $required ) {
+	private function render_rating_input( $name, $value ) {
 		$current = (int) $value;
 		?>
-		<div class="fsweb-review-editor-stars" data-field="<?php echo esc_attr( $field_id ); ?>">
+		<div class="fsweb-review-editor-stars">
 			<span class="fsweb-review-editor-rating-badge">
 				(<span class="fsweb-review-editor-rating-current"><?php echo esc_html( $current ); ?></span>/5)
 			</span>
@@ -374,8 +320,7 @@ class Fsweb_Comments_Core_Review_Editor {
 					id="<?php echo esc_attr( $name . '_' . $i ); ?>"
 					name="<?php echo esc_attr( $name ); ?>"
 					value="<?php echo (int) $i; ?>"
-					<?php checked( $current, $i ); ?>
-					<?php if ( $required && 1 === $i ) { echo 'required'; } ?>>
+					<?php checked( $current, $i ); ?>>
 				<label for="<?php echo esc_attr( $name . '_' . $i ); ?>" title="<?php echo (int) $i; ?>">&#9733;</label>
 			<?php endfor; ?>
 		</div>
@@ -383,63 +328,18 @@ class Fsweb_Comments_Core_Review_Editor {
 	}
 
 	/**
-	 * Render an image field — preview + current URL.
+	 * Add the custom columns.
 	 *
-	 * @since    1.0.0
-	 * @param    string $name      Input name attr.
-	 * @param    string $field_id  Field identifier.
-	 * @param    string $value     Current image URL or attachment ID.
-	 */
-	private function render_image_field( $name, $field_id, $value ) {
-		$thumb_url = '';
-
-		if ( ! empty( $value ) ) {
-			// Check if it looks like a URL.
-			if ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
-				$thumb_url = $value;
-			} elseif ( is_numeric( $value ) ) {
-				$thumb_url = wp_get_attachment_image_url( (int) $value, 'thumbnail' );
-			}
-		}
-		?>
-		<div class="fsweb-review-editor-image">
-			<div class="fsweb-review-editor-image-preview">
-				<?php if ( $thumb_url ) : ?>
-					<img src="<?php echo esc_url( $thumb_url ); ?>" alt="" style="max-width:150px;max-height:150px;display:block;margin-bottom:8px;border-radius:4px;">
-				<?php else : ?>
-					<div class="fsweb-review-editor-image-empty">
-						<?php esc_html_e( 'No image', 'fsweb-comments-core' ); ?>
-					</div>
-				<?php endif; ?>
-			</div>
-			<input type="text" id="<?php echo esc_attr( $name ); ?>"
-				name="<?php echo esc_attr( $name ); ?>"
-				value="<?php echo esc_attr( $value ); ?>"
-				class="widefat"
-				placeholder="<?php esc_attr_e( 'Image URL or attachment ID', 'fsweb-comments-core' ); ?>">
-		</div>
-		<?php
-	}
-
-	// ------------------------------------------------------------------//
-	//  Custom Columns
-	// ------------------------------------------------------------------//
-
-	/**
-	 * Customise the list-table columns for fsweb_review.
-	 *
-	 * @since    1.0.0
-	 * @param    array $columns    Existing columns.
-	 * @return   array
+	 * @param array $columns Existing columns.
+	 * @return array
 	 */
 	public function custom_columns( $columns ) {
 		$new = array();
 
-		// Rebuild: cb → image → title → rating → email → category → date.
 		foreach ( $columns as $key => $label ) {
 			if ( 'title' === $key ) {
-				$new['fsweb_image']  = __( 'Photo', 'fsweb-comments-core' );
-				$new[ $key ]         = $label;
+				$new['fsweb_image'] = __( 'Photo', 'fsweb-comments-core' );
+				$new[ $key ]        = $label;
 				continue;
 			}
 			if ( 'date' === $key ) {
@@ -453,11 +353,11 @@ class Fsweb_Comments_Core_Review_Editor {
 	}
 
 	/**
-	 * Render custom column content.
+	 * Render a custom column.
 	 *
-	 * @since    1.0.0
-	 * @param    string $column     Column ID.
-	 * @param    int    $post_id    Post ID.
+	 * @param string $column  Column id.
+	 * @param int    $post_id Post id.
+	 * @return void
 	 */
 	public function render_column( $column, $post_id ) {
 		switch ( $column ) {
@@ -466,26 +366,21 @@ class Fsweb_Comments_Core_Review_Editor {
 				if ( $thumb ) {
 					echo wp_kses_post( $thumb );
 				} else {
-					// Try image field from meta.
-					$img = get_post_meta( $post_id, 'fsweb_image', true );
-					if ( ! empty( $img ) ) {
-						$url = filter_var( $img, FILTER_VALIDATE_URL ) ? $img : wp_get_attachment_image_url( (int) $img, array( 40, 40 ) );
-						if ( $url ) {
-							echo '<img src="' . esc_url( $url ) . '" width="40" height="40" style="border-radius:4px;object-fit:cover;" alt="">';
-						}
-					}
+					echo '<span class="fsweb-cc-muted">—</span>';
 				}
 				break;
 
 			case 'fsweb_rating':
 				$rating = (int) get_post_meta( $post_id, 'fsweb_rating', true );
 				if ( $rating > 0 ) {
-					echo wp_kses_post('<span style="color:#f0c040;font-size:16px;letter-spacing:1px;">'
-						. str_repeat( '★', $rating )
-						. str_repeat( '☆', 5 - $rating )
-						. '</span>' );
+					echo wp_kses_post(
+						'<span class="fsweb-cc-stars">'
+						. str_repeat( '★', min( 5, $rating ) )
+						. str_repeat( '☆', max( 0, 5 - $rating ) )
+						. '</span>'
+					);
 				} else {
-					echo '<span style="color:#c3c4c7;">—</span>';
+					echo '<span class="fsweb-cc-muted">—</span>';
 				}
 				break;
 
@@ -494,22 +389,9 @@ class Fsweb_Comments_Core_Review_Editor {
 				if ( ! empty( $email ) ) {
 					echo '<a href="' . esc_url( 'mailto:' . $email ) . '">' . esc_html( $email ) . '</a>';
 				} else {
-					echo '<span style="color:#c3c4c7;">—</span>';
+					echo '<span class="fsweb-cc-muted">—</span>';
 				}
 				break;
 		}
-	}
-
-	/**
-	 * Make custom columns sortable.
-	 *
-	 * @since    1.0.0
-	 * @param    array $columns    Sortable columns.
-	 * @return   array
-	 */
-	public function sortable_columns( $columns ) {
-		$columns['fsweb_rating'] = 'fsweb_rating';
-		$columns['fsweb_email']  = 'fsweb_email';
-		return $columns;
 	}
 }

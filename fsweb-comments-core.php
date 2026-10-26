@@ -1,24 +1,23 @@
 <?php
 
 /**
- * The plugin bootstrap file
+ * The plugin bootstrap file.
  *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
+ * This file is read by WordPress to generate the plugin information in the
+ * plugin admin area. It also loads the dependencies, registers activation and
+ * deactivation hooks, and starts the plugin.
  *
  * @link              https://flowsyncweb.com
  * @since             1.0.0
  * @package           Fsweb_Comments_Core
  *
  * @wordpress-plugin
- * Plugin Name:       Comments Core
- * Plugin URI:        https://flowsyncweb.com
- * Description:       A lightweight, high-performance comment and feedback management system designed for seamless integration and developer-friendly customization.
- * Version:           1.0.7
- * Requires at least: 6.0
- * Requires PHP:      8.2
+ * Plugin Name:       FSWEB Comments Core
+ * Plugin URI:        https://github.com/euzebiodeveloper/fsweb-comments-core
+ * Description:       Lightweight review and feedback management for WordPress: collect reviews with star ratings, moderate them and display them anywhere with a shortcode.
+ * Version:           1.0.8
+ * Requires at least: 6.7
+ * Requires PHP:      7.4
  * Author:            Flow Sync Web
  * Author URI:        https://flowsyncweb.com/
  * License:           GPL-2.0+
@@ -34,10 +33,13 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.7' );
+define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.8' );
+
+/**
+ * Plugin slug. Used for the text domain and admin screens.
+ */
+define( 'FSWEB_COMMENTS_CORE_SLUG', 'fsweb-comments-core' );
 
 /**
  * Plugin directory path and URL (with trailing slash).
@@ -46,149 +48,51 @@ define( 'FSWEB_COMMENTS_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FSWEB_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
 
 /**
- * Base URL for the FSWEB license API.
+ * Landing page of the PRO add-on.
  *
- * The service exposes the same /activate, /deactivate and /validate paths
- * and the same JSON contract used here ({success, status, expires, message}).
- * The previous bridge (License Manager for WooCommerce) was retired.
- *
- * The constant is namespaced to this plugin on purpose. Sibling FSWEB plugins
- * (fsweb-ai-automated-contact, fsweb-mercadopago) historically defined the same
- * generic shared license-URL constant name. WordPress loads plugins
- * alphabetically and the first definition wins, so an outdated sibling still
- * pointing at the retired legacy endpoint could silently force this plugin
- * back onto it (HTTP 500). A plugin-owned name keeps each plugin's URL
- * independent.
- *
- * Override in wp-config.php if needed:
- *   define( 'FSWEB_COMMENTS_CORE_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
+ * The free edition never contains premium code: the Form Builder, Views
+ * Builder, skins, slider and automatic updates live in a separate add-on.
+ * Override in wp-config.php to point at another page.
  */
-if ( ! defined( 'FSWEB_COMMENTS_CORE_LICENSE_API_URL' ) ) {
-	define( 'FSWEB_COMMENTS_CORE_LICENSE_API_URL', 'https://api.flowsyncweb.com/api/license' );
+if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_URL' ) ) {
+	define( 'FSWEB_COMMENTS_CORE_PRO_URL', 'https://flowsyncweb.com/produto/comments-core-pro/' );
 }
 
 /**
  * The code that runs during plugin activation.
- * This action is documented in includes/class-fsweb-comments-core-activator.php
+ *
+ * @since 1.0.0
  */
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Required by register_activation_hook.
-function activate_fsweb_comments_core() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-fsweb-comments-core-activator.php';
+function fsweb_comments_core_activate() {
+	require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-activator.php';
 	Fsweb_Comments_Core_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
- * This action is documented in includes/class-fsweb-comments-core-deactivator.php
+ *
+ * @since 1.0.0
  */
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Required by register_deactivation_hook.
-function deactivate_fsweb_comments_core() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-fsweb-comments-core-deactivator.php';
+function fsweb_comments_core_deactivate() {
+	require_once FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core-deactivator.php';
 	Fsweb_Comments_Core_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_fsweb_comments_core' );
-register_deactivation_hook( __FILE__, 'deactivate_fsweb_comments_core' );
+register_activation_hook( __FILE__, 'fsweb_comments_core_activate' );
+register_deactivation_hook( __FILE__, 'fsweb_comments_core_deactivate' );
 
 /**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
+ * The core plugin class.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-fsweb-comments-core.php';
-
-/**
- * FSWEB Update Checker — automatic updates from your own server.
- *
- * @see https://github.com/flowsyncweb/fsweb-update-checker
- */
-require plugin_dir_path( __FILE__ ) . 'fsweb-update-checker/index.php';
-$fsweb_update_checker = new FSWEB_Update_Checker_CommentsCore_1_0(
-	'https://api.flowsyncweb.com/api/releases/fsweb-comments-core',
-	__FILE__
-);
-
-// Set the license page URL so admin notices link to the correct page.
-$fsweb_update_checker->set_license_url(
-	admin_url( 'edit.php?post_type=fsweb_review&page=fsweb-comments-core-license' )
-);
-
-/**
- * Migrate a legacy shared license option to this plugin's namespaced option.
- *
- * Early releases of the FSWEB plugins stored every plugin's license in the
- * same `fsweb_license_*` wp_options, so Comments Core and Mercadopago
- * overwrote each other's keys. This one-time migration preserves the
- * Comments Core license (the plugin that originally owned the shared option)
- * and removes the shared option so the collision cannot happen again.
- *
- * @since 1.0.3
- */
-function fsweb_comments_core_migrate_license() {
-	if ( 'yes' === get_option( 'fsweb_comments_core_license_migrated', 'no' ) ) {
-		return;
-	}
-
-	$legacy_key = get_option( 'fsweb_license_key', '' );
-	$current    = get_option( 'fsweb_comments_core_license_key', '' );
-
-	if ( '' === $current && '' !== $legacy_key ) {
-		update_option( 'fsweb_comments_core_license_key', $legacy_key );
-		update_option( 'fsweb_comments_core_license_status', get_option( 'fsweb_license_status', 'inactive' ) );
-		update_option( 'fsweb_comments_core_license_expires', get_option( 'fsweb_license_expires', '' ) );
-	}
-
-	// Delete the shared options — they are what caused the collision.
-	delete_option( 'fsweb_license_key' );
-	delete_option( 'fsweb_license_status' );
-	delete_option( 'fsweb_license_expires' );
-
-	update_option( 'fsweb_comments_core_license_migrated', 'yes' );
-}
-
-// Inject license key so the update-checker sends it with every request.
-// Always set it — even when empty — so the checker tracks the current key and
-// clears stale errors only when the key actually changes (otherwise a removed
-// key would keep the previous key's state, and a rejection for an empty key
-// could never be cleared).
-fsweb_comments_core_migrate_license();
-$fsweb_license_key = get_option( 'fsweb_comments_core_license_key', '' );
-$fsweb_update_checker->set_license( $fsweb_license_key );
-
-/**
- * Reset the update checker caches after the license is activated.
- *
- * The update checker persists its metadata and error flags (license/server)
- * in wp_options. When a license is (re)activated, stale errors recorded under
- * the previous key must be wiped so they don't keep showing admin notices or
- * blocking the "Previous Versions" feature until the next successful fetch.
- *
- * @since 1.2.0
- * @return void
- */
-function fsweb_comments_core_reset_update_checker_cache() {
-	global $fsweb_update_checker;
-
-	if ( isset( $fsweb_update_checker )
-		&& is_object( $fsweb_update_checker )
-		&& method_exists( $fsweb_update_checker, 'reset_cache' ) ) {
-		$fsweb_update_checker->reset_cache();
-	}
-}
+require FSWEB_COMMENTS_CORE_DIR . 'includes/class-fsweb-comments-core.php';
 
 /**
  * Begins execution of the plugin.
  *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
- *
- * @since    1.0.0
+ * @since 1.0.0
  */
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin bootstrap; contains plugin slug.
-function run_fsweb_comments_core() {
-
+function fsweb_comments_core_run() {
 	$plugin = new Fsweb_Comments_Core();
 	$plugin->run();
-
 }
-run_fsweb_comments_core();
+fsweb_comments_core_run();

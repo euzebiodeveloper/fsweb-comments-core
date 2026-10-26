@@ -47,6 +47,10 @@
 .fsweb-slider-viewport {
 	position: relative;
 	overflow: hidden;
+	/* Room for the hover lift and the card shadow. Without it the clip box
+	   cuts the top edge as soon as the card moves up. */
+	padding: 14px 0;
+	margin: -14px 0;
 }
 
 .fsweb-reviews--slider .fsweb-reviews-track {

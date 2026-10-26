@@ -37,8 +37,9 @@ plugin (now the PRO add-on).
 
 - The default layout of `[fsweb_reviews]` is the slider: deactivating an add-on
   no longer falls back to a column of cards stacked one under the other
-- The review card is a two-column grid: photo and name on the left, stars, text
-  and date on the right; on phones the columns stack
+- The review card is a two-column grid: photo and name on the left, email,
+  stars and review text on the right; the date is no longer printed and on
+  phones the columns stack
 - The photo field is the first field of the submission form and the upload no
   longer prints the JPG/PNG/GIF/WebP hint
 - The grid columns come from a data attribute instead of an inline style
@@ -52,6 +53,8 @@ plugin (now the PRO add-on).
 
 ### Fixed
 
+- Hovering a card in the slider no longer clips its top edge: the viewport now
+  keeps room for the lift and the shadow
 - The submit button spinner kept turning before any submission: the class rule
   set `display: inline-block`, which beats the `hidden` attribute
 - The review list columns used inline styles; the colours now live in the admin

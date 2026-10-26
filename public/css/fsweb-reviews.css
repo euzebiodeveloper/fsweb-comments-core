@@ -128,6 +128,17 @@
 	text-align: center;
 }
 
+/* Reviewer email — first line of the data column */
+.fsweb-review-email {
+	display: block;
+	margin-bottom: 8px;
+	font-size: 13px;
+	line-height: 1.4;
+	color: var(--fsweb-email, #2271b1);
+	overflow-wrap: anywhere;
+	text-align: left;
+}
+
 .fsweb-review-content {
 	font-size: 14px;
 	line-height: 1.7;
@@ -214,6 +225,16 @@
 	flex: 1 1 auto;
 }
 
+.fsweb-review-list-item .fsweb-review-name {
+	margin-bottom: 4px;
+	text-align: left;
+}
+
+.fsweb-review-list-item .fsweb-review-stars-display {
+	text-align: left;
+	margin-bottom: 10px;
+}
+
 .fsweb-review-heading {
 	display: flex;
 	flex-wrap: wrap;
@@ -274,6 +295,12 @@
 	.fsweb-review-list-item {
 		flex-direction: column;
 		align-items: center;
+		text-align: center;
+	}
+
+	.fsweb-review-list-item .fsweb-review-name,
+	.fsweb-review-list-item .fsweb-review-email,
+	.fsweb-review-list-item .fsweb-review-stars-display {
 		text-align: center;
 	}
 

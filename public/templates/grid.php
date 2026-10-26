@@ -22,7 +22,7 @@ $fsweb_cc_theme = isset( $atts['theme'] ) ? $atts['theme'] : 'default';
 	while ( $reviews->have_posts() ) :
 		$reviews->the_post();
 		$fsweb_cc_rating = (int) get_post_meta( get_the_ID(), 'fsweb_rating', true );
-		$fsweb_cc_date   = get_the_date();
+		$fsweb_cc_email  = get_post_meta( get_the_ID(), 'fsweb_email', true );
 		?>
 		<article class="fsweb-review-card<?php echo $fsweb_cc_show_image ? '' : ' fsweb-review-card--stacked'; ?>">
 			<div class="fsweb-review-card__aside">
@@ -43,6 +43,10 @@ $fsweb_cc_theme = isset( $atts['theme'] ) ? $atts['theme'] : 'default';
 			</div>
 
 			<div class="fsweb-review-card__main">
+				<?php if ( $fsweb_cc_email ) : ?>
+					<span class="fsweb-review-email"><?php echo esc_html( $fsweb_cc_email ); ?></span>
+				<?php endif; ?>
+
 				<?php if ( $fsweb_cc_rating > 0 ) : ?>
 					<div class="fsweb-review-stars-display" aria-label="<?php echo esc_attr( sprintf( /* translators: %d: rating. */ __( 'Rated %d out of 5', 'fsweb-comments-core' ), $fsweb_cc_rating ) ); ?>">
 						<?php
@@ -56,10 +60,6 @@ $fsweb_cc_theme = isset( $atts['theme'] ) ? $atts['theme'] : 'default';
 				<div class="fsweb-review-content">
 					<?php the_content(); ?>
 				</div>
-
-				<time class="fsweb-review-date" datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>">
-					<?php echo esc_html( $fsweb_cc_date ); ?>
-				</time>
 			</div>
 		</article>
 		<?php

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26T01:24:23+00:00\n"
+"POT-Creation-Date: 2026-10-26T01:31:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: Poedit 3.9\n"
 "X-Domain: fsweb-comments-core\n"
@@ -343,7 +343,7 @@ msgid "Require the visitor email"
 msgstr ""
 
 #: admin/class-fsweb-comments-core-admin.php:753
-msgid "The email stays private and is only used to contact the author."
+msgid "The email is saved with the review and shown on the card."
 msgstr ""
 
 #: admin/class-fsweb-comments-core-admin.php:771
@@ -693,17 +693,17 @@ msgid "Please fill in the required fields."
 msgstr ""
 
 #. translators: %d: rating.
-#: public/templates/grid.php:47
-#: public/templates/list.php:44
-#: public/templates/slider.php:54
+#: public/templates/grid.php:51
+#: public/templates/list.php:48
+#: public/templates/slider.php:59
 #, php-format
 msgid "Rated %d out of 5"
 msgstr ""
 
-#: public/templates/slider.php:79
+#: public/templates/slider.php:80
 msgid "Previous review"
 msgstr ""
 
-#: public/templates/slider.php:80
+#: public/templates/slider.php:81
 msgid "Next review"
 msgstr ""

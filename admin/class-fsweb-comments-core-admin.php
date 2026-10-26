@@ -750,7 +750,7 @@ class Fsweb_Comments_Core_Admin {
 											<input type="checkbox" name="fsweb_comments_core_require_email" value="1" <?php checked( $require ); ?>>
 											<?php esc_html_e( 'Require the visitor email', 'fsweb-comments-core' ); ?>
 										</label>
-										<p class="description"><?php esc_html_e( 'The email stays private and is only used to contact the author.', 'fsweb-comments-core' ); ?></p>
+										<p class="description"><?php esc_html_e( 'The email is saved with the review and shown on the card.', 'fsweb-comments-core' ); ?></p>
 									</td>
 								</tr>
 							</table>

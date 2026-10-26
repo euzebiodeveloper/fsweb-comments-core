@@ -91,6 +91,9 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-review-card__main', $output );
 		$this->assertMatchesRegularExpression( '/fsweb-review-card__aside.*fsweb-review-name/s', $output, 'The name must sit in the photo column.' );
 		$this->assertMatchesRegularExpression( '/fsweb-review-card__main.*fsweb-review-content/s', $output, 'The review text must sit in the data column.' );
+		$this->assertStringContainsString( 'fsweb-review-email', $output );
+		$this->assertStringContainsString( 'jane@example.com', $output );
+		$this->assertStringNotContainsString( 'fsweb-review-date', $output );
 	}
 
 	public function test_default_theme_falls_back_to_the_setting() {

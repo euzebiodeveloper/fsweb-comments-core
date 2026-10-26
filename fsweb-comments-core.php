@@ -55,7 +55,7 @@ define( 'FSWEB_COMMENTS_CORE_URL', plugin_dir_url( __FILE__ ) );
  * Override in wp-config.php to point at another page.
  */
 if ( ! defined( 'FSWEB_COMMENTS_CORE_PRO_URL' ) ) {
-	define( 'FSWEB_COMMENTS_CORE_PRO_URL', 'https://flowsyncweb.com/produto/comments-core/' );
+	define( 'FSWEB_COMMENTS_CORE_PRO_URL', 'https://flowsyncweb.com/produto/comments-core-pro/' );
 }
 
 /**

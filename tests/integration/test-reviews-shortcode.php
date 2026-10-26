@@ -82,6 +82,18 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-reviews--theme-dark', do_shortcode( '[fsweb_reviews skin="dark"]' ) );
 	}
 
+	/**
+	 * The neutral avatar keeps one look across the two themes, the same the
+	 * add-on draws on a dark card; a navy circle on a navy card reads as a
+	 * hole instead of a photo placeholder.
+	 */
+	public function test_the_dark_theme_leaves_the_neutral_avatar_alone() {
+		$css = file_get_contents( FSWEB_COMMENTS_CORE_DIR . 'public/css/fsweb-reviews-theme-dark.css' );
+
+		$this->assertStringNotContainsString( '.fsweb-review-avatar--placeholder', $css );
+		$this->assertFileExists( FSWEB_COMMENTS_CORE_DIR . 'public/css/fsweb-reviews.css' );
+	}
+
 	public function test_card_puts_the_photo_and_the_name_in_one_column() {
 		$this->create_review( array( 'post_title' => 'Alice' ) );
 

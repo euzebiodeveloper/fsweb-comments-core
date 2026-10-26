@@ -32,10 +32,9 @@
 	border-color: var(--fsweb-border);
 }
 
-.fsweb-reviews--theme-dark .fsweb-review-avatar--placeholder {
-	background: #2a2a40;
-	color: #6a6a8a;
-}
+/* The neutral avatar keeps the light circle from the base sheet, the same the
+   add-on draws on a dark card: a navy circle on a navy card reads as a hole
+   instead of a photo placeholder. Only the ring follows the dark palette. */
 
 .fsweb-reviews--theme-dark .fsweb-review-name {
 	color: var(--fsweb-text);

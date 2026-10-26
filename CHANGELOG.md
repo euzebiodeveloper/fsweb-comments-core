@@ -18,6 +18,10 @@ plugin (now the PRO add-on).
   layouts
 - Slider with arrows, dot navigation, keyboard support and 1 to 4 cards per view
 - Two themes per shortcode: `default` and `dark`
+- Settings screen option to pick the default theme, used when the shortcode
+  does not set one
+- Optional photo upload in the submission form: JPG, PNG, GIF or WebP up to
+  2 MB, stored as the review featured image
 - `[fsweb_review_form]` shortcode with AJAX submission
 - Moderation queue: submissions are created as pending
 - Admin overview with published, pending and average rating counters
@@ -44,5 +48,7 @@ plugin (now the PRO add-on).
 
 ### Fixed
 
+- The submit button spinner kept turning before any submission: the class rule
+  set `display: inline-block`, which beats the `hidden` attribute
 - The review list columns used inline styles; the colours now live in the admin
   stylesheet

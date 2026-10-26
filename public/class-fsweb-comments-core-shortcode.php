@@ -75,6 +75,11 @@ class Fsweb_Comments_Core_Shortcode {
 			$fsweb_cc_requested_theme = strtolower( trim( (string) $raw['skin'] ) );
 		}
 
+		// Nothing asked in the shortcode: the settings screen decides.
+		if ( '' === $fsweb_cc_requested_theme ) {
+			$fsweb_cc_requested_theme = (string) get_option( 'fsweb_comments_core_default_theme', 'default' );
+		}
+
 		$theme = in_array( $fsweb_cc_requested_theme, array( 'default', 'dark' ), true ) ? $fsweb_cc_requested_theme : 'default';
 
 		$atts['layout'] = $layout;

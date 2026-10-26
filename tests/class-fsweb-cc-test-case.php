@@ -50,6 +50,7 @@ abstract class Fsweb_Cc_Test_Case extends PHPUnit\Framework\TestCase {
 
 		delete_option( 'fsweb_comments_core_form_status' );
 		delete_option( 'fsweb_comments_core_require_email' );
+		delete_option( 'fsweb_comments_core_default_theme' );
 		delete_option( 'fsweb_comments_core_license_status' );
 
 		remove_all_filters( 'fsweb_cc_reviews_pre_render' );

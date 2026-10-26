@@ -16,7 +16,7 @@ This is the **free edition**. Premium features live in the separate
 - Submissions are held as **pending** until a moderator approves them
 - Display reviews as a **slider** (default), **grid** or **list** via `[fsweb_reviews]`
 - Two themes per shortcode: **default** and **dark**
-- Photo support through the featured image
+- Photo support through the featured image, plus an optional photo upload in the submission form
 - Average rating, published and pending counters in the admin overview
 - Open/close submissions from **Reviews → Settings**
 - Theme overrides: copy a template to `yourtheme/fsweb-reviews/slider.php`
@@ -77,7 +77,6 @@ The PRO add-on installs on top of this plugin and adds:
 - **Views Builder** — compose the review card with dynamic tags
 - **Infinite slider** with autoplay, on top of the free slider
 - Extra **skins** (minimal, colorful, flat) and custom CSS
-- Front-end photo upload
 - Automatic updates and priority support
 
 ## Requirements

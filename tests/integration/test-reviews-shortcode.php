@@ -82,6 +82,25 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-reviews--theme-dark', do_shortcode( '[fsweb_reviews skin="dark"]' ) );
 	}
 
+	public function test_default_theme_falls_back_to_the_setting() {
+		$this->create_review();
+
+		update_option( 'fsweb_comments_core_default_theme', 'dark' );
+
+		$this->assertStringContainsString( 'fsweb-reviews--theme-dark', do_shortcode( '[fsweb_reviews]' ) );
+	}
+
+	public function test_shortcode_attribute_overrides_the_default_theme_setting() {
+		$this->create_review();
+
+		update_option( 'fsweb_comments_core_default_theme', 'dark' );
+
+		$output = do_shortcode( '[fsweb_reviews theme="default"]' );
+
+		$this->assertStringContainsString( 'fsweb-reviews--theme-default', $output );
+		$this->assertStringNotContainsString( 'fsweb-reviews--theme-dark', $output );
+	}
+
 	public function test_grid_layout_uses_the_grid_template() {
 		$this->create_review();
 

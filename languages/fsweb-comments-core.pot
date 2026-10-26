@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26T01:00:09+00:00\n"
+"POT-Creation-Date: 2026-10-26T01:14:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: Poedit 3.9\n"
 "X-Domain: fsweb-comments-core\n"
@@ -48,21 +48,21 @@ msgstr ""
 #: admin/class-fsweb-comments-core-admin.php:176
 #: admin/class-fsweb-comments-core-admin.php:177
 #: admin/class-fsweb-comments-core-admin.php:257
-#: admin/class-fsweb-comments-core-admin.php:537
+#: admin/class-fsweb-comments-core-admin.php:557
 msgid "Form Builder"
 msgstr ""
 
 #: admin/class-fsweb-comments-core-admin.php:186
 #: admin/class-fsweb-comments-core-admin.php:187
 #: admin/class-fsweb-comments-core-admin.php:262
-#: admin/class-fsweb-comments-core-admin.php:618
+#: admin/class-fsweb-comments-core-admin.php:641
 msgid "Views Builder"
 msgstr ""
 
 #: admin/class-fsweb-comments-core-admin.php:197
 #: admin/class-fsweb-comments-core-admin.php:198
 #: admin/class-fsweb-comments-core-admin.php:267
-#: admin/class-fsweb-comments-core-admin.php:693
+#: admin/class-fsweb-comments-core-admin.php:717
 msgid "Settings"
 msgstr ""
 
@@ -88,357 +88,358 @@ msgstr ""
 msgid "Available in the PRO add-on"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:444
+#: admin/class-fsweb-comments-core-admin.php:464
 msgid "Comments Core"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:445
+#: admin/class-fsweb-comments-core-admin.php:465
 msgid "Collect reviews, moderate them and display them anywhere with a shortcode."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:452
+#: admin/class-fsweb-comments-core-admin.php:472
 msgid "Published reviews"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:456
+#: admin/class-fsweb-comments-core-admin.php:476
 msgid "Awaiting moderation"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:460
+#: admin/class-fsweb-comments-core-admin.php:480
 msgid "Average rating"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:464
-#: admin/class-fsweb-comments-core-admin.php:713
+#: admin/class-fsweb-comments-core-admin.php:484
+#: admin/class-fsweb-comments-core-admin.php:737
 msgid "Submissions"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:466
+#: admin/class-fsweb-comments-core-admin.php:486
 msgid "Open"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:466
+#: admin/class-fsweb-comments-core-admin.php:486
 msgid "Closed"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:476
+#: admin/class-fsweb-comments-core-admin.php:496
 msgid "Shortcodes"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:480
+#: admin/class-fsweb-comments-core-admin.php:500
 msgid "Display your reviews:"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:482
+#: admin/class-fsweb-comments-core-admin.php:502
 msgid "Show the submission form:"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:485
+#: admin/class-fsweb-comments-core-admin.php:505
 msgid "Attributes: layout (slider, grid or list), theme (default or dark), count, slides (1 to 4), columns (1 to 4), category, order (newest, oldest, random, menu_order), show_image (yes or no)."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:494
+#: admin/class-fsweb-comments-core-admin.php:514
 msgid "Included in the free edition"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:499
+#: admin/class-fsweb-comments-core-admin.php:519
 msgid "Reviews post type with categories"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:500
+#: admin/class-fsweb-comments-core-admin.php:520
 msgid "Star ratings and photo (featured image)"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:501
+#: admin/class-fsweb-comments-core-admin.php:521
 msgid "Slider (default), grid and list layouts"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:502
+#: admin/class-fsweb-comments-core-admin.php:522
 msgid "Default and dark themes"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:503
+#: admin/class-fsweb-comments-core-admin.php:523
 msgid "Submission form with moderation queue"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:504
+#: admin/class-fsweb-comments-core-admin.php:524
 msgid "Theme template overrides"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:509
+#: admin/class-fsweb-comments-core-admin.php:529
 msgid "Open settings"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:513
+#: admin/class-fsweb-comments-core-admin.php:533
 msgid "Add review"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:538
+#: admin/class-fsweb-comments-core-admin.php:558
 msgid "Build the review form field by field, with extra types and multiple steps."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:548
+#: admin/class-fsweb-comments-core-admin.php:568
 msgid "Fields"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:554
+#: admin/class-fsweb-comments-core-admin.php:574
 #: admin/class-fsweb-comments-core-review-editor.php:170
 msgid "Name"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:555
-#: admin/class-fsweb-comments-core-admin.php:559
-#: admin/class-fsweb-comments-core-admin.php:563
-#: admin/class-fsweb-comments-core-admin.php:567
-#: admin/class-fsweb-comments-core-admin.php:636
-#: admin/class-fsweb-comments-core-admin.php:640
-#: admin/class-fsweb-comments-core-admin.php:644
+#: admin/class-fsweb-comments-core-admin.php:575
+#: admin/class-fsweb-comments-core-admin.php:579
+#: admin/class-fsweb-comments-core-admin.php:583
+#: admin/class-fsweb-comments-core-admin.php:587
+#: admin/class-fsweb-comments-core-admin.php:596
+#: admin/class-fsweb-comments-core-admin.php:659
+#: admin/class-fsweb-comments-core-admin.php:663
+#: admin/class-fsweb-comments-core-admin.php:667
 msgid "Included"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:558
-#: admin/class-fsweb-comments-core-admin.php:723
+#: admin/class-fsweb-comments-core-admin.php:578
+#: admin/class-fsweb-comments-core-admin.php:747
 #: admin/class-fsweb-comments-core-review-editor.php:176
 #: admin/class-fsweb-comments-core-review-editor.php:347
 msgid "Email"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:562
+#: admin/class-fsweb-comments-core-admin.php:582
 msgid "Rating (stars)"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:566
+#: admin/class-fsweb-comments-core-admin.php:586
 msgid "Review text"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:570
+#: admin/class-fsweb-comments-core-admin.php:590
 msgid "Date"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:571
+#: admin/class-fsweb-comments-core-admin.php:591
 msgid "Select"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:572
+#: admin/class-fsweb-comments-core-admin.php:592
 msgid "URL"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:573
+#: admin/class-fsweb-comments-core-admin.php:595
 msgid "Photo upload"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:573
-msgid "Visitors attach a photo to the review."
+#: admin/class-fsweb-comments-core-admin.php:600
+msgid "In the free edition the form has name, email, photo, rating and review. The PRO add-on lets you reorder, remove and add fields."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:577
-msgid "In the free edition the form always has name, email, rating and review. The PRO add-on lets you reorder, remove and add fields."
-msgstr ""
-
-#: admin/class-fsweb-comments-core-admin.php:586
+#: admin/class-fsweb-comments-core-admin.php:609
 msgid "Flow"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:592
+#: admin/class-fsweb-comments-core-admin.php:615
 msgid "Multi-step form"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:592
+#: admin/class-fsweb-comments-core-admin.php:615
 msgid "Split the form into steps with a progress indicator."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:593
+#: admin/class-fsweb-comments-core-admin.php:616
 msgid "Redirect after submit"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:593
+#: admin/class-fsweb-comments-core-admin.php:616
 msgid "Send the visitor to a thank-you page after the review is accepted."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:594
+#: admin/class-fsweb-comments-core-admin.php:617
 msgid "Saved forms"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:594
+#: admin/class-fsweb-comments-core-admin.php:617
 msgid "Keep several forms and choose one per shortcode with [fsweb_review_form id=\"...\"]."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:619
+#: admin/class-fsweb-comments-core-admin.php:642
 msgid "Design the review card and pick the layout, the skin and the CSS for each view."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:629
+#: admin/class-fsweb-comments-core-admin.php:652
 msgid "Layout"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:635
+#: admin/class-fsweb-comments-core-admin.php:658
 msgid "Grid"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:639
+#: admin/class-fsweb-comments-core-admin.php:662
 msgid "List"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:643
+#: admin/class-fsweb-comments-core-admin.php:666
 msgid "Slider"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:646
+#: admin/class-fsweb-comments-core-admin.php:669
 msgid "Infinite slider"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:646
+#: admin/class-fsweb-comments-core-admin.php:669
 msgid "Autoplay and seamless looping past the last card."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:649
+#: admin/class-fsweb-comments-core-admin.php:672
 msgid "The free edition renders the slider by default, with arrows, dot navigation and keyboard support, plus the grid and list layouts. The infinite loop and autoplay come with the PRO add-on."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:658
-#: admin/class-fsweb-comments-core-admin.php:740
+#: admin/class-fsweb-comments-core-admin.php:681
+#: admin/class-fsweb-comments-core-admin.php:764
 msgid "Appearance"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:664
+#: admin/class-fsweb-comments-core-admin.php:687
 msgid "Skin"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:664
+#: admin/class-fsweb-comments-core-admin.php:687
 msgid "Dark, minimal, colorful and flat, ready to use."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:665
-#: admin/class-fsweb-comments-core-admin.php:747
+#: admin/class-fsweb-comments-core-admin.php:688
+#: admin/class-fsweb-comments-core-admin.php:782
 msgid "Custom CSS"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:665
+#: admin/class-fsweb-comments-core-admin.php:688
 msgid "Write the CSS of each view without touching the theme."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:666
+#: admin/class-fsweb-comments-core-admin.php:689
 msgid "Card composition"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:666
+#: admin/class-fsweb-comments-core-admin.php:689
 msgid "Choose which components appear in the card and in which order."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:694
+#: admin/class-fsweb-comments-core-admin.php:718
 msgid "Control the submissions and the appearance of the reviews."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:706
+#: admin/class-fsweb-comments-core-admin.php:730
 msgid "Review form"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:717
+#: admin/class-fsweb-comments-core-admin.php:741
 msgid "Open — accept new reviews"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:718
+#: admin/class-fsweb-comments-core-admin.php:742
 msgid "Closed — hide the form"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:727
+#: admin/class-fsweb-comments-core-admin.php:751
 msgid "Require the visitor email"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:729
+#: admin/class-fsweb-comments-core-admin.php:753
 msgid "The email stays private and is only used to contact the author."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:746
-msgid "Extra skins"
+#: admin/class-fsweb-comments-core-admin.php:771
+msgid "Theme"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:746
-msgid "Minimal, colorful and flat, ready to use."
+#: admin/class-fsweb-comments-core-admin.php:775
+msgid "Default — light cards"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:747
+#: admin/class-fsweb-comments-core-admin.php:776
+msgid "Dark — dark cards"
+msgstr ""
+
+#: admin/class-fsweb-comments-core-admin.php:778
+msgid "Used when the shortcode does not set theme=\"dark\" or theme=\"default\"."
+msgstr ""
+
+#: admin/class-fsweb-comments-core-admin.php:782
 msgid "Extra CSS loaded after the plugin styles."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:751
+#: admin/class-fsweb-comments-core-admin.php:786
 msgid "The free edition ships the default and dark themes. The other skins and the custom CSS come with the PRO add-on."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:784
-#: admin/class-fsweb-comments-core-admin.php:807
+#: admin/class-fsweb-comments-core-admin.php:819
+#: admin/class-fsweb-comments-core-admin.php:842
 msgid "Comments Core PRO"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:785
+#: admin/class-fsweb-comments-core-admin.php:820
 msgid "The PRO add-on is installed and running."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:790
+#: admin/class-fsweb-comments-core-admin.php:825
 msgid "Everything this page used to sell is already unlocked on your site."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:794
+#: admin/class-fsweb-comments-core-admin.php:829
 msgid "Open the dashboard"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:808
+#: admin/class-fsweb-comments-core-admin.php:843
 msgid "Unlock the builders, the extra skins and the automatic updates with a single license."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:818
+#: admin/class-fsweb-comments-core-admin.php:853
 msgid "What the PRO add-on adds"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:820
+#: admin/class-fsweb-comments-core-admin.php:855
 msgid "Form Builder: 8 field types, drag and drop order, multi-step forms"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:821
+#: admin/class-fsweb-comments-core-admin.php:856
 msgid "Views Builder: rows, columns and components with per-view styles"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:822
+#: admin/class-fsweb-comments-core-admin.php:857
 msgid "Infinite slider with autoplay, on top of the free slider"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:823
+#: admin/class-fsweb-comments-core-admin.php:858
 msgid "Four ready-made skins plus custom CSS per view"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:824
-msgid "Front-end photo upload"
-msgstr ""
-
-#: admin/class-fsweb-comments-core-admin.php:825
+#: admin/class-fsweb-comments-core-admin.php:859
 msgid "License activation and automatic updates"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:830
+#: admin/class-fsweb-comments-core-admin.php:864
 msgid "Get Comments Core PRO"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:841
+#: admin/class-fsweb-comments-core-admin.php:875
 msgid "How the license works"
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:846
+#: admin/class-fsweb-comments-core-admin.php:880
 msgid "Install the free plugin (this one) and keep it active."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:847
+#: admin/class-fsweb-comments-core-admin.php:881
 msgid "Buy the license and download the PRO add-on ZIP."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:848
+#: admin/class-fsweb-comments-core-admin.php:882
 msgid "Install and activate the add-on — it appears under Reviews → Dashboard."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:849
+#: admin/class-fsweb-comments-core-admin.php:883
 msgid "Open Reviews → License and paste your key. The PRO pills disappear and every feature is unlocked."
 msgstr ""
 
-#: admin/class-fsweb-comments-core-admin.php:852
+#: admin/class-fsweb-comments-core-admin.php:886
 msgid "One key works for both editions: the add-on always validates the base slug fsweb-comments-core."
 msgstr ""
 
@@ -456,7 +457,7 @@ msgid "Review"
 msgstr ""
 
 #: admin/class-fsweb-comments-core-review-editor.php:281
-#: public/class-fsweb-comments-core-form-shortcode.php:218
+#: public/class-fsweb-comments-core-form-shortcode.php:235
 msgid "— Select —"
 msgstr ""
 
@@ -610,41 +611,75 @@ msgid "Your email"
 msgstr ""
 
 #: public/class-fsweb-comments-core-form-shortcode.php:64
-msgid "Your rating"
+msgid "Your photo"
 msgstr ""
 
 #: public/class-fsweb-comments-core-form-shortcode.php:70
+msgid "Your rating"
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:76
 msgid "Your review"
 msgstr ""
 
-#: public/class-fsweb-comments-core-form-shortcode.php:94
+#: public/class-fsweb-comments-core-form-shortcode.php:100
 msgid "Submit Review"
 msgstr ""
 
-#: public/class-fsweb-comments-core-form-shortcode.php:101
-#: public/class-fsweb-comments-core-form-shortcode.php:318
+#: public/class-fsweb-comments-core-form-shortcode.php:107
+#: public/class-fsweb-comments-core-form-shortcode.php:418
 msgid "Review submissions are closed."
 msgstr ""
 
-#: public/class-fsweb-comments-core-form-shortcode.php:144
+#: public/class-fsweb-comments-core-form-shortcode.php:150
 msgid "Submit another review"
 msgstr ""
 
+#: public/class-fsweb-comments-core-form-shortcode.php:224
+msgid "Click to upload"
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:225
+msgid "JPG, PNG, GIF or WebP, up to 2 MB."
+msgstr ""
+
 #. translators: %d: number of stars.
-#: public/class-fsweb-comments-core-form-shortcode.php:258
+#: public/class-fsweb-comments-core-form-shortcode.php:275
 #, php-format
 msgid "%d stars"
 msgstr ""
 
-#: public/class-fsweb-comments-core-form-shortcode.php:327
-msgid "Please fill in every required field."
+#: public/class-fsweb-comments-core-form-shortcode.php:329
+#: public/class-fsweb-comments-core-form-shortcode.php:333
+msgid "We could not read the image. Please try again."
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:337
+#: public/class-fsweb-comments-core-form-shortcode.php:370
+msgid "The image upload failed. Please try again."
 msgstr ""
 
 #: public/class-fsweb-comments-core-form-shortcode.php:341
+msgid "The image must be 2 MB or smaller."
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:354
+msgid "Please upload a JPG, PNG, GIF or WebP image."
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:384
+msgid "We could not save the image. Please try again."
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:427
+msgid "Please fill in every required field."
+msgstr ""
+
+#: public/class-fsweb-comments-core-form-shortcode.php:453
 msgid "We could not save your review. Please try again."
 msgstr ""
 
-#: public/class-fsweb-comments-core-form-shortcode.php:369
+#: public/class-fsweb-comments-core-form-shortcode.php:485
 #: public/class-fsweb-comments-core-public.php:139
 msgid "Thank you! Your review was submitted and is awaiting moderation."
 msgstr ""

@@ -23,7 +23,7 @@ FSWEB Comments Core is a lightweight review and feedback manager for WordPress. 
 * Submissions are held as **pending** until a moderator approves them
 * Slider (default), grid and list layouts via `[fsweb_reviews]`
 * Default and dark themes, chosen per shortcode
-* Photo support through the featured image
+* Photo support through the featured image, including an optional upload in the submission form
 * Average rating and post counters in the admin overview
 * Open or close submissions from Reviews → Settings
 * Theme overrides: copy a template to `yourtheme/fsweb-reviews/slider.php`
@@ -37,7 +37,7 @@ The free edition is complete, has no time limit and no locked features. An optio
 
 `[fsweb_reviews]` attributes: `layout` (slider|grid|list), `theme` (default|dark), `count` (1–50), `slides` (1–4), `columns` (1–4), `category`, `order` (newest|oldest|random|menu_order), `show_image` (yes|no).
 
-`[fsweb_review_form]` attributes: `title`, `button`.
+`[fsweb_review_form]` attributes: `title`, `button`. Visitors can attach an optional photo (JPG, PNG, GIF or WebP, up to 2 MB); it becomes the review featured image after moderation.
 
 **Hooks for developers**
 

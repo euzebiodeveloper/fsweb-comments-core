@@ -1,10 +1,20 @@
 name: Tests
 
+# Runs on the dev branch only: every commit and every PR that targets dev.
+# Merging dev into main no longer re-runs the whole matrix on the merge
+# commit, which used to duplicate every result that dev already produced.
+# Use the manual trigger (select main) if main ever needs a run of its own.
 on:
   push:
-    branches: [dev, main]
+    branches: [dev]
   pull_request:
-    branches: [dev, main]
+    branches: [dev]
+  workflow_dispatch:
+
+# A new push to the same branch cancels the run still in progress.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   phpunit:

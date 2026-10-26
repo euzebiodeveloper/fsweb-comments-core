@@ -757,6 +757,7 @@ class Fsweb_Comments_Core_Admin {
 						</div>
 					</div>
 
+					<?php if ( ! $this->is_pro_active() ) : ?>
 					<div class="fsweb-cc-card">
 						<div class="fsweb-cc-card__header">
 							<h2>
@@ -787,6 +788,7 @@ class Fsweb_Comments_Core_Admin {
 							</p>
 						</div>
 					</div>
+					<?php endif; ?>
 				</div>
 
 				<?php submit_button(); ?>

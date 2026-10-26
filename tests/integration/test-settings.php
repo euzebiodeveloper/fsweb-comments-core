@@ -75,4 +75,20 @@ class Fsweb_Cc_Test_Settings extends Fsweb_Cc_Test_Case {
 		$this->assertStringContainsString( 'fsweb-cc-pro-tag', $markup );
 		$this->assertStringContainsString( 'fsweb-cc-locked', $markup );
 	}
+
+	public function test_the_appearance_card_leaves_the_settings_screen_once_the_add_on_is_active() {
+		$admin = new class( 'fsweb-comments-core', FSWEB_COMMENTS_CORE_VERSION ) extends Fsweb_Comments_Core_Admin {
+			public function is_pro_active() {
+				return true;
+			}
+		};
+
+		$markup = $this->render( array( $admin, 'render_settings_page' ) );
+
+		$this->assertStringNotContainsString( 'fsweb_comments_core_default_theme', $markup );
+		$this->assertStringNotContainsString( '>Appearance<', $markup );
+		$this->assertStringNotContainsString( 'fsweb-cc-locked', $markup );
+		$this->assertStringContainsString( 'name="fsweb_comments_core_form_status"', $markup );
+		$this->assertStringContainsString( 'name="fsweb_comments_core_require_email"', $markup );
+	}
 }

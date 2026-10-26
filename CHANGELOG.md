@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### Fixed
+
+- The Settings screen kept the Appearance card while the PRO add-on was
+  active, so the same page offered two places to pick a theme; the card now
+  belongs to the free edition only and leaves the screen with the add-on on
+
 ## 1.0.8 — 2026-10-25
 
 First public release of the free edition, split out of the original Comments Core

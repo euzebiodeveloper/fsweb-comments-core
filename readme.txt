@@ -4,7 +4,7 @@ Tags: reviews, testimonials, feedback, ratings, shortcode
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,10 +82,11 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.0.8 =
 * Initial release: review post type, submission form, grid and list shortcodes, admin screens.
+* Optional PRO add-on documented; no feature is held behind a licence in this edition.
 
 == Upgrade Notice ==
 
-= 1.0.0 =
+= 1.0.8 =
 Initial release.

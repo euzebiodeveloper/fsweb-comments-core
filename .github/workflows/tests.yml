@@ -1,10 +1,20 @@
 name: Tests
 
+# Runs on the dev branch only: every commit and every PR that targets dev.
+# Merging dev into main no longer re-runs the whole matrix on the merge
+# commit, which used to duplicate every result that dev already produced.
+# Use the manual trigger (select main) if main ever needs a run of its own.
 on:
   push:
-    branches: [dev, main]
+    branches: [dev]
   pull_request:
-    branches: [dev, main]
+    branches: [dev]
+  workflow_dispatch:
+
+# A new push to the same branch cancels the run still in progress.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   phpunit:
@@ -74,6 +84,20 @@ jobs:
     name: Plugin Check
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: pc
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,18 +113,50 @@ jobs:
           curl -sSL -o /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
           chmod +x /tmp/wp-cli.phar
 
-      - name: Install WordPress, Plugin Check and the plugin
+      - name: Install WordPress and Plugin Check
         run: |
           /tmp/wp-cli.phar core download --path=/tmp/pc --version=latest --skip-content
           /tmp/wp-cli.phar config create --path=/tmp/pc --dbname=pc --dbuser=root --dbpass=root --dbhost=127.0.0.1 --skip-check
-          /tmp/wp-cli.phar plugin install plugin-check --path=/tmp/pc
-          ln -s "$GITHUB_WORKSPACE" /tmp/pc/wp-content/plugins/fsweb-comments-core
-          /tmp/wp-cli.phar plugin activate plugin-check --path=/tmp/pc
+          /tmp/wp-cli.phar core install --path=/tmp/pc --url=http://example.org --title=PluginCheck --admin_user=admin --admin_password=admin --admin_email=admin@example.org --skip-email
+          /tmp/wp-cli.phar plugin install plugin-check --activate --path=/tmp/pc
+
+      # Check what ships, not the repository: the same excludes used by
+      # build-zip.yml. Otherwise tests/, phpunit.xml.dist and the hidden files
+      # fail the job for files the package never contains.
+      - name: Build the distributable package
+        run: |
+          BUILD_DIR="/tmp/pc/wp-content/plugins/fsweb-comments-core"
+          mkdir -p "${BUILD_DIR}"
+          rsync -a ./ "${BUILD_DIR}/" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.gitignore' \
+            --exclude='.gitattributes' \
+            --exclude='.editorconfig' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            --exclude='CHANGELOG.md' \
+            --exclude='AGENTS.md' \
+            --exclude='ROADMAP.md' \
+            --exclude='reasonix.toml' \
+            --exclude='.reasonix/' \
+            --exclude='*.zip' \
+            --exclude='node_modules/' \
+            --exclude='.vscode/' \
+            --exclude='.idea/' \
+            --exclude='.distignore' \
+            --exclude='tests/' \
+            --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='phpunit.xml.dist' \
+            --exclude='.phpunit.result.cache' \
+            --exclude='vendor/' \
+            --exclude='PROMPT.md' \
+            --exclude='languages/*.po' \
+            --exclude='languages/*.mo'
 
       - name: Run Plugin Check
         run: |
           /tmp/wp-cli.phar plugin check fsweb-comments-core \
             --path=/tmp/pc \
-            --exclude-directories=.github \
-            --exclude-files=.gitignore \
             --format=table

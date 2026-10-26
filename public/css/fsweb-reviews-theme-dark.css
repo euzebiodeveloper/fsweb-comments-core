@@ -1,0 +1,71 @@
+/**
+ * FSWEB Reviews — Dark theme.
+ *
+ * The second format offered in the free edition: same structure, dark cards.
+ * Every rule is scoped to `.fsweb-reviews--theme-dark`, so the rest of the
+ * site keeps whatever the theme does and two shortcodes on the same page can
+ * use different formats.
+ *
+ * The slider arrows and dots are repainted through the custom properties the
+ * slider sheet exposes: on a navy card, the site accent would clash.
+ */
+
+.fsweb-reviews--theme-dark {
+	--fsweb-text: #e0e0f0;
+	--fsweb-muted: #b0b0c8;
+	--fsweb-border: #3a3a5c;
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-card,
+.fsweb-reviews--theme-dark .fsweb-review-list-item {
+	background: #1e1e2e;
+	border-color: var(--fsweb-border);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-card:hover {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-avatar {
+	border-color: var(--fsweb-border);
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-avatar--placeholder {
+	background: #2a2a40;
+	color: #6a6a8a;
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-name {
+	color: var(--fsweb-text);
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-content {
+	color: var(--fsweb-muted);
+}
+
+.fsweb-reviews--theme-dark .fsweb-star {
+	color: #3a3a5c;
+}
+
+.fsweb-reviews--theme-dark .fsweb-star--filled {
+	color: #f5c542;
+}
+
+.fsweb-reviews--theme-dark .fsweb-review-date {
+	color: #6a6a8a;
+}
+
+/* Slider palette for the dark cards. */
+.fsweb-reviews--theme-dark.fsweb-reviews--slider {
+	--fsweb-slider-accent: #7eb8f4;
+	--fsweb-slider-accent-color: #1e1e2e;
+	--fsweb-slider-accent-ring: rgba(126, 184, 244, 0.28);
+	--fsweb-slider-accent-glow: rgba(126, 184, 244, 0.35);
+	--fsweb-slider-arrow-bg: #2a2a40;
+	--fsweb-slider-arrow-border: #3a3a5c;
+	--fsweb-slider-arrow-color: #e0e0f0;
+	--fsweb-slider-arrow-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+	--fsweb-slider-dot: #3a3a5c;
+	--fsweb-slider-dot-active: #7eb8f4;
+}

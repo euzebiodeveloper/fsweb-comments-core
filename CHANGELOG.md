@@ -14,7 +14,10 @@ plugin (now the PRO add-on).
 
 - `fsweb_review` custom post type and `fsweb_review_category` taxonomy
 - Review editor: name, email, star rating and review text
-- `[fsweb_reviews]` shortcode with grid and list layouts
+- `[fsweb_reviews]` shortcode rendering a slider by default, plus grid and list
+  layouts
+- Slider with arrows, dot navigation, keyboard support and 1 to 4 cards per view
+- Two themes per shortcode: `default` and `dark`
 - `[fsweb_review_form]` shortcode with AJAX submission
 - Moderation queue: submissions are created as pending
 - Admin overview with published, pending and average rating counters
@@ -27,6 +30,10 @@ plugin (now the PRO add-on).
 - Filters and actions for extending the query, the form and the markup
 
 ### Changed
+
+- The default layout of `[fsweb_reviews]` is the slider: deactivating an add-on
+  no longer falls back to a column of cards stacked one under the other
+- The grid columns come from a data attribute instead of an inline style
 
 - The Go PRO screen and the PRO pills link to the live product page,
   `https://flowsyncweb.com/produto/comments-core-pro/`

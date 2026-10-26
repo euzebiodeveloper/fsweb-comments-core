@@ -117,6 +117,13 @@
 }
 
 /* Grid layout ------------------------------------------------------- */
+/* Columns come from the shortcode as an attribute, so no inline style
+   attribute is needed on the wrapper. */
+.fsweb-reviews--grid[data-fsweb-columns="1"] { --fsweb-columns: 1; }
+.fsweb-reviews--grid[data-fsweb-columns="2"] { --fsweb-columns: 2; }
+.fsweb-reviews--grid[data-fsweb-columns="3"] { --fsweb-columns: 3; }
+.fsweb-reviews--grid[data-fsweb-columns="4"] { --fsweb-columns: 4; }
+
 .fsweb-reviews--grid {
 	display: grid;
 	grid-template-columns: repeat(var(--fsweb-columns, 3), minmax(0, 1fr));

@@ -15,8 +15,9 @@ if ( ! defined( 'WPINC' ) ) {
 
 $fsweb_cc_columns = min( 4, max( 1, (int) $atts['columns'] ) );
 $fsweb_cc_show_image = 'yes' === $atts['show_image'];
+$fsweb_cc_theme = isset( $atts['theme'] ) ? $atts['theme'] : 'default';
 ?>
-<div class="fsweb-reviews fsweb-reviews--grid" style="--fsweb-columns:<?php echo (int) $fsweb_cc_columns; ?>;">
+<div class="fsweb-reviews fsweb-reviews--grid fsweb-reviews--theme-<?php echo esc_attr( $fsweb_cc_theme ); ?>" data-fsweb-columns="<?php echo esc_attr( (string) $fsweb_cc_columns ); ?>">
 	<?php
 	while ( $reviews->have_posts() ) :
 		$reviews->the_post();

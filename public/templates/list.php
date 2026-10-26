@@ -14,8 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 $fsweb_cc_show_image = 'yes' === $atts['show_image'];
+$fsweb_cc_theme = isset( $atts['theme'] ) ? $atts['theme'] : 'default';
 ?>
-<div class="fsweb-reviews fsweb-reviews--list">
+<div class="fsweb-reviews fsweb-reviews--list fsweb-reviews--theme-<?php echo esc_attr( $fsweb_cc_theme ); ?>">
 	<?php
 	while ( $reviews->have_posts() ) :
 		$reviews->the_post();

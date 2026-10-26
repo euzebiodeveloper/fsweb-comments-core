@@ -17,8 +17,10 @@ if ( ! defined( 'WPINC' ) ) {
  * Shortcode handler for [fsweb_reviews].
  *
  * Attributes:
- *   layout     — 'grid' (default) or 'list'
+ *   layout     — 'slider' (default), 'grid' or 'list'
  *   count      — number of reviews (default 6, max 50)
+ *   slides     — slider cards per view, 1 to 4 (default 3)
+ *   theme      — 'default' (default) or 'dark'
  *   category   — category slug (comma separated, empty = all)
  *   order      — 'newest' (default), 'oldest', 'random', 'menu_order'
  *   show_image — 'yes' (default) or 'no'
@@ -40,10 +42,13 @@ class Fsweb_Comments_Core_Shortcode {
 	 * @return string
 	 */
 	public function render( $atts ) {
+		$raw  = is_array( $atts ) ? $atts : array();
 		$atts = shortcode_atts(
 			array(
-				'layout'     => 'grid',
+				'layout'     => 'slider',
 				'count'      => 6,
+				'slides'     => 3,
+				'theme'      => 'default',
 				'category'   => '',
 				'order'      => 'newest',
 				'show_image' => 'yes',
@@ -55,11 +60,25 @@ class Fsweb_Comments_Core_Shortcode {
 				'id'         => '',
 				'skin'       => '',
 			),
-			$atts,
+			$raw,
 			'fsweb_reviews'
 		);
 
-		$layout = 'list' === $atts['layout'] ? 'list' : 'grid';
+		$layout = in_array( $atts['layout'], array( 'slider', 'grid', 'list' ), true ) ? $atts['layout'] : 'slider';
+
+		// The add-on calls the theme a skin. Read the raw attributes first:
+		// shortcode_atts() already filled `theme` with its default, so asking
+		// it afterwards would never see the alias.
+		$fsweb_cc_requested_theme = isset( $raw['theme'] ) ? strtolower( trim( (string) $raw['theme'] ) ) : '';
+
+		if ( '' === $fsweb_cc_requested_theme && isset( $raw['skin'] ) ) {
+			$fsweb_cc_requested_theme = strtolower( trim( (string) $raw['skin'] ) );
+		}
+
+		$theme = in_array( $fsweb_cc_requested_theme, array( 'default', 'dark' ), true ) ? $fsweb_cc_requested_theme : 'default';
+
+		$atts['layout'] = $layout;
+		$atts['theme']  = $theme;
 
 		/**
 		 * Short-circuit the review rendering.
@@ -83,7 +102,7 @@ class Fsweb_Comments_Core_Shortcode {
 			return '';
 		}
 
-		Fsweb_Comments_Core_Public::enqueue_styles();
+		Fsweb_Comments_Core_Public::enqueue_layout_assets( $layout, $theme );
 
 		ob_start();
 

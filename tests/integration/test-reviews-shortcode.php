@@ -10,7 +10,7 @@
  */
 class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 
-	public function test_renders_published_reviews_as_grid_by_default() {
+	public function test_renders_published_reviews_as_a_slider_by_default() {
 		$this->create_review( array( 'post_title' => 'Alice' ) );
 		$this->create_review( array( 'post_title' => 'Bob' ) );
 		$this->create_review(
@@ -22,9 +22,73 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 
 		$output = do_shortcode( '[fsweb_reviews]' );
 
-		$this->assertStringContainsString( 'fsweb-reviews--grid', $output );
+		$this->assertStringContainsString( 'fsweb-reviews--slider', $output );
+		$this->assertStringContainsString( 'fsweb-slider-stage', $output );
+		$this->assertStringContainsString( 'data-fsweb-slider', $output );
 		$this->assertSame( 2, substr_count( $output, 'fsweb-review-card' ) );
 		$this->assertStringNotContainsString( 'Pending', $output );
+	}
+
+	public function test_slider_arrows_are_buttons_with_accessible_labels() {
+		$this->create_review();
+
+		$output = do_shortcode( '[fsweb_reviews]' );
+
+		$this->assertStringContainsString( 'fsweb-slider-prev', $output );
+		$this->assertStringContainsString( 'fsweb-slider-next', $output );
+		$this->assertStringContainsString( 'fsweb-slider-dots', $output );
+		$this->assertStringContainsString( 'Previous review', $output );
+		$this->assertStringContainsString( 'Next review', $output );
+	}
+
+	public function test_slides_attribute_sets_the_cards_per_view() {
+		$this->create_review();
+
+		$output = do_shortcode( '[fsweb_reviews slides="2"]' );
+
+		$this->assertStringContainsString( 'data-fsweb-slides="2"', $output );
+	}
+
+	public function test_slides_attribute_is_clamped_between_one_and_four() {
+		$this->create_review();
+
+		$this->assertStringContainsString( 'data-fsweb-slides="4"', do_shortcode( '[fsweb_reviews slides="9"]' ) );
+		$this->assertStringContainsString( 'data-fsweb-slides="1"', do_shortcode( '[fsweb_reviews slides="0"]' ) );
+	}
+
+	public function test_default_theme_adds_no_dark_class() {
+		$this->create_review();
+
+		$output = do_shortcode( '[fsweb_reviews]' );
+
+		$this->assertStringContainsString( 'fsweb-reviews--theme-default', $output );
+		$this->assertStringNotContainsString( 'fsweb-reviews--theme-dark', $output );
+	}
+
+	public function test_dark_theme_class_reaches_every_layout() {
+		$this->create_review();
+
+		foreach ( array( 'slider', 'grid', 'list' ) as $layout ) {
+			$output = do_shortcode( '[fsweb_reviews layout="' . $layout . '" theme="dark"]' );
+
+			$this->assertStringContainsString( 'fsweb-reviews--theme-dark', $output, 'Layout: ' . $layout );
+			$this->assertStringContainsString( 'fsweb-reviews--' . $layout, $output, 'Layout: ' . $layout );
+		}
+	}
+
+	public function test_skin_attribute_is_an_alias_for_the_theme() {
+		$this->create_review();
+
+		$this->assertStringContainsString( 'fsweb-reviews--theme-dark', do_shortcode( '[fsweb_reviews skin="dark"]' ) );
+	}
+
+	public function test_grid_layout_uses_the_grid_template() {
+		$this->create_review();
+
+		$output = do_shortcode( '[fsweb_reviews layout="grid"]' );
+
+		$this->assertStringContainsString( 'fsweb-reviews--grid', $output );
+		$this->assertStringNotContainsString( 'fsweb-slider-stage', $output );
 	}
 
 	public function test_list_layout_uses_the_list_template() {
@@ -50,9 +114,9 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 	public function test_columns_attribute_is_clamped_between_one_and_four() {
 		$this->create_review();
 
-		$output = do_shortcode( '[fsweb_reviews columns="9"]' );
+		$output = do_shortcode( '[fsweb_reviews layout="grid" columns="9"]' );
 
-		$this->assertStringContainsString( '--fsweb-columns:4', $output );
+		$this->assertStringContainsString( 'data-fsweb-columns="4"', $output );
 	}
 
 	public function test_category_attribute_filters_the_query() {
@@ -93,7 +157,7 @@ class Fsweb_Cc_Test_Reviews_Shortcode extends Fsweb_Cc_Test_Case {
 		$output = do_shortcode( '[fsweb_reviews]' );
 
 		$this->assertStringContainsString( 'pro-output', $output );
-		$this->assertStringNotContainsString( 'fsweb-reviews--grid', $output );
+		$this->assertStringNotContainsString( 'fsweb-reviews--slider', $output );
 	}
 
 	public function test_query_args_filter_receives_the_attributes() {

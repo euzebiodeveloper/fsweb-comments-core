@@ -51,7 +51,9 @@ jobs:
             --exclude='phpunit.xml.dist' \
             --exclude='.phpunit.result.cache' \
             --exclude='vendor/' \
-            --exclude='PROMPT.md'
+            --exclude='PROMPT.md' \
+            --exclude='languages/*.po' \
+            --exclude='languages/*.mo'
 
           cd /tmp/build
           zip -r "${GITHUB_WORKSPACE}/${ZIP_NAME}" "${PLUGIN_SLUG}"

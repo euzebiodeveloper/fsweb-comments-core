@@ -4,7 +4,7 @@ Tags: reviews, testimonials, feedback, ratings, shortcode
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,10 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 
 == Changelog ==
 
+= 1.0.9 =
+* Escaped and sanitized every value printed by the extension filters: form attributes, custom field markup and the reviews shortcode output.
+* Removed an unnecessary wp-admin include from the photo upload handler.
+
 = 1.0.8 =
 * Initial release: review post type, submission form, slider, grid and list shortcodes, admin screens.
 * The slider is the default layout, with arrows, dot navigation and keyboard support.
@@ -90,6 +94,9 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 * Optional PRO add-on documented; no feature is held behind a licence in this edition.
 
 == Upgrade Notice ==
+
+= 1.0.9 =
+Security hardening for filter output.
 
 = 1.0.8 =
 Initial release.

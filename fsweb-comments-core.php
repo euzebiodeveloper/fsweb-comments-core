@@ -15,7 +15,7 @@
  * Plugin Name:       FSWEB Comments Core
  * Plugin URI:        https://github.com/euzebiodeveloper/fsweb-comments-core
  * Description:       Lightweight review and feedback management for WordPress: collect reviews with star ratings, moderate them and display them anywhere with a shortcode.
- * Version:           1.0.8
+ * Version:           1.0.9
  * Requires at least: 6.7
  * Requires PHP:      7.4
  * Author:            Flow Sync Web
@@ -34,7 +34,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  */
-define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.8' );
+define( 'FSWEB_COMMENTS_CORE_VERSION', '1.0.9' );
 
 /**
  * Plugin slug. Used for the text domain and admin screens.

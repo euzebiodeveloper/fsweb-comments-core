@@ -45,7 +45,7 @@ class Fsweb_Comments_Core {
 	 * Set the plugin identity and boot the hooks.
 	 */
 	public function __construct() {
-		$this->version     = defined( 'FSWEB_COMMENTS_CORE_VERSION' ) ? FSWEB_COMMENTS_CORE_VERSION : '1.0.8';
+		$this->version     = defined( 'FSWEB_COMMENTS_CORE_VERSION' ) ? FSWEB_COMMENTS_CORE_VERSION : '1.0.9';
 		$this->plugin_name = 'fsweb-comments-core';
 
 		$this->load_dependencies();

@@ -212,6 +212,122 @@ class Fsweb_Comments_Core_Public {
 	}
 
 	/**
+	 * Allowed HTML for markup returned by the extension filters.
+	 *
+	 * The post allowlist covers regular content; the SVG entries keep the
+	 * avatar placeholder and slider arrow icons that the layouts print.
+	 *
+	 * @return array
+	 */
+	public static function allowed_reviews_markup() {
+		$allowed = wp_kses_allowed_html( 'post' );
+
+		$icon_attributes = array(
+			'class'               => true,
+			'fill'                => true,
+			'width'               => true,
+			'height'              => true,
+			'viewbox'             => true,
+			'focusable'           => true,
+			'role'                => true,
+			'xmlns'               => true,
+			'preserveaspectratio' => true,
+			'stroke'              => true,
+			'stroke-width'        => true,
+			'stroke-linecap'      => true,
+			'stroke-linejoin'     => true,
+		);
+
+		$shape_attributes = array(
+			'd'          => true,
+			'fill'       => true,
+			'stroke'     => true,
+			'transform'  => true,
+			'cx'         => true,
+			'cy'         => true,
+			'r'          => true,
+			'x'          => true,
+			'y'          => true,
+			'width'      => true,
+			'height'     => true,
+			'points'     => true,
+			'href'       => true,
+			'xlink:href' => true,
+		);
+
+		$allowed['svg']   = $icon_attributes;
+		$allowed['g']     = $icon_attributes;
+		$allowed['defs']  = $icon_attributes;
+		$allowed['title'] = array();
+
+		foreach ( array( 'path', 'circle', 'rect', 'line', 'polyline', 'polygon', 'use' ) as $tag ) {
+			$allowed[ $tag ] = $shape_attributes;
+		}
+
+		return $allowed;
+	}
+
+	/**
+	 * Sanitize markup returned by extension filters.
+	 *
+	 * @param string $html Markup.
+	 * @return string
+	 */
+	public static function kses_reviews_markup( $html ) {
+		return wp_kses( (string) $html, self::allowed_reviews_markup() );
+	}
+
+	/**
+	 * Allowed HTML for custom form field markup.
+	 *
+	 * The field renderer is filterable, so only form controls and the
+	 * wrappers used by the built-in renderer are permitted.
+	 *
+	 * @return array
+	 */
+	public static function allowed_form_field_markup() {
+		$attributes = array(
+			'class'            => true,
+			'id'               => true,
+			'name'             => true,
+			'type'             => true,
+			'value'            => true,
+			'placeholder'      => true,
+			'required'         => true,
+			'checked'          => true,
+			'selected'         => true,
+			'disabled'         => true,
+			'readonly'         => true,
+			'multiple'         => true,
+			'accept'           => true,
+			'min'              => true,
+			'max'              => true,
+			'step'             => true,
+			'rows'             => true,
+			'cols'             => true,
+			'maxlength'        => true,
+			'pattern'          => true,
+			'autocomplete'     => true,
+			'for'              => true,
+			'title'            => true,
+			'data-*'           => true,
+			'aria-label'       => true,
+			'aria-labelledby'  => true,
+			'aria-describedby' => true,
+			'aria-hidden'      => true,
+			'role'             => true,
+		);
+
+		$allowed = array();
+
+		foreach ( array( 'div', 'span', 'p', 'label', 'input', 'select', 'textarea', 'option', 'optgroup', 'button', 'small', 'strong', 'em' ) as $tag ) {
+			$allowed[ $tag ] = $attributes;
+		}
+
+		return $allowed;
+	}
+
+	/**
 	 * Filter the rendered reviews markup.
 	 *
 	 * Gives the PRO add-on a single place to inject its layouts, skins and
@@ -229,6 +345,6 @@ class Fsweb_Comments_Core_Public {
 		 * @param string $output Rendered HTML.
 		 * @param array  $atts   Shortcode attributes.
 		 */
-		return apply_filters( 'fsweb_cc_reviews_html', $output, $atts );
+		return self::kses_reviews_markup( apply_filters( 'fsweb_cc_reviews_html', $output, $atts ) );
 	}
 }

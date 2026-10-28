@@ -98,7 +98,7 @@ class Fsweb_Comments_Core_Shortcode {
 		$custom = apply_filters( 'fsweb_cc_reviews_pre_render', '', $atts );
 
 		if ( '' !== $custom ) {
-			return $custom;
+			return Fsweb_Comments_Core_Public::kses_reviews_markup( $custom );
 		}
 
 		$query = new WP_Query( $this->build_query( $atts ) );
@@ -151,7 +151,7 @@ class Fsweb_Comments_Core_Shortcode {
 		 */
 		$output = apply_filters( 'fsweb_cc_reviews_shortcode_output', $output, $atts );
 
-		return $output;
+		return Fsweb_Comments_Core_Public::kses_reviews_markup( $output );
 	}
 
 	/**

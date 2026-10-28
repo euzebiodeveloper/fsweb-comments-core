@@ -174,7 +174,7 @@ class Fsweb_Cc_Test_Form_Shortcode extends Fsweb_Cc_Test_Case {
 		add_filter(
 			'fsweb_cc_form_attributes',
 			static function () {
-				return 'data-custom="1"';
+				return array( 'data-custom' => '1' );
 			}
 		);
 

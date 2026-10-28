@@ -118,7 +118,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 				<h3 class="fsweb-review-form-title"><?php echo esc_html( $atts['title'] ); ?></h3>
 			<?php endif; ?>
 
-			<form class="fsweb-review-form" method="post" enctype="multipart/form-data" data-fsweb-form<?php echo $this->form_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the filter owner. ?>>
+			<form class="fsweb-review-form" method="post" enctype="multipart/form-data" data-fsweb-form<?php foreach ( $this->form_attributes() as $fsweb_attribute_name => $fsweb_attribute_value ) : ?> <?php echo esc_attr( $fsweb_attribute_name ) . '="' . esc_attr( $fsweb_attribute_value ) . '"'; ?><?php endforeach; ?>>
 				<?php wp_nonce_field( 'fsweb_review_submit', 'fsweb_nonce' ); ?>
 
 				<?php foreach ( $fields as $field ) : ?>
@@ -183,7 +183,7 @@ class Fsweb_Comments_Core_Form_Shortcode {
 		$custom = apply_filters( 'fsweb_cc_form_field_html', '', $field, $name, $required );
 
 		if ( '' !== $custom ) {
-			echo $custom; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by the callback.
+			echo wp_kses( $custom, Fsweb_Comments_Core_Public::allowed_form_field_markup() );
 			return;
 		}
 
@@ -280,18 +280,37 @@ class Fsweb_Comments_Core_Form_Shortcode {
 	/**
 	 * Extra attributes for the <form> tag.
 	 *
-	 * @return string
+	 * Names are validated against the HTML attribute syntax; values are
+	 * escaped when the template prints them.
+	 *
+	 * @return array Valid attribute name => value pairs.
 	 */
 	protected function form_attributes() {
 		/**
 		 * Filter extra attributes printed on the review form.
 		 *
+		 * Return an associative array of name => value pairs, not an escaped
+		 * attribute string.
+		 *
 		 * @since 1.0.0
-		 * @param string $attributes Attributes, already prefixed with a space.
+		 * @since 1.0.9 Filter callbacks receive and return an array of attributes.
+		 *
+		 * @param array $attributes Attributes added to the form tag.
 		 */
-		$attributes = (string) apply_filters( 'fsweb_cc_form_attributes', '' );
+		$attributes = (array) apply_filters( 'fsweb_cc_form_attributes', array() );
+		$valid      = array();
 
-		return $attributes ? ' ' . $attributes : '';
+		foreach ( $attributes as $name => $value ) {
+			$name = (string) $name;
+
+			if ( ! preg_match( '/^[a-zA-Z_:][a-zA-Z0-9_:.-]*$/', $name ) ) {
+				continue;
+			}
+
+			$valid[ $name ] = (string) $value;
+		}
+
+		return $valid;
 	}
 
 	/**
@@ -355,7 +374,6 @@ class Fsweb_Comments_Core_Form_Shortcode {
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
 
 		$upload = wp_handle_upload(
 			$file,

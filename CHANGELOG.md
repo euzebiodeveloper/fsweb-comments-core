@@ -5,8 +5,19 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.9 — 2026-10-28
+
 ### Fixed
 
+- Escaped the attributes returned by `fsweb_cc_form_attributes`; the filter
+  now receives and returns an array instead of a raw attribute string.
+- Sanitized custom field HTML from `fsweb_cc_form_field_html` with an explicit
+  `wp_kses()` allowlist before printing it.
+- Sanitized the markup returned by the reviews filters
+  (`fsweb_cc_reviews_pre_render`, `fsweb_cc_reviews_shortcode_output` and
+  `fsweb_cc_reviews_html`), keeping the inline SVG icons allowed.
+- Removed the unused `wp-admin/includes/media.php` include from the photo
+  upload handler.
 - The Settings screen kept the Appearance card while the PRO add-on was
   active, so the same page offered two places to pick a theme; the card now
   belongs to the free edition only and leaves the screen with the add-on on

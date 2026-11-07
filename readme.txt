@@ -78,8 +78,9 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 == Screenshots ==
 
 1. Overview screen with counters and quick actions.
-2. Review editor with star rating.
-3. Reviews displayed with the slider shortcode.
+2. Settings screen with the form and appearance options.
+3. Reviews slider with the dark theme.
+4. Reviews slider with the light theme.
 
 == Changelog ==
 

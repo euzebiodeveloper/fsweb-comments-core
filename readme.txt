@@ -78,9 +78,9 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 == Screenshots ==
 
 1. Overview screen with counters and quick actions.
-2. Settings screen with the form and appearance options.
-3. Reviews slider with the dark theme.
-4. Reviews slider with the light theme.
+2. Front-end review form with photo upload.
+3. Review card in the light theme.
+4. Review card in the dark theme.
 
 == Changelog ==
 

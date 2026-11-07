@@ -69,19 +69,33 @@ jobs:
         if: ${{ !inputs.assets_only }}
         run: |
           set -euo pipefail
+          # 'svn/' guarda o checkout do WordPress.org: sem esta exclusao o
+          # rsync copia a propria pasta para dentro do trunk e o svn quebra
+          # com E155005 (working copy aninhada em svn/trunk/svn).
           rsync -a --delete ./ svn/trunk/ \
             --exclude='.git/' \
             --exclude='.github/' \
+            --exclude='svn/' \
             --exclude='assets/' \
+            --exclude='.distignore' \
             --exclude='.gitignore' \
             --exclude='.gitattributes' \
             --exclude='.editorconfig' \
+            --exclude='.phpunit.result.cache' \
+            --exclude='phpunit.xml.dist' \
+            --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='vendor/' \
+            --exclude='tests/' \
             --exclude='.DS_Store' \
             --exclude='Thumbs.db' \
             --exclude='CHANGELOG.md' \
             --exclude='README.md' \
             --exclude='AGENTS.md' \
+            --exclude='PROMPT.md' \
             --exclude='ROADMAP.md' \
+            --exclude='reasonix.toml' \
+            --exclude='.reasonix/' \
             --exclude='*.zip' \
             --exclude='node_modules/' \
             --exclude='.vscode/' \
@@ -119,6 +133,10 @@ jobs:
               svn delete "${path}"
             fi
           done
+          if [ -d trunk/svn ]; then
+            echo "::error::Working copy aninhada em trunk/svn; abortando antes do commit."
+            exit 1
+          fi
           svn add --force trunk --no-ignore
           echo "--- svn status ---"
           svn status trunk

@@ -1,0 +1,155 @@
+name: Deploy to WordPress.org
+
+# Manual apenas: Actions > Deploy to WordPress.org > Run workflow, na main.
+# Nao dispara em merge de PR, release publicado ou workflow concluido.
+on:
+  workflow_dispatch:
+    inputs:
+      assets_only:
+        description: "Publicar apenas a pasta assets/ (icone, banner, screenshots), sem tocar no trunk"
+        type: boolean
+        default: false
+
+concurrency:
+  group: wporg-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    # So a main publica no diretorio; dispatch em outra branch e ignorado.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    env:
+      SLUG: fsweb-comments-core
+      SVN_URL: https://plugins.svn.wordpress.org/fsweb-comments-core
+      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read plugin version
+        id: version
+        run: |
+          set -euo pipefail
+          VERSION=$(grep -oP 'Version:\s*\K[0-9]+\.[0-9]+\.[0-9]+' "${SLUG}.php" | head -1)
+          if [ -z "${VERSION}" ]; then
+            echo "::error::Nao foi possivel ler a versao em ${SLUG}.php."
+            exit 1
+          fi
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Versao: ${VERSION}"
+
+      - name: Check SVN credentials
+        run: |
+          set -euo pipefail
+          if [ -z "${SVN_USERNAME}" ] || [ -z "${SVN_PASSWORD}" ]; then
+            echo "::error::Configure os secrets SVN_USERNAME e SVN_PASSWORD em Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Install Subversion
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
+
+      - name: Checkout WordPress.org SVN
+        run: |
+          set -euo pipefail
+          svn checkout "${SVN_URL}" svn --depth=immediates
+          svn update svn/trunk --set-depth=infinity
+          if svn ls "${SVN_URL}/assets" >/dev/null 2>&1; then
+            svn update svn/assets --set-depth=infinity
+          fi
+
+      - name: Sync plugin files into trunk
+        if: ${{ !inputs.assets_only }}
+        run: |
+          set -euo pipefail
+          rsync -a --delete ./ svn/trunk/ \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='assets/' \
+            --exclude='.gitignore' \
+            --exclude='.gitattributes' \
+            --exclude='.editorconfig' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            --exclude='CHANGELOG.md' \
+            --exclude='README.md' \
+            --exclude='AGENTS.md' \
+            --exclude='ROADMAP.md' \
+            --exclude='*.zip' \
+            --exclude='node_modules/' \
+            --exclude='.vscode/' \
+            --exclude='.idea/' \
+            --exclude='languages/*.po' \
+            --exclude='languages/*.mo'
+
+      # Icone, banner e screenshots do diretorio (pasta assets do SVN, fora do trunk).
+      - name: Sync directory assets
+        run: |
+          set -euo pipefail
+          if [ ! -d assets ]; then
+            echo "Sem pasta assets/ no repositorio; nada a sincronizar."
+            exit 0
+          fi
+          mkdir -p svn/assets
+          rsync -a --delete ./assets/ svn/assets/
+          cd svn
+          svn status assets | awk '$1 == "!" { sub(/^![[:space:]]+/, ""); print }' | while IFS= read -r path; do
+            if [ -n "${path}" ]; then
+              svn delete "${path}"
+            fi
+          done
+          svn add --force assets --no-ignore
+          echo "--- svn status assets ---"
+          svn status assets
+
+      - name: Stage new and deleted files
+        if: ${{ !inputs.assets_only }}
+        run: |
+          set -euo pipefail
+          cd svn
+          svn status trunk | awk '$1 == "!" { sub(/^![[:space:]]+/, ""); print }' | while IFS= read -r path; do
+            if [ -n "${path}" ]; then
+              svn delete "${path}"
+            fi
+          done
+          svn add --force trunk --no-ignore
+          echo "--- svn status ---"
+          svn status trunk
+
+      - name: Commit trunk
+        run: |
+          set -euo pipefail
+          cd svn
+          if [ -z "$(svn status trunk assets)" ]; then
+            echo "Nada novo no trunk/assets; commit ignorado."
+            exit 0
+          fi
+          svn commit trunk assets \
+            -m "Deploy ${SLUG} v${{ steps.version.outputs.VERSION }}" \
+            --username "${SVN_USERNAME}" \
+            --password "${SVN_PASSWORD}" \
+            --non-interactive \
+            --no-auth-cache
+
+      - name: Tag the version
+        if: ${{ !inputs.assets_only }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          if svn ls "${SVN_URL}/tags/${VERSION}" >/dev/null 2>&1; then
+            echo "A tag ${VERSION} ja existe; nada a fazer."
+            exit 0
+          fi
+          svn copy "${SVN_URL}/trunk" "${SVN_URL}/tags/${VERSION}" \
+            -m "Tag ${SLUG} v${VERSION}" \
+            --username "${SVN_USERNAME}" \
+            --password "${SVN_PASSWORD}" \
+            --non-interactive \
+            --no-auth-cache

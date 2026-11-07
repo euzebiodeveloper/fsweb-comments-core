@@ -30,6 +30,7 @@ jobs:
           rsync -a ./ "${BUILD_DIR}/" \
             --exclude='.git/' \
             --exclude='.github/' \
+            --exclude='assets/' \
             --exclude='.gitignore' \
             --exclude='.gitattributes' \
             --exclude='.editorconfig' \

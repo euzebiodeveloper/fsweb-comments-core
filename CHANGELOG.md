@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.11 — 2026-11-07
+
+### Changed
+
+- Replaced the directory banner and icon with the official artwork used by
+  the PRO edition.
+
+### Fixed
+
+- Manual deploy workflow no longer copies the SVN checkout into the trunk.
+
 ## 1.0.10 — 2026-11-07
 
 ### Added

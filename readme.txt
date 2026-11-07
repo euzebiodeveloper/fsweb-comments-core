@@ -4,7 +4,7 @@ Tags: reviews, testimonials, feedback, ratings, shortcode
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,11 +78,15 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 == Screenshots ==
 
 1. Overview screen with counters and quick actions.
-2. Settings screen with the form and appearance options.
-3. Reviews slider with the dark theme.
-4. Reviews slider with the light theme.
+2. Front-end review form with photo upload.
+3. Review card in the light theme.
+4. Review card in the dark theme.
 
 == Changelog ==
+
+= 1.0.11 =
+* Replaced the directory banner and icon with the official artwork.
+* Fixed the manual deploy workflow so the SVN checkout is no longer copied inside the trunk.
 
 = 1.0.10 =
 * Added the directory icon and banner for the WordPress.org plugin page.
@@ -99,6 +103,9 @@ They are stored as `fsweb_review` posts with the **pending** status until an adm
 * Optional PRO add-on documented; no feature is held behind a licence in this edition.
 
 == Upgrade Notice ==
+
+= 1.0.11 =
+Official directory artwork.
 
 = 1.0.10 =
 Directory assets and automated release deployment.
